@@ -1,7 +1,5 @@
 # BỨC TRANH TOÀN CẢNH VỀ INTERNET & MẠNG MÁY TÍNH
 
-![Internet Infrastructure Overview](file:///C:/Users/TR_NGHIA/.gemini/antigravity/brain/e13dccb4-8120-4443-b60d-e8154aa84495/internet_infrastructure_overview_1777177814312.png)
-
 ## PHẦN 1: BỐI CẢNH & TẦM NHÌN (THE BIG PICTURE)
 
 ### 1. Internet là gì & Lịch sử ra đời
