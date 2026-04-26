@@ -1,6 +1,6 @@
 # Computer Scientist Foundation
 
-A personal repository for Computer Science foundations and DevOps practices, inspired by **NAB Wecamp Sessions**.
+A personal repository for Computer Science foundations and SDE practices, inspired by **NAB Wecamp Sessions**.
 
 ## Goal
 Build a solid foundation for an **SDE** (Software Development Engineer) role:
