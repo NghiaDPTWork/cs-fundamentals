@@ -192,3 +192,91 @@ SSH giải quyết bài toán "An ninh" đã đặt ra ở Phần 1. Nó chứng
 </details>
 
 ---
+
+### 2. Tầng Giao vận (Transport Layer) - Người vận chuyển tận tâm
+
+Nếu Tầng Ứng dụng quyết định "Gửi cái gì", thì Tầng Giao vận sẽ quyết định **"Gửi như thế nào"**. Đây là tầng chịu trách nhiệm chia nhỏ dữ liệu và đảm bảo chúng tới đích một cách chính xác hoặc nhanh chóng tùy theo yêu cầu.
+
+#### Tại sao lập trình viên phải học kỹ Tầng Giao vận?
+- **Quản lý kết nối:** Hiểu tại sao một Request bị "timeout" hoặc tại sao Server lại từ chối kết nối (Connection Refused).
+- **Tối ưu hiệu năng:** Biết khi nào dùng TCP để đảm bảo dữ liệu (như giao dịch ngân hàng) và khi nào dùng UDP để tối ưu tốc độ (như livestream, game).
+- **Sử dụng Port:** Hiểu cách các ứng dụng khác nhau (Web, Database, SSH) chạy chung trên một địa chỉ IP mà không bị xung đột.
+
+---
+
+#### Các nhân vật chính: TCP và UDP
+
+| Đặc điểm | TCP (Transmission Control Protocol) | UDP (User Datagram Protocol) |
+| :--- | :--- | :--- |
+| **Tính chất** | "Kẻ cẩn trọng" - Tin cậy tuyệt đối. | "Kẻ tốc độ" - Nhanh nhưng không đảm bảo. |
+| **Cơ chế** | Bắt tay 3 bước, đánh số thứ tự, xác nhận (ACK). | Bắn dữ liệu liên tục, không cần xác nhận. |
+| **Đơn vị dữ liệu** | **Segment** (Đoạn mã hóa có kiểm soát) | **Datagram** (Gói tin đơn giản) |
+| **Ứng dụng** | Web (HTTP), Email, Truyền file, Database. | Livestream, Call Video, Game online. |
+
+<details>
+<summary><b>Xem chi tiết: Phân biệt Message - Segment - Datagram (Sự tiến hóa của dữ liệu)</b></summary>
+
+Hãy tưởng tượng bạn muốn gửi một **Bộ bàn ghế gỗ (Message)** khổng lồ qua đường bưu điện:
+
+1.  **Message (Tầng Ứng dụng):** Là nguyên bộ bàn ghế. Bạn không thể nhét cả bộ vào một chiếc xe máy nhỏ được.
+2.  **Sự giới hạn (MTU):** Đường ống vật lý chỉ cho phép gói hàng tối đa ~1.5KB.
+3.  **Segment (TCP):** Bạn tháo rời bộ bàn ghế ra thành từng bộ phận (chân bàn, mặt bàn...), đánh số thứ tự (1, 2, 3...) và cho vào từng thùng hàng. Nếu mất thùng số 2, bạn sẽ biết và gửi lại đúng cái chân bàn đó.
+4.  **Datagram (UDP):** Bạn cũng tháo rời nhưng không đánh số, cứ thế ném lên xe. Xe nào tới trước thì tới, mất thì thôi, không lắp lại được bộ bàn ghế hoàn chỉnh cũng không sao (Phù hợp với Livestream - mất 1 khung hình không chết ai).
+</details>
+
+<details>
+<summary><b>Xem chi tiết: Tại sao phải Bắt tay 3 bước & Chia tay 4 bước?</b></summary>
+
+Nhiều người nghĩ nó rườm rà, nhưng đây là "linh hồn" của sự tin cậy:
+
+- **Bắt tay 3 bước (3-way Handshake) để làm gì?**
+    - Không chỉ là "Chào hỏi", mà là để **Đồng bộ hóa (Sync)** số thứ tự (Sequence Number).
+    - Ví dụ: Client bảo "Tôi sẽ bắt đầu đánh số từ 1000", Server đáp "Ok, tôi cũng sẽ bắt đầu từ 5000". Nếu không có bước này, máy nhận sẽ không biết mảnh dữ liệu nào là đầu, mảnh nào là cuối để ráp lại.
+- **Chia tay 4 bước (4-way Teardown) để làm gì?**
+    - Đảm bảo **không có dữ liệu bị bỏ sót**. 
+    - Vì kết nối là 2 chiều (Full-duplex), nên khi Client nói "Tôi hết dữ liệu rồi (FIN)", Server có thể vẫn còn vài mảnh dữ liệu cuối đang gửi nốt. Server phải gửi xong và cũng nói "Tôi cũng hết rồi (FIN)" thì cửa mới thực sự đóng lại.
+</details>
+
+<details>
+<summary><b>Xem chi tiết: IP & Port - Ai lấy? Ai dùng? Lấy khi nào?</b></summary>
+
+Đây là luồng "liên tầng" mà bạn cần nắm chắc:
+
+1.  **Ai lấy IP?** **Trình duyệt (Browser)** là người đi lấy. Khi bạn nhấn Enter, Browser nhìn vào Tên miền và gọi sang "ông hàng xóm" **DNS** để xin địa chỉ IP.
+2.  **Lấy khi nào?** Ngay lập tức, trước khi bất kỳ kết nối nào được tạo ra. Không có IP thì không biết gửi đi đâu.
+3.  **Ai dùng?** **Hệ điều hành (OS)** và **Tầng Giao vận** sẽ dùng cái IP đó.
+4.  **IP và Port kết hợp như thế nào?**
+    - **IP:** Tìm đến đúng cái "Nhà" (Server).
+    - **Port:** Tìm đến đúng cái "Cửa" (Dịch vụ) đang mở sẵn trong nhà đó.
+    - **Socket:** Khi Browser có IP từ DNS, nó sẽ bảo OS: "Hãy mở cho tôi một Socket tới IP: `172.217.161.206` ở Port: `443`". OS sẽ tạo ra một đường ống thực sự dựa trên thông tin này.
+</details>
+
+<details>
+<summary><b>Xem chi tiết: UDP & WebRTC - Giải pháp cho sự tức thời</b></summary>
+
+**1. Tại sao UDP lại nhanh?**
+UDP bỏ qua mọi thủ tục rườm rà. Nó không bắt tay, không kiểm tra xem máy nhận có sống hay không, cứ thế là gửi. Nếu một gói tin bị mất trên đường đi (Packet Loss), UDP cũng không gửi lại. 
+*Ví dụ:* Khi livestream, nếu mất 1 khung hình, video sẽ hơi giật nhẹ rồi chạy tiếp, thay vì dừng lại chờ tải khung hình cũ (như TCP).
+
+**2. WebRTC (Web Real-Time Communication):**
+Đây là công nghệ giúp các ứng dụng Web gọi Video/Audio trực tiếp. WebRTC sử dụng triệt để **UDP** để truyền tải hình ảnh với độ trễ thấp nhất, giúp cuộc trò chuyện diễn ra mượt mà như ngoài đời thực.
+</details>
+
+<details>
+<summary><b>Xem chi tiết: Port Numbers - Những "Cánh cửa" bên trong một địa chỉ IP</b></summary>
+
+Hãy tưởng tượng **IP** là địa chỉ của một tòa chung cư, thì **Port** chính là số căn hộ.
+- Một máy chủ (IP) có thể chạy đồng thời nhiều dịch vụ:
+    - Web chạy ở Port 80/443.
+    - Database chạy ở Port 3306.
+    - SSH chạy ở Port 22.
+- **Socket:** Là sự kết hợp giữa `IP : Port`. Khi bạn gọi API, trình duyệt sẽ mở một Socket để kết nối tới đúng "căn hộ" dịch vụ trên Server.
+</details>
+
+---
+
+### Nguyên lý gốc rễ: "Divide and Conquer" (Chia để trị)
+Dù là hành động gì trên giao diện, quy trình luôn là:
+*   **Application:** Xác định "Chúng ta gửi cái gì?" (Message).
+*   **Transport:** Đảm bảo "Gửi có đủ và đúng thứ tự?" (TCP/UDP).
+*   **Network:** Quyết định "Đi đường nào?" (IP/Routing).
