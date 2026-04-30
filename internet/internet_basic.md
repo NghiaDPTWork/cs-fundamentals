@@ -260,3 +260,78 @@ Không phải giao thức nào cũng để truyền dữ liệu người dùng. 
 </details>
 
 ---
+
+### 4. Tầng Truy cập mạng (Network Access Layer) - Hạ tầng vật lý
+
+Đây là tầng cuối cùng trong mô hình TCP/IP (gộp tầng Data Link và Physical của OSI). Nếu Tầng Mạng lo việc tìm đường trên bản đồ, thì Tầng Truy cập mạng chính là **"Mặt đường, lốp xe và xăng dầu"** giúp dữ liệu thực sự di chuyển.
+
+#### Tại sao lập trình viên phải hiểu Tầng Truy cập mạng?
+- **Hiểu về giới hạn:** Tại sao Wi-Fi lại chậm hơn cắm cáp LAN? Tại sao độ trễ (ping) lại cao khi dùng 4G?
+- **Định danh thiết bị:** Hiểu về địa chỉ MAC để biết cách các hệ thống bảo mật mạng lọc thiết bị (MAC Filtering).
+- **Phần cứng thực tế:** Nắm được vai trò của Card mạng (NIC) và Switch trong việc truyền tải dữ liệu nội bộ.
+
+---
+
+#### Đơn vị dữ liệu: Frame (Khung tin) & Bits (Số nhị phân)
+Tại đây, các **Packet** được bọc thêm lớp vỏ cuối cùng chứa địa chỉ MAC để trở thành **Frame**. Sau đó, Frame bị "nghiền nát" thành các dãy bit **0 và 1** để truyền qua dây dẫn.
+
+| Thành phần | Đặc điểm |
+| :--- | :--- |
+| **Địa chỉ MAC** | Địa chỉ vật lý duy nhất được ghi vào phần cứng (Card mạng) khi sản xuất. |
+| **Switch** | Thiết bị thông minh giúp điều phối các Frame đến đúng địa chỉ MAC trong mạng LAN. |
+| **Môi trường truyền** | Cáp đồng (điện), Cáp quang (ánh sáng), Sóng vô tuyến (Wi-Fi/4G). |
+
+<details>
+<summary><b>Xem chi tiết: Địa chỉ MAC vs Địa chỉ IP - Số nhà và Tên chủ hộ</b></summary>
+
+Để gói tin đến đúng máy bạn, cần có 2 loại địa chỉ:
+1.  **IP Address (Địa chỉ Logic):** Có thể thay đổi khi bạn sang quán cafe khác. Nó giống như "Địa chỉ tạm trú".
+2.  **MAC Address (Địa chỉ Vật lý):** Không bao giờ thay đổi (trừ khi bạn thay card mạng). Nó giống như "Số chứng minh thư" của thiết bị.
+    - *Cơ chế:* Trong mạng nội bộ, Router/Switch không dùng IP để tìm máy bạn, chúng dùng bảng **ARP (Address Resolution Protocol)** để tra xem IP này đang tương ứng với cái MAC nào để đẩy Frame vào đúng cổng.
+</details>
+
+<details>
+<summary><b>Xem chi tiết: Từ Frame đến Bits - Khi dữ liệu biến thành Ánh sáng và Điện</b></summary>
+
+Đây là bước cuối cùng trước khi dữ liệu rời khỏi máy tính của bạn:
+
+**1. Đóng gói Frame:**
+Tầng này gắn thêm "đầu" và "đuôi" vào Packet để thiết bị phần cứng biết khi nào một gói tin bắt đầu và kết thúc.
+
+**2. Chuyển đổi tín hiệu:**
+- **Cáp đồng (RJ45):** Các bit 0 và 1 được chuyển thành các mức điện áp cao/thấp.
+- **Cáp quang:** Chuyển thành các xung ánh sáng chớp tắt cực nhanh bên trong sợi thủy tinh. Đây là cách truyền nhanh nhất và ít nhiễu nhất.
+- **Wi-Fi/Sóng vô tuyến:** Chuyển thành các dao động sóng điện từ lan tỏa trong không gian.
+
+**3. Tại sao cắm dây luôn nhanh hơn Wi-Fi?**
+Sóng Wi-Fi dễ bị nhiễu bởi tường, thiết bị điện tử và bị suy giảm theo khoảng cách. Cáp quang/Cáp đồng truyền trong môi trường kín nên tốc độ ổn định và độ trễ cực thấp.
+</details>
+
+---
+
+### 🏁 TỔNG KẾT: HÀNH TRÌNH ĐÓNG GÓI (ENCAPSULATION)
+Hãy nhìn lại toàn bộ quá trình khi bạn nhấn "Gửi" một tin nhắn:
+
+1.  **Tầng Ứng dụng:** Tạo ra **Message** (Nội dung chat).
+2.  **Tầng Giao vận:** Băm Message thành các **Segment** (Gắn thêm Port).
+3.  **Tầng Mạng:** Bọc Segment thành các **Packet** (Gắn thêm IP).
+4.  **Tầng Truy cập mạng:** Bọc Packet thành các **Frame** (Gắn thêm MAC) -> Chuyển thành **Bits** để truyền đi.
+
+*(Dữ liệu đi lùi từ Tầng 4 xuống Tầng 1 ở máy gửi, và đi ngược từ Tầng 1 lên Tầng 4 ở máy nhận để "mở quà").*
+
+<details>
+<summary><b>💡 Giải mã: Tại sao tên gọi dữ liệu lại thay đổi qua từng tầng?</b></summary>
+
+Việc đổi tên từ **Message -> Segment -> Packet -> Frame** không phải để làm khó người học, mà nó phản ánh **sự thay đổi về cấu trúc và nhiệm vụ** của dữ liệu. Trong kỹ thuật, mỗi đơn vị này được gọi chung là một **PDU (Protocol Data Unit)**.
+
+Hãy tưởng tượng bạn gửi một **Con gấu bông (Dữ liệu gốc)** cho bạn thân:
+
+1.  **Message (Tầng Ứng dụng):** Chính là con gấu bông. Ở tầng này, chúng ta chỉ quan tâm đến nội dung: "Nó màu gì? Nó là quà tặng ai?".
+2.  **Segment (Tầng Giao vận):** Bạn cho gấu bông vào một chiếc hộp. Bên ngoài hộp, bạn dán mác: "Mảnh số 1/3", "Gửi tới phòng 403 (Port)". Chiếc hộp này bảo vệ con gấu và đảm bảo nó không bị thất lạc.
+3.  **Packet (Tầng Mạng):** Bạn bọc chiếc hộp bằng một lớp giấy gói quà màu nâu của bưu điện. Bên ngoài bạn ghi: "Gửi tới số nhà 123 đường ABC (IP)". Lúc này, bưu điện không cần biết bên trong là gấu bông hay mảnh số mấy, họ chỉ cần nhìn địa chỉ nhà để chuyển đi.
+4.  **Frame (Tầng Truy cập mạng):** Nhân viên bưu điện cho gói quà vào một cái thùng container lớn của xe tải. Thùng này có mã số xe (MAC) để đi qua các trạm kiểm soát vật lý.
+
+**Tại sao phải làm vậy? (Triết lý Abstraction):**
+- **Để "Chia để trị":** Router ở giữa đường chỉ cần đọc cái lớp giấy nâu (Packet - IP) để biết đường đi, nó không cần tốn công mở hết các lớp bên trong để xem bạn gửi gấu bông hay gửi gì. Điều này giúp tốc độ xử lý mạng nhanh hơn hàng triệu lần.
+- **Để linh hoạt:** Nếu sau này bạn không gửi bằng xe tải (Frame Ethernet) mà gửi bằng máy bay (Frame Wi-Fi), con gấu bông bên trong (Message) vẫn giữ nguyên không đổi. Chỉ cần thay cái "lớp bọc ngoài cùng" là xong.
+</details>
