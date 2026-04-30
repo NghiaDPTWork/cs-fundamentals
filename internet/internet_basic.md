@@ -192,11 +192,3 @@ SSH giải quyết bài toán "An ninh" đã đặt ra ở Phần 1. Nó chứng
 </details>
 
 ---
-
-### Nguyên lý gốc rễ: "Divide and Conquer" (Chia để trị)
-
-Dù là hành động gì trên giao diện, quy trình luôn là:
-
-- **Application:** Xác định "Chúng ta gửi cái gì?" (Message).
-- **Transport:** Đảm bảo "Gửi có đủ và đúng thứ tự?" (TCP).
-- **Network:** Quyết định "Đi đường nào?" (IP/Routing).
