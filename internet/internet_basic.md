@@ -68,27 +68,92 @@
 
 <details>
 <summary><b>Xem chi tiết: HTTP/HTTPS - "Mạch máu" của thế giới Web</b></summary>
-(Nội dung chi tiết về Request/Response, Auth, Stateless...)
+
+**1. Mô hình Request - Response:**
+Mọi giao tiếp trên Web đều bắt đầu bằng một yêu cầu (Request) từ Client và kết thúc bằng một phản hồi (Response) từ Server.
+
+-   **HTTP Request:**
+    -   **Method:** GET (Lấy dữ liệu), POST (Gửi dữ liệu mới), PUT (Cập nhật), DELETE (Xóa).
+    -   **Headers:** Chứa metadata như `User-Agent` (thông tin trình duyệt), `Content-Type` (loại dữ liệu), `Authorization` (token xác thực).
+    -   **Body:** Nội dung dữ liệu gửi đi (thường dùng trong POST/PUT, định dạng JSON hoặc Form data).
+-   **HTTP Response:**
+    -   **Status Codes:** 
+        -   `2xx (Success)`: Thành công (Ví dụ: `200 OK`).
+        -   `3xx (Redirection)`: Chuyển hướng (Ví dụ: `301 Moved Permanently`).
+        -   `4xx (Client Error)`: Lỗi do phía người dùng (Ví dụ: `404 Not Found`, `401 Unauthorized`).
+        -   `5xx (Server Error)`: Lỗi do phía máy chủ (Ví dụ: `500 Internal Server Error`).
+
+**2. Tính chất Stateless (Không lưu trạng thái):**
+HTTP là giao thức stateless - mỗi Request là độc lập, Server không "nhớ" bạn là ai từ Request trước đó.
+-   **Giải pháp:** Để làm các ứng dụng như Giỏ hàng hay Đăng nhập, chúng ta sử dụng **Cookie**, **Session** hoặc **JWT (JSON Web Token)** để duy trì trạng thái.
+
+**3. HTTPS - Bảo mật là ưu tiên hàng đầu:**
+HTTPS = HTTP + **SSL/TLS** (Mã hóa).
+-   **Mã hóa:** Dữ liệu được mã hóa trước khi gửi đi, tránh bị kẻ xấu "nghe lén" (Sniffing) mật khẩu hay thông tin cá nhân.
+-   **Chứng chỉ (Certificate):** Server phải có chứng chỉ từ các tổ chức uy tín (CA) để chứng minh mình là trang web thật, không phải giả mạo.
 </details>
 
 <details>
 <summary><b>Xem chi tiết: DNS - Điểm bắt đầu của mọi hành trình</b></summary>
-(Nội dung chi tiết về Hierarchy, Recursive Query, Record types...)
+
+DNS (Domain Name System) hoạt động như một cuốn danh bạ khổng lồ, giúp biến tên miền dễ nhớ như `google.com` thành địa chỉ IP mà máy tính hiểu được như `172.217.161.206`.
+
+**1. Cấu trúc phân cấp (Hierarchy):**
+-   **Root Servers (.)**: Điểm gốc của toàn bộ hệ thống DNS thế giới.
+-   **TLD Servers (.com, .net, .vn)**: Quản lý các phần mở rộng của tên miền.
+-   **Authoritative Nameservers**: Nơi lưu giữ "sự thật" về địa chỉ IP của một tên miền cụ thể (ví dụ: Server DNS của Cloudflare hoặc Bluehost).
+
+**2. Quy trình truy vấn (Recursive Query):**
+Khi bạn gõ tên miền, máy tính sẽ hỏi **DNS Resolver** (thường do nhà mạng ISP cung cấp). Resolver sẽ thực hiện "cuộc hành trình" hỏi từ Root -> TLD -> Authoritative cho đến khi nhận được địa chỉ IP cuối cùng để trả về cho trình duyệt.
+
+**3. Các loại bản ghi (Record Types) phổ biến:**
+-   **A Record:** Trỏ tên miền sang địa chỉ **IPv4**.
+-   **AAAA Record:** Trỏ tên miền sang địa chỉ **IPv6**.
+-   **CNAME:** Trỏ một tên miền này sang một tên miền khác (ví dụ: `www.example.com` trỏ về `example.com`).
+-   **MX Record (Mail Exchange):** Xác định máy chủ nào chịu trách nhiệm nhận Email cho tên miền đó.
+-   **TXT Record:** Chứa thông tin văn bản, thường dùng để xác minh quyền sở hữu tên miền (cho Google Search Console, v.v.).
+
+**4. TTL (Time To Live) & Propagation:**
+-   **TTL:** Thời gian bản ghi DNS được lưu trong bộ nhớ đệm (Cache).
+-   **Propagation (Lan tỏa):** Khi bạn đổi IP của tên miền, cần một khoảng thời gian (vài phút đến 24h) để các Server DNS trên toàn cầu cập nhật thông tin mới.
 </details>
 
 <details>
 <summary><b>Xem chi tiết: WebSocket - Phá vỡ giới hạn của HTTP</b></summary>
-(Nội dung chi tiết về Full-duplex, Handshake...)
+
+Khác với HTTP (Client hỏi - Server trả lời rồi ngắt kết nối), WebSocket giữ cho "đường ống" luôn mở.
+
+-   **Full-duplex (Song công):** Cả Client và Server có thể chủ động gửi dữ liệu cho nhau bất cứ lúc nào mà không cần phải chờ yêu cầu từ phía kia.
+-   **Handshake (Bắt tay):** WebSocket bắt đầu bằng một HTTP Request đặc biệt có header `Upgrade: websocket`. Nếu Server đồng ý, kết nối sẽ chuyển sang giao thức WebSocket.
+-   **Ưu điểm:** Giảm thiểu độ trễ và dung lượng header (không cần gửi lại header HTTP cồng kềnh cho mỗi tin nhắn).
+-   **Ứng dụng:** Ứng dụng chat thời gian thực, bảng giá chứng khoán cập nhật liên tục, Game online multiplayer.
 </details>
 
 <details>
 <summary><b>Xem chi tiết: FTP, SMTP & Mô hình Bưu cục</b></summary>
-(Nội dung chi tiết về Dual-channel, Store and Forward...)
+
+Đây là những giao thức lâu đời nhưng vẫn cực kỳ quan trọng trong hạ tầng Internet:
+
+-   **FTP (File Transfer Protocol):** Chuyên dụng để truyền tải file giữa máy tính và máy chủ. 
+    -   Nó sử dụng 2 kênh: **Kênh điều khiển** (Port 21 - gửi lệnh) và **Kênh dữ liệu** (Port 20 - truyền nội dung file).
+-   **SMTP (Simple Mail Transfer Protocol):** Giao thức tiêu chuẩn để **gửi** Email. Khi bạn nhấn nút "Gửi", SMTP sẽ đưa thư từ máy bạn đến Mail Server, và từ Mail Server này sang Mail Server khác.
+-   **POP3 & IMAP:** Trong khi SMTP dùng để gửi, thì 2 giao thức này dùng để **nhận/tải** thư về.
+    -   **POP3:** Tải thư về máy và thường xóa thư trên Server (tiết kiệm bộ nhớ server).
+    -   **IMAP:** Đồng bộ hóa thư giữa Server và tất cả các thiết bị (hiện đại và phổ biến hơn).
 </details>
 
 <details>
 <summary><b>Xem chi tiết: SSH - "Chìa khóa vạn năng" cho máy chủ</b></summary>
-(Nội dung chi tiết về Public/Private Key, Tunneling...)
+
+SSH (Secure Shell) là công cụ không thể thiếu của mọi lập trình viên Backend hay DevOps để quản trị máy chủ từ xa qua dòng lệnh.
+
+-   **Bảo mật tuyệt đối:** Mọi dữ liệu (bao gồm cả mật khẩu) đều được mã hóa mạnh mẽ, chống lại các cuộc tấn công trung gian (Man-in-the-middle).
+-   **Cơ chế xác thực Public/Private Key:** 
+    -   Thay vì dùng mật khẩu, bạn tạo một cặp khóa.
+    -   **Khóa Public:** Đặt lên máy chủ.
+    -   **Khóa Private:** Giữ bí mật trên máy tính cá nhân.
+    -   Khi kết nối, Server sẽ dùng khóa Public để "đố" và chỉ có khóa Private tương ứng mới "giải" được.
+-   **Tunneling (Đường hầm):** SSH còn cho phép bạn tạo một đường hầm bảo mật để truy cập vào các dịch vụ nội bộ bên trong máy chủ (như Database) mà không cần mở port công khai.
 </details>
 
 ---
