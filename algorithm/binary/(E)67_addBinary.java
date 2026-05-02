@@ -1,7 +1,7 @@
 class Solution {
     public String addBinary(String a, String b) {
         StringBuilder sb = new StringBuilder();
-
+        
         int result = 0, carry = 0;
         int i = a.length() - 1;
         int j = b.length() - 1;
