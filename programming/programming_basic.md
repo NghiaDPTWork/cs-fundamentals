@@ -47,6 +47,48 @@ Tại sao các chuyên gia vẫn ưu tiên màn hình đen (Terminal/CMD) thay v
 
 Để vượt qua giới hạn của một người biết code và trở thành một Kỹ sư phần mềm thực thụ, chúng ta cần phát triển kỹ năng qua 6 tầng kiến thức cốt lõi.
 
+### Tầng 0: Tư duy Hệ thống (Computational Thinking)
+Đây không phải là kỹ năng viết code, mà là kỹ năng **giải quyết vấn đề** trước khi chạm vào bàn phím. Nếu không có tầng này, bạn chỉ là một người "thợ gõ" cú pháp mà không hiểu tại sao mình lại làm như vậy.
+
+#### 0.1. Decomposition (Sự phân rã - Chia để trị)
+Mọi hệ thống phức tạp (như Facebook hay một trò chơi 3D) thực chất là tập hợp của hàng vạn mảnh ghép cực kỳ đơn giản.
+*   **Bản chất:** Kỹ năng chia nhỏ một vấn đề khổng lồ, mơ hồ thành những bài toán con (sub-problems) nhỏ đến mức có thể giải quyết ngay lập tức.
+*   **Ví dụ:** Phân rã tính năng **"Đăng nhập"** (Login System):
+    *   `Bước 1:` Nhận dữ liệu (Email/Mật khẩu) từ người dùng.
+    *   `Bước 2:` Kiểm tra định dạng Email (Validation).
+    *   `Bước 3:` Truy vấn tài khoản trong Cơ sở dữ liệu (Database Query).
+    *   `Bước 4:` So khớp mật khẩu đã mã hóa (Security Logic).
+    *   `Bước 5:` Khởi tạo phiên làm việc nếu thành công (Session/Token).
+*   **Tầm quan trọng:** Giúp lập trình viên không bị choáng ngợp và có thể quản lý được độ phức tạp của dự án.
+
+#### 0.2. Abstraction (Sự trừu tượng hóa - Tìm kiếm bản chất)
+Lập trình viên giỏi là người biết "quên" đi những thứ không cần thiết để tập trung vào cái cốt lõi.
+*   **Bản chất:** Quá trình lọc bỏ các chi tiết vụn vặt của thực tế để xây dựng một mô hình đại diện trong máy tính.
+*   **Ví dụ:** Trừu tượng hóa đối tượng **"Khách hàng"** trong hệ thống Ngân hàng:
+    *   **Thực tế (Chi tiết thừa):** Sở thích cá nhân, màu tóc, thú cưng, chiều cao... (Bị loại bỏ vì không phục vụ mục đích tính toán).
+    *   **Mô hình (Bản chất):**
+        *   `ID:` Định danh khách hàng.
+        *   `Số dư:` Quản lý tài chính.
+        *   `Lịch sử giao dịch:` Theo dõi biến động.
+    *   **=> Kết quả:** Một "Con người" ngoài đời thực đã được trừu tượng hóa thành một "Tập dữ liệu" tinh gọn trong máy tính.
+
+*   **Tầm quan trọng:** Giảm tải gánh nặng tư duy và giúp mã nguồn có tính linh hoạt, tái sử dụng cao.
+
+#### 0.3. Pattern Recognition (Nhận diện khuôn mẫu)
+Thế giới lập trình đầy rẫy những vấn đề tương tự nhau. Việc nhận ra "tôi đã thấy bài toán này ở đâu đó rồi" là chìa khóa của tốc độ.
+*   **Bản chất:** Tìm ra những điểm chung, những quy luật lặp lại giữa các bài toán khác nhau.
+*   **Ví dụ:** Nếu bạn biết cách sắp xếp một danh sách `Tên học sinh`, bạn cũng sẽ biết cách sắp xếp một danh sách `Giá sản phẩm`. Cấu trúc logic là như nhau, chỉ có đối tượng dữ liệu là thay đổi.
+
+#### 0.4. Algorithms (Thiết lập thuật toán - Tư duy quy trình)
+Sau khi đã chia nhỏ và trừu tượng hóa, ta cần một bản kế hoạch hành động.
+*   **Bản chất:** Là một tập hợp các chỉ dẫn hữu hạn, rõ ràng và không mơ hồ để đạt được kết quả mong muốn.
+*   **Tiêu chuẩn:** Một thuật toán tốt phải đảm bảo 3 yếu tố:
+    *   ✅ **Đúng đắn:** Luôn trả về kết quả chính xác cho mọi đầu vào hợp lệ.
+    *   ⚡ **Hiệu quả:** Tối ưu về mặt thời gian (CPU) và không gian (RAM).
+    *   📝 **Rõ ràng:** Dễ đọc, dễ hiểu để con người có thể bảo trì và máy tính có thể thực thi.
+*   **Kết nối:** Thuật toán là cầu nối biến "Ý tưởng" ở Tầng 0 thành "Cú pháp" ở Tầng 1.
+
+
 ---
 
 _Tài liệu học tập - Computer Science Fundamentals_
