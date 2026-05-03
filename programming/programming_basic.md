@@ -43,8 +43,6 @@ Tại sao các chuyên gia vẫn ưu tiên màn hình đen (Terminal/CMD) thay v
 
 ---
 
----
-
 ## PHẦN 2: MÔ HÌNH 6 LỚP - LỘ TRÌNH CHUYÊN SÂU (6-LAYER MODEL)
 
 ### Sợi chỉ xuyên suốt: Từ "Dòng điện" đến "Giải pháp"
