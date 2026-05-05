@@ -187,55 +187,79 @@ Mỗi nhóm giải thuật đại diện cho một tư duy giải quyết vấn 
   
   - **Linear Search (Tìm kiếm tuần tự):** 
     - *Mô hình:* Duyệt từ đầu đến cuối danh sách. 
-    - *Đặc điểm:* Dùng cho mọi loại dữ liệu. Độ phức tạp $O(n)$.
+    - *Quy trình (Flow):*
+      1. Bắt đầu từ phần tử đầu tiên (index 0).
+      2. So sánh phần tử hiện tại với giá trị cần tìm.
+      3. Nếu khớp: Trả về vị trí và kết thúc.
+      4. Nếu không khớp: Chuyển sang phần tử tiếp theo.
+      5. Lặp lại cho đến hết danh sách. Nếu không tìm thấy, trả về -1.
   - **Binary Search (Tìm kiếm nhị phân):**
     - *Mô hình:* Luôn chia đôi tập dữ liệu đã sắp xếp để tìm kiếm.
-    - *Đặc điểm:* **Bắt buộc dữ liệu phải được sắp xếp**. Cực nhanh với $O(\log n)$.
-  - **Khác biệt:** Nếu bạn có 1 tỷ cuốn sách, Linear Search có thể mất 1 tỷ giây, còn Binary Search chỉ mất 30 giây.
+    - *Quy trình (Flow):*
+      1. Đặt `Trái = 0`, `Phải = n - 1`.
+      2. Tính `Giữa = (Trái + Phải) / 2`.
+      3. Nếu `Mảng[Giữa] == Giá trị`: Trả về `Giữa`.
+      4. Nếu `Mảng[Giữa] < Giá trị`: Bỏ nửa trái, đặt `Trái = Giữa + 1`.
+      5. Nếu `Mảng[Giữa] > Giá trị`: Bỏ nửa phải, đặt `Phải = Giữa - 1`.
+      6. Lặp lại bước 2-5 cho đến khi `Trái > Phải`.
   </details>
 
 - **Sắp xếp (Sorting)**
   <details>
   <summary>Sắp xếp đơn giản (O(n²)) vs Sắp xếp hiệu quả (O(n log n))</summary>
   
-  - **Nhóm đơn giản (Bubble, Insertion Sort):** 
-    - *Mô hình:* So sánh các cặp phần tử cạnh nhau và tráo đổi.
-    - *Sử dụng:* Chỉ nên dùng khi dữ liệu rất nhỏ vì rất chậm khi $n$ tăng.
-  - **Nhóm hiệu quả (Merge, Quick Sort):**
-    - *Mô hình:* Chia mảng thành các mảng con nhỏ hơn, sắp xếp chúng rồi gộp lại (Divide and Conquer).
-    - *Sử dụng:* Là tiêu chuẩn cho hầu hết các thư viện lập trình hiện đại.
+  - **Bubble Sort (Sắp xếp nổi bọt):** 
+    - *Quy trình (Flow):* Duyệt mảng nhiều lần, tại mỗi lần duyệt, so sánh các cặp cạnh nhau và đẩy phần tử lớn nhất về cuối mảng như "nổi bọt".
+  - **Merge Sort (Sắp xếp trộn):**
+    - *Quy trình (Flow):* 
+      1. Chia mảng hiện tại thành 2 nửa (Divide).
+      2. Đệ quy sắp xếp từng nửa (Conquer).
+      3. Trộn (Merge) 2 nửa đã sắp xếp thành mảng hoàn chỉnh.
   </details>
 
 - **Đệ quy (Recursion) & Quy hoạch động (Dynamic Programming)**
   <details>
   <summary>Mối quan hệ giữa Đệ quy và "Bộ nhớ" của DP</summary>
   
-  - **Recursion:** 
-    - *Mô hình:* Một hàm tự gọi lại chính nó với tham số nhỏ hơn cho đến khi gặp điều kiện dừng (Base case).
-    - *Vấn đề:* Dễ bị tính toán lặp lại các bài toán con (ví dụ tính Fibonacci đệ quy).
+  - **Recursion (Đệ quy):** 
+    - *Quy trình (Flow):* 
+      1. Kiểm tra Điều kiện dừng (Base case). Nếu đúng, trả về kết quả.
+      2. Nếu không, thực hiện một phần công việc và gọi lại chính nó với bài toán nhỏ hơn.
+      3. Kết hợp kết quả từ các lời gọi đệ quy.
   - **Dynamic Programming (DP):**
-    - *Mô hình:* Là Đệ quy kết hợp với **Memoization** (lưu trữ kết quả đã tính).
-    - *Khác biệt:* DP "thông minh" hơn vì nó không bao giờ tính lại một thứ gì đó hai lần. Nó đánh đổi bộ nhớ để lấy tốc độ.
+    - *Quy trình (Flow):* 
+      1. Xác định bài toán con và trạng thái.
+      2. Kiểm tra xem kết quả bài toán con đã có trong "Bảng nhớ" chưa.
+      3. Nếu có: Lấy ra dùng ngay ($O(1)$).
+      4. Nếu chưa: Tính toán, lưu vào bảng, rồi mới trả về.
   </details>
 
 - **Tham lam (Greedy) vs Quy hoạch động (DP)**
   <details>
   <summary>Lựa chọn cục bộ vs Tối ưu toàn cục</summary>
   
-  - **Greedy:** 
-    - *Mô hình:* Tại mỗi bước, chọn phương án tốt nhất ngay lúc đó mà không quan tâm tương lai.
-    - *Đặc điểm:* Rất nhanh nhưng không phải lúc nào cũng ra kết quả đúng nhất (Ví dụ: Bài toán thối tiền lẻ).
-  - **DP:** Xem xét tất cả các khả năng của bài toán con để đưa ra quyết định tối ưu cho toàn bộ bài toán lớn.
+  - **Greedy (Tham lam):** 
+    - *Quy trình (Flow):* 
+      1. Khởi tạo tập lời giải rỗng.
+      2. Tại mỗi bước, chọn phần tử "tốt nhất" theo một tiêu chí nào đó (ví dụ: nhỏ nhất, lớn nhất).
+      3. Kiểm tra xem phần tử đó có hợp lệ với lời giải không.
+      4. Lặp lại cho đến khi đạt được mục tiêu.
   </details>
 
 - **Duyệt đồ thị (Graph Traversal): BFS vs DFS**
   <details>
   <summary>Tìm kiếm theo chiều rộng vs Chiều sâu</summary>
   
-  - **BFS (Breadth-First Search):**
-    - *Mô hình:* Duyệt theo từng lớp (như sóng nước lan tỏa). Sử dụng **Queue**.
-    - *Ứng dụng:* Tìm đường đi ngắn nhất giữa hai điểm.
-  - **DFS (Depth-First Search):**
-    - *Mô hình:* Đi sâu hết mức có thể vào một nhánh trước khi quay lại. Sử dụng **Stack** hoặc Đệ quy.
-    - *Ứng dụng:* Giải mê cung, kiểm tra tính liên thông của đồ thị.
+  - **BFS (Tìm kiếm theo chiều rộng):**
+    - *Quy trình (Flow):* 
+      1. Đưa đỉnh bắt đầu vào một **Hàng đợi (Queue)** và đánh dấu đã thăm.
+      2. Lấy một đỉnh ra khỏi Queue.
+      3. Thăm tất cả các đỉnh kề chưa thăm của nó, đánh dấu đã thăm và đưa chúng vào Queue.
+      4. Lặp lại bước 2-3 cho đến khi Queue rỗng.
+  - **DFS (Tìm kiếm theo chiều sâu):**
+    - *Quy trình (Flow):* 
+      1. Đưa đỉnh bắt đầu vào một **Ngăn xếp (Stack)** hoặc dùng Đệ quy.
+      2. Đánh dấu đã thăm đỉnh hiện tại.
+      3. Đi tiếp tới một đỉnh kề chưa thăm (đi sâu nhất có thể).
+      4. Nếu không còn đỉnh kề nào chưa thăm, quay lại (Backtrack) đỉnh trước đó.
   </details>
