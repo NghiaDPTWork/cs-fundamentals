@@ -105,12 +105,45 @@ Cấu trúc dữ liệu được chia làm hai loại chính:
 
 ### 4.1. Cấu trúc dữ liệu tuyến tính (Linear Data Structures)
 
-Các phần tử được sắp xếp theo một thứ tự tuần tự.
+Các phần tử được sắp xếp theo một thứ tự tuần tự. Mỗi loại được sinh ra để tối ưu cho các mục đích truy xuất hoặc chỉnh sửa khác nhau:
 
-- **Array:** Tập hợp các phần tử có cùng kiểu dữ liệu, nằm ở các ô nhớ liên tiếp.
-- **Linked List:** Các phần tử (node) được liên kết với nhau bằng con trỏ.
-- **Stack (LIFO):** Vào sau ra trước (như chồng đĩa).
-- **Queue (FIFO):** Vào trước ra trước (như hàng đợi mua vé).
+- **Array (Mảng)**
+  <details>
+  <summary>Thế mạnh về truy xuất ngẫu nhiên và lưu trữ cố định</summary>
+  
+  - **Tối ưu cho:** **Truy xuất (Access)**. Nhờ các ô nhớ liên tiếp, bạn có thể nhảy tới bất kỳ vị trí nào ngay lập tức ($O(1)$).
+  - **Điểm yếu:** Chỉnh sửa (Thêm/Xóa). Khi bạn thêm hoặc xóa ở giữa mảng, tất cả phần tử phía sau phải "dịch hàng", cực kỳ tốn kém ($O(n)$).
+  - **Sinh ra để làm gì?** Để quản lý danh sách có số lượng phần tử cố định hoặc ít thay đổi, nơi việc đọc dữ liệu là ưu tiên hàng đầu.
+  </details>
+
+- **Linked List (Danh sách liên kết)**
+  <details>
+  <summary>Thế mạnh về chỉnh sửa linh hoạt và bộ nhớ động</summary>
+  
+  - **Tối ưu cho:** **Chỉnh sửa (Insertion/Deletion)**. Để thêm hoặc xóa, bạn chỉ cần thay đổi "mối nối" (con trỏ) của các node bên cạnh ($O(1)$ nếu đã biết vị trí).
+  - **Điểm yếu:** Truy xuất. Bạn không thể nhảy cóc tới phần tử thứ 100 mà phải đi bộ từ phần tử đầu tiên ($O(n)$).
+  - **Sinh ra để làm gì?** Dành cho các danh sách có kích thước thay đổi liên tục, nơi bộ nhớ không cần phải liên tiếp nhau.
+  </details>
+
+- **Stack (Ngăn xếp - LIFO)**
+  <details>
+  <summary>Quản lý lịch sử và các tác vụ lồng nhau</summary>
+  
+  - **Cơ chế:** "Vào sau, ra trước" (Last-In-First-Out).
+  - **Tối ưu cho:** Quản lý trạng thái hiện tại và quay lại trạng thái trước đó.
+  - **Ứng dụng:** Chức năng Undo/Redo trong soạn thảo, nút "Back" trên trình duyệt, hoặc quản lý lời gọi hàm (Call Stack) trong lập trình.
+  - **Sinh ra để làm gì?** Để giải quyết các bài toán có tính chất "đệ quy" hoặc cần tạm dừng việc này để làm việc kia rồi quay lại.
+  </details>
+
+- **Queue (Hàng đợi - FIFO)**
+  <details>
+  <summary>Đảm bảo tính công bằng và xử lý theo thứ tự</summary>
+  
+  - **Cơ chế:** "Vào trước, ra trước" (First-In-First-Out).
+  - **Tối ưu cho:** Xử lý các tác vụ theo đúng thứ tự xuất hiện.
+  - **Ứng dụng:** Hàng đợi in ấn, quản lý yêu cầu (request) gửi đến server, thuật toán tìm kiếm theo chiều rộng (BFS).
+  - **Sinh ra để làm gì?** Để điều phối tài nguyên và đảm bảo mọi yêu cầu đều được phục vụ theo nguyên tắc "đến trước phục vụ trước".
+  </details>
 
 ### 4.2. Cấu trúc dữ liệu phi tuyến tính (Non-Linear Data Structures)
 
