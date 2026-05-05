@@ -177,9 +177,65 @@ Một giải thuật tốt thường phải đảm bảo các tính chất: Tín
 
 ### 5.1. Các nhóm giải thuật phổ biến
 
-- **Tìm kiếm (Searching):** Linear Search, Binary Search.
-- **Sắp xếp (Sorting):** Bubble Sort, Insertion Sort, Merge Sort, Quick Sort.
-- **Đệ quy (Recursion):** Giải quyết bài toán bằng cách gọi lại chính nó với bài toán nhỏ hơn.
-- **Quy hoạch động (Dynamic Programming):** Chia bài toán lớn thành các bài toán con và lưu trữ kết quả để tránh tính toán lại.
-- **Tham lam (Greedy):** Luôn chọn phương án tốt nhất tại thời điểm hiện tại.
-- **Duyệt đồ thị:** BFS (Tìm kiếm theo chiều rộng), DFS (Tìm kiếm theo chiều sâu).
+### 5.1. Các nhóm giải thuật phổ biến
+
+Mỗi nhóm giải thuật đại diện cho một tư duy giải quyết vấn đề khác nhau. Dưới đây là sự phân biệt và mô hình hoạt động của chúng:
+
+- **Tìm kiếm (Searching)**
+  <details>
+  <summary>Phân biệt Linear Search và Binary Search</summary>
+  
+  - **Linear Search (Tìm kiếm tuần tự):** 
+    - *Mô hình:* Duyệt từ đầu đến cuối danh sách. 
+    - *Đặc điểm:* Dùng cho mọi loại dữ liệu. Độ phức tạp $O(n)$.
+  - **Binary Search (Tìm kiếm nhị phân):**
+    - *Mô hình:* Luôn chia đôi tập dữ liệu đã sắp xếp để tìm kiếm.
+    - *Đặc điểm:* **Bắt buộc dữ liệu phải được sắp xếp**. Cực nhanh với $O(\log n)$.
+  - **Khác biệt:** Nếu bạn có 1 tỷ cuốn sách, Linear Search có thể mất 1 tỷ giây, còn Binary Search chỉ mất 30 giây.
+  </details>
+
+- **Sắp xếp (Sorting)**
+  <details>
+  <summary>Sắp xếp đơn giản (O(n²)) vs Sắp xếp hiệu quả (O(n log n))</summary>
+  
+  - **Nhóm đơn giản (Bubble, Insertion Sort):** 
+    - *Mô hình:* So sánh các cặp phần tử cạnh nhau và tráo đổi.
+    - *Sử dụng:* Chỉ nên dùng khi dữ liệu rất nhỏ vì rất chậm khi $n$ tăng.
+  - **Nhóm hiệu quả (Merge, Quick Sort):**
+    - *Mô hình:* Chia mảng thành các mảng con nhỏ hơn, sắp xếp chúng rồi gộp lại (Divide and Conquer).
+    - *Sử dụng:* Là tiêu chuẩn cho hầu hết các thư viện lập trình hiện đại.
+  </details>
+
+- **Đệ quy (Recursion) & Quy hoạch động (Dynamic Programming)**
+  <details>
+  <summary>Mối quan hệ giữa Đệ quy và "Bộ nhớ" của DP</summary>
+  
+  - **Recursion:** 
+    - *Mô hình:* Một hàm tự gọi lại chính nó với tham số nhỏ hơn cho đến khi gặp điều kiện dừng (Base case).
+    - *Vấn đề:* Dễ bị tính toán lặp lại các bài toán con (ví dụ tính Fibonacci đệ quy).
+  - **Dynamic Programming (DP):**
+    - *Mô hình:* Là Đệ quy kết hợp với **Memoization** (lưu trữ kết quả đã tính).
+    - *Khác biệt:* DP "thông minh" hơn vì nó không bao giờ tính lại một thứ gì đó hai lần. Nó đánh đổi bộ nhớ để lấy tốc độ.
+  </details>
+
+- **Tham lam (Greedy) vs Quy hoạch động (DP)**
+  <details>
+  <summary>Lựa chọn cục bộ vs Tối ưu toàn cục</summary>
+  
+  - **Greedy:** 
+    - *Mô hình:* Tại mỗi bước, chọn phương án tốt nhất ngay lúc đó mà không quan tâm tương lai.
+    - *Đặc điểm:* Rất nhanh nhưng không phải lúc nào cũng ra kết quả đúng nhất (Ví dụ: Bài toán thối tiền lẻ).
+  - **DP:** Xem xét tất cả các khả năng của bài toán con để đưa ra quyết định tối ưu cho toàn bộ bài toán lớn.
+  </details>
+
+- **Duyệt đồ thị (Graph Traversal): BFS vs DFS**
+  <details>
+  <summary>Tìm kiếm theo chiều rộng vs Chiều sâu</summary>
+  
+  - **BFS (Breadth-First Search):**
+    - *Mô hình:* Duyệt theo từng lớp (như sóng nước lan tỏa). Sử dụng **Queue**.
+    - *Ứng dụng:* Tìm đường đi ngắn nhất giữa hai điểm.
+  - **DFS (Depth-First Search):**
+    - *Mô hình:* Đi sâu hết mức có thể vào một nhánh trước khi quay lại. Sử dụng **Stack** hoặc Đệ quy.
+    - *Ứng dụng:* Giải mê cung, kiểm tra tính liên thông của đồ thị.
+  </details>
