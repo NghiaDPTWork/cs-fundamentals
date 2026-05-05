@@ -147,10 +147,27 @@ Các phần tử được sắp xếp theo một thứ tự tuần tự. Mỗi l
 
 ### 4.2. Cấu trúc dữ liệu phi tuyến tính (Non-Linear Data Structures)
 
-Các phần tử không được sắp xếp theo tuần tự mà theo phân cấp hoặc mạng lưới.
+Các phần tử không được sắp xếp theo tuần tự mà theo phân cấp hoặc mạng lưới, phản ánh các mối quan hệ phức tạp hơn trong thực tế:
 
-- **Tree:** Cấu trúc phân cấp (Ví dụ: Cây nhị phân, Cây tìm kiếm nhị phân).
-- **Graph:** Tập hợp các đỉnh (nodes) và các cạnh (edges) nối giữa chúng.
+- **Tree (Cây)**
+  <details>
+  <summary>Phân cấp dữ liệu và tối ưu hóa tìm kiếm</summary>
+  
+  - **Tối ưu cho:** Biểu diễn dữ liệu có tính **phân cấp** và **tìm kiếm nhanh** (đối với Cây tìm kiếm nhị phân - BST).
+  - **Ứng dụng:** Cấu trúc thư mục máy tính, cây gia phả, cấu trúc DOM trong HTML, hoặc bộ định tuyến dữ liệu.
+  - **Sinh ra để làm gì?** Để giải quyết bài toán truy xuất dữ liệu có tổ chức (như từ điển) nhanh hơn danh sách liên kết nhưng linh hoạt hơn mảng.
+  - **Độ phức tạp:** Thường là $O(\log n)$ cho các thao tác cơ bản nếu cây cân bằng.
+  </details>
+
+- **Graph (Đồ thị)**
+  <details>
+  <summary>Mô hình hóa mạng lưới và các mối quan hệ phức tạp</summary>
+  
+  - **Tối ưu cho:** Biểu diễn các **kết nối** (connection) giữa các thực thể.
+  - **Ứng dụng:** Mạng xã hội (bạn bè), bản đồ giao thông (đường đi ngắn nhất), mạng lưới internet, hệ thống gợi ý của Netflix/Amazon.
+  - **Sinh ra để làm gì?** Để mô tả thế giới thực nơi mọi thứ không chỉ đứng cạnh nhau mà còn liên kết chéo với nhau theo nhiều cách.
+  - **Thuật toán đi kèm:** Tìm đường đi ngắn nhất (Dijkstra), duyệt mạng lưới (BFS, DFS).
+  </details>
 
 ---
 
