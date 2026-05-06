@@ -3,18 +3,23 @@
  * @return {number}
  */
 var lengthOfLongestSubstring = function (s) {
-  let result = "";
-  let expect = "";
+  let maxString = "";
+  let indexDuplicate = 0;
+  let expectString = "";
 
   for (let i = 0; i <= s.length - 1; i++) {
-    let char = s[i];
-    let index = expect.indexOf(char);
+    indexDuplicate = expectString.indexOf(s.charAt(i));
 
-    index !== -1
-      ? (expect = expect.substring(index + 1) + char)
-      : (expect = expect + char);
+    indexDuplicate !== -1
+      ? (expectString =
+          expectString.substring(indexDuplicate + 1, expectString.length) +
+          s.charAt(i))
+      : (expectString = expectString + s.charAt(i));
 
-    expect.length > result.length ? (result = expect) : (result = result);
+    expectString.length > maxString.length
+      ? (maxString = expectString)
+      : (maxString = maxString);
   }
-  return result.length;
+
+  return maxString.length;
 };
