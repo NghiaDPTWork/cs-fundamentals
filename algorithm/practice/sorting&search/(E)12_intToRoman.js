@@ -27,6 +27,5 @@ var intToRoman = function (num) {
       num -= value;
     }
   }
-
   return result;
 };
