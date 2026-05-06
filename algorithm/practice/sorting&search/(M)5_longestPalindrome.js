@@ -3,20 +3,19 @@
  * @return {string}
  */
 var longestPalindrome = function (s) {
-  if (!s || s.length < 1) return "";
-
-  let result = "";
-  let current = "";
+  let maxString = "";
+  let currentString = "";
 
   for (let i = 0; i <= s.length - 1; i++) {
-    current = expand(s, i, i);
-    if (current.length > result.length) result = current;
+    // odd
+    currentString = expand(s, i, i);
+    currentString.length > maxString.length && (maxString = currentString);
 
-    current = expand(s, i, i + 1);
-    if (current.length > result.length) result = current;
+    // event
+    currentString = expand(s, i, i + 1);
+    currentString.length > maxString.length && (maxString = currentString);
   }
-
-  return result;
+  return maxString;
 };
 
 function expand(s, left, right) {
