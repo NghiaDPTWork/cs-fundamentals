@@ -13,7 +13,7 @@ var addBinary = function (a, b) {
     let sum = carry;
 
     if (i >= 0) {
-      sum += a.charCodeAt(i) - 48;
+      sum += a.charCodeAt(i) - 48; // 48 is ASCII code for '0'
       i--;
     }
 
