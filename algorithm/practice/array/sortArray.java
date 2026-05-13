@@ -1,44 +1,49 @@
 class Solution {
     public int[] sortArray(int[] nums) {
-        quickSort(nums, 0, nums.length - 1);
-        return nums;
+        // Base case: Nếu mảng chỉ còn 1 phần tử hoặc rỗng, trả về luôn (đã xong)
+        if (nums.length <= 1) return nums;
+
+        // 1. Tìm vị trí ở giữa để chia đôi
+        int mid = nums.length / 2;
+
+        // 2. Chia mảng thành 2 nửa: Left và Right
+        int[] left = Arrays.copyOfRange(nums, 0, mid);
+        int[] right = Arrays.copyOfRange(nums, mid, nums.length);
+
+        // 3. Đệ quy: Tiếp tục chia nhỏ và sắp xếp từng nửa
+        // Đây chính là lúc ta "xếp bài" cho từng phần nhỏ
+        left = sortArray(left);
+        right = sortArray(right);
+
+        // 4. Trộn (Merge) hai nửa đã sắp xếp lại với nhau
+        return merge(left, right);
     }
 
-    private void quickSort(int[] arr, int low, int high) {
-        if (low < high) {
-            // Bước 1: Tìm vị trí chốt (pivot) sau khi đã phân đoạn
-            int pivotIndex = partition(arr, low, high);
+    private int[] merge(int[] left, int[] right) {
+        int[] result = new int[left.length + right.length];
+        int i = 0; // Con trỏ cho mảng left
+        int j = 0; // Con trỏ cho mảng right
+        int k = 0; // Con trỏ cho mảng kết quả
 
-            // Bước 2: Đệ quy sắp xếp nửa bên trái pivot
-            quickSort(arr, low, pivotIndex - 1);
-
-            // Bước 3: Đệ quy sắp xếp nửa bên phải pivot
-            quickSort(arr, pivotIndex + 1, high);
-        }
-    }
-
-    private int partition(int[] arr, int low, int high) {
-        // Chọn phần tử cuối cùng làm Pivot
-        int pivot = arr[high];
-        int i = (low - 1); 
-        // Chỉ số của phần tử nhỏ hơn pivot
-
-        for (int j = low; j < high; j++) {
-            // Nếu phần tử hiện tại nhỏ hơn hoặc bằng pivot
-            if (arr[j] <= pivot) {
-                i++;
-                // Hoán đổi arr[i] và arr[j]
-                int temp = arr[i];
-                arr[i] = arr[j];
-                arr[j] = temp;
+        // So sánh và nhặt lá bài nhỏ hơn bỏ vào mảng result
+        while (i < left.length && j < right.length) {
+            if (left[i] <= right[j]) {
+                result[k++] = left[i++];
+            } else {
+                result[k++] = right[j++];
             }
         }
 
-        // Đưa Pivot về đúng vị trí giữa (i + 1)
-        int temp = arr[i + 1];
-        arr[i + 1] = arr[high];
-        arr[high] = temp;
+        // Nếu mảng left vẫn còn phần tử (trong khi right đã hết)
+        while (i < left.length) {
+            result[k++] = left[i++];
+        }
 
-        return i + 1;
+        // Nếu mảng right vẫn còn phần tử (trong khi left đã hết)
+        while (j < right.length) {
+            result[k++] = right[j++];
+        }
+
+        return result;
     }
 }
