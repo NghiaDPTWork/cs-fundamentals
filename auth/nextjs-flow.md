@@ -38,225 +38,53 @@ sequenceDiagram
 
 ---
 
-## 3. Triển Khai Chi Tiết Từng Thành Phần
+## 3. Các Bước Triển Khai Logic và Luồng Hoạt Động
 
-### 3.1. Đăng Nhập qua Server Action & Cấu Hình Cookie
-Server Actions cho phép thực thi code trực tiếp trên Server khi Client gửi form submit.
-
-```typescript
-// app/actions/auth.ts
-"use server";
-
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-
-export async function login(formData: FormData) {
-  const email = formData.get("email");
-  const password = formData.get("password");
-
-  // 1. Gọi API Backend để kiểm tra thông tin
-  const response = await fetch("https://api.yourdomain.com/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  });
-
-  if (!response.ok) {
-    return { error: "Thông tin đăng nhập không chính xác" };
-  }
-
-  const { accessToken, refreshToken, user } = await response.json();
-
-  // 2. Lưu Access Token và Refresh Token vào Cookie bảo mật HttpOnly
-  const cookieStore = await cookies();
-
-  cookieStore.set("accessToken", accessToken, {
-    httpOnly: true, // Javascript client không thể đọc được -> Chống XSS
-    secure: process.env.NODE_ENV === "production", // Chỉ gửi qua HTTPS
-    sameSite: "lax", // Chống CSRF cơ bản
-    path: "/", // Áp dụng cho toàn bộ domain
-    maxAge: 15 * 60, // Hết hạn sau 15 phút (Access Token)
-  });
-
-  cookieStore.set("refreshToken", refreshToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    maxAge: 7 * 24 * 60 * 60, // Hết hạn sau 7 ngày
-  });
-
-  // 3. Chuyển hướng sang trang Dashboard
-  redirect("/dashboard");
-}
-```
-
----
+### 3.1. Đăng Nhập và Thiết lập Session (Login & Session Setup)
+1.  **Nhận thông tin đăng nhập**:
+    *   Sử dụng **Server Actions** hoặc **Route Handlers (API Routes)** trên Next.js để tiếp nhận dữ liệu đăng nhập (email, password) gửi lên từ form của Client.
+2.  **Xác thực và Thiết lập Cookie**:
+    *   Gọi API Backend để đối chiếu thông tin tài khoản.
+    *   Sau khi nhận thành công cặp token, Server Next.js sử dụng API quản lý Cookie của Next.js (như hàm `cookies()`) để ghi Token vào trình duyệt.
+    *   Cần cấu hình Cookie cực kỳ nghiêm ngặt:
+        *   `httpOnly: true`: Ngăn chặn Javascript client tiếp cận token (chống XSS).
+        *   `secure: true`: Chỉ truyền cookie qua kênh HTTPS bảo mật.
+        *   `sameSite: 'lax'`: Ngăn chặn các cuộc tấn công CSRF phổ biến.
+        *   `maxAge` và `path`: Cấu hình thời hạn sống tương ứng của Access Token và Refresh Token.
+3.  **Điều hướng**:
+    *   Sau khi thiết lập cookie thành công trên Server, thực hiện chuyển hướng người dùng sang trang `/dashboard`.
 
 ### 3.2. Bảo Vệ Route Tầng Mạng Với `middleware.ts`
-Middleware chạy tại tầng Edge (trước khi request chạm tới Server Component hay Page). Đây là nơi lý tưởng để chặn và chuyển hướng người dùng chưa đăng nhập.
-
-> [!IMPORTANT]
-> Môi trường chạy của Next.js Middleware là **Edge Runtime** chứ không phải Node.js truyền thống. Các thư viện nặng như `jsonwebtoken` (dùng thư viện mã hóa của Node.js) sẽ không chạy được ở đây. Chúng ta nên dùng thư viện siêu nhẹ **`jose`** để giải mã JWT trong Middleware.
-
-```typescript
-// middleware.ts
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { jwtVerify } from "jose"; // Thư viện nhẹ tương thích Edge Runtime
-
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "your-secret-key"
-);
-
-// Danh sách các route cần bảo vệ
-const protectedRoutes = ["/dashboard", "/admin", "/profile"];
-
-export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  const accessToken = request.cookies.get("accessToken")?.value;
-
-  // Kiểm tra xem route hiện tại có nằm trong danh sách cần bảo vệ không
-  const isProtectedRoute = protectedRoutes.some((route) =>
-    pathname.startsWith(route)
-  );
-
-  if (isProtectedRoute) {
-    if (!accessToken) {
-      // Nếu không có token -> Chuyển hướng ngay về login
-      const loginUrl = new URL("/login", request.url);
-      loginUrl.searchParams.set("from", pathname); // Lưu lại trang cũ để quay lại sau
-      return NextResponse.redirect(loginUrl);
-    }
-
-    try {
-      // Xác minh tính hợp lệ và chữ ký của JWT
-      const { payload } = await jwtVerify(accessToken, JWT_SECRET);
-      
-      // Phân quyền nâng cao: Nếu truy cập trang admin nhưng role không phải Admin
-      if (pathname.startsWith("/admin") && payload.role !== "Admin") {
-        return NextResponse.redirect(new URL("/unauthorized", request.url));
-      }
-    } catch (error) {
-      // Nếu Token hết hạn hoặc sai chữ ký -> Yêu cầu đăng nhập lại
-      const loginUrl = new URL("/login", request.url);
-      return NextResponse.redirect(loginUrl);
-    }
-  }
-
-  return NextResponse.next();
-}
-
-// Cấu hình Middleware chỉ chạy cho các route cụ thể (tối ưu hóa hiệu năng)
-export const config = {
-  matcher: ["/dashboard/:path*", "/admin/:path*", "/profile/:path*"],
-};
-```
-
----
+1.  **Vị trí và Môi trường chạy**:
+    *   Tệp `middleware.ts` được đặt ở thư mục gốc của ứng dụng Next.js, đánh chặn mọi request trước khi chạm tới Server Components hay Pages.
+    *   Do chạy trên môi trường **Edge Runtime** siêu nhẹ, ta nên sử dụng các thư viện gọn nhẹ (như `jose`) để giải mã và kiểm tra tính hợp lệ chữ ký của JWT Token thay vì các thư viện Node.js truyền thống.
+2.  **Logic xác thực của Middleware**:
+    *   Đọc Cookie `accessToken` trực tiếp từ request HTTP.
+    *   Nếu không tồn tại token: Redirect người dùng về trang đăng nhập `/login` ngay lập tức trên Server, không trả về bất kỳ dòng HTML nhạy cảm nào của Dashboard.
+    *   Nếu có token: Tiến hành giải mã và xác thực chữ ký JWT.
+    *   **Phân quyền nâng cao**: Đọc vai trò (`role`) trong payload của token. Nếu người dùng cố truy cập trang quản trị `/admin` nhưng role không khớp, redirect sang trang cảnh báo `/unauthorized` (`403 Forbidden`).
+    *   Nếu hợp lệ: Cho phép request tiếp tục đi tiếp.
 
 ### 3.3. Xác Thực Trong Server Components (`page.tsx`)
-Tại Server Components, ta có thể đọc Cookie trực tiếp bằng hàm `cookies()` của Next.js để gọi API lấy dữ liệu đã được xác thực từ Server.
-
-```tsx
-// app/dashboard/page.tsx
-import { cookies } from "next/headers";
-
-interface Project {
-  id: string;
-  name: string;
-}
-
-async function getProjects(token: string): Promise<Project[]> {
-  const res = await fetch("https://api.yourdomain.com/projects", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    next: { revalidate: 3600 }, // Cache dữ liệu trên server 1 tiếng
-  });
-
-  if (!res.ok) throw new Error("Không thể tải danh sách dự án");
-  return res.json();
-}
-
-export default async function DashboardPage() {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get("accessToken")?.value;
-
-  // Lấy dữ liệu an toàn ngay trên Server
-  const projects = await getProjects(accessToken || "");
-
-  return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-      <ul>
-        {projects.map((project) => (
-          <li key={project.id} className="py-2 border-b">
-            {project.name}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-```
-
----
+1.  **Đọc thông tin Session**:
+    *   Server Components chạy hoàn toàn trên server. Để lấy token phục vụ việc fetch dữ liệu, Component sử dụng API đọc Cookie (`cookies()`).
+2.  **Gọi API Backend có xác thực**:
+    *   Lấy Access Token từ Cookie và đính kèm vào Header của phương thức `fetch()` gửi lên API Backend để lấy dữ liệu riêng tư của người dùng.
+    *   Quá trình này diễn ra an toàn ở môi trường Server phía sau tường lửa, giảm thiểu rủi ro rò rỉ token và giấu kín địa chỉ API gốc của Backend.
 
 ### 3.4. Xác Thực Trong Client Components
-Nếu một Component cần tính tương tác (như lắng nghe state, click button) và cần biết thông tin User, ta sử dụng React Context hoặc truyền dữ liệu từ Server Component xuống dưới dạng Props.
-
-```tsx
-// app/components/Navbar.tsx
-"use client";
-
-import { useRouter } from "next/navigation";
-
-interface NavbarProps {
-  initialUser: { name: string; email: string } | null;
-}
-
-export default function Navbar({ initialUser }: NavbarProps) {
-  const router = useRouter();
-
-  const handleLogout = async () => {
-    // Gọi API Route Handler hoặc Server Action để xóa Cookie
-    await fetch("/api/auth/logout", { method: "POST" });
-    router.refresh(); // Làm mới trang để cập nhật lại Server Components
-    router.push("/login");
-  };
-
-  return (
-    <nav className="flex justify-between p-4 bg-gray-800 text-white">
-      <div>My App</div>
-      {initialUser ? (
-        <div className="flex items-center gap-4">
-          <span>Xin chào, {initialUser.name}</span>
-          <button onClick={handleLogout} className="bg-red-500 px-3 py-1 rounded">
-            Đăng xuất
-          </button>
-        </div>
-      ) : (
-        <button onClick={() => router.push("/login")} className="bg-blue-500 px-3 py-1 rounded">
-          Đăng nhập
-        </button>
-      )}
-    </nav>
-  );
-}
-```
+1.  **Đọc Session**:
+    *   Client Components chạy trên trình duyệt và không thể truy cập trực tiếp các hàm Server-only như `cookies()`.
+    *   Thông tin User/Session cần được truyền từ Server Component cha xuống Client Component con thông qua Props hoặc bọc trong một Client Context Provider.
+2.  **Đăng xuất (Logout)**:
+    *   Khi người dùng click nút đăng xuất, Client Component gọi một Server Action hoặc Route Handler để xóa sạch các Cookie đã lưu trên trình duyệt.
+    *   Sử dụng router của Next.js chạy lệnh `router.refresh()` để yêu cầu tất cả các Server Components hiện tại trên màn hình render lại giao diện mới tương thích với trạng thái chưa đăng nhập, sau đó dùng `router.push('/login')` để chuyển hướng.
 
 ---
 
-## 4. Tùy Chọn Thay Thế: Sử Dụng Auth.js (NextAuth.js)
+## 4. Sử Dụng Thư Viện Chuyên Dụng: Auth.js (NextAuth.js)
 
-Đối với các dự án thực tế muốn tích hợp nhanh nhiều nhà cung cấp (Google, Facebook, GitHub, Credentials login), **Auth.js** (tên gọi mới của NextAuth.js) là thư viện tiêu chuẩn khuyên dùng.
-
-- **Đặc trưng**:
-  - Hỗ trợ lưu trữ session dạng JWT (mặc định) hoặc lưu session trong database thông qua Adapters (Prisma, Drizzle, MongoDB).
-  - Tích hợp sẵn Middleware bảo vệ route siêu gọn.
-  - Tự động handle luồng refresh token thông qua callback `jwt` và `session`.
-- **Cài đặt cơ bản**:
-  1. Cấu hình config file `auth.ts` định nghĩa các `providers` và `callbacks`.
-  2. Tạo API Route `app/api/auth/[...nextauth]/route.ts` để NextAuth tự động sinh các endpoint đăng nhập/đăng xuất.
-  3. Sử dụng `auth()` trong Server Components và `useSession()` trong Client Components để truy xuất dữ liệu người dùng.
+Đối với các dự án thực tế muốn tích hợp nhanh nhiều nhà cung cấp đăng nhập (Social Login như Google, GitHub, Facebook, hoặc Credentials), ta nên cân nhắc sử dụng **Auth.js** (tên gọi mới của NextAuth.js):
+*   Tự động quản lý toàn bộ vòng đời session (JWT hoặc Database Session).
+*   Tích hợp sẵn Middleware bảo vệ route và cấu hình cookies an toàn theo chuẩn sản xuất.
+*   Cung cấp sẵn các helper hooks (`useSession()`, `auth()`) hỗ trợ lấy thông tin user đồng thời ở cả Server Components và Client Components.
