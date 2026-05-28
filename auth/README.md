@@ -76,6 +76,53 @@ sequenceDiagram
 - **Nhược điểm**:
   - Khó thu hồi (Revoke): Rất khó để hủy bỏ một Token đang còn hạn trừ khi duy trì một danh sách đen (Blacklist) trong Redis (lúc này tính stateless bị giảm đi một phần).
 
+### 2.3. Chiến lược lưu trữ Token & Tại sao cần cặp đôi AT & RT?
+
+#### A. So sánh các vị trí lưu trữ Token trên Client
+Khi sử dụng Token-based auth, việc lưu trữ token ở đâu là quyết định sống còn đối với bảo mật:
+
+*   **LocalStorage / SessionStorage**:
+    *   *Ưu điểm*: Dễ code, dễ truy xuất bằng Javascript (`localStorage.getItem('token')`).
+    *   *Mối nguy hiểm (XSS)*: Rất dễ bị đánh cắp nếu trang web bị tấn công **XSS** (Cross-Site Scripting). Kẻ tấn công có thể tiêm mã độc Javascript vào trang web (qua các thư viện bên thứ ba, input không được lọc kỹ) và chạy lệnh để lấy toàn bộ dữ liệu trong LocalStorage gửi về server của chúng.
+*   **Cookie thông thường**:
+    *   *Ưu điểm*: Có thể truyền tự động theo HTTP Request.
+    *   *Mối nguy hiểm*: Vẫn có thể bị Javascript đọc được nếu không bật cờ `HttpOnly`.
+*   **Cookie HttpOnly (Được khuyên dùng)**:
+    *   *Ưu điểm*: Trình duyệt ngăn chặn tuyệt đối việc Javascript đọc Cookie này. Do đó, **hoàn toàn chống được tấn công XSS**.
+    *   *Mối nguy hiểm (CSRF)*: Dễ bị tấn công **CSRF** (Cross-Site Request Forgery). Kẻ tấn công dụ người dùng bấm vào một link độc hại, trình duyệt sẽ tự động đính kèm Cookie chứa token này và gửi request giả mạo lên server của bạn. Tuy nhiên, ta có thể khắc phục triệt để CSRF bằng cách cấu hình thuộc tính **`SameSite=Strict`** hoặc **`SameSite=Lax`** cho Cookie.
+
+---
+
+#### B. Vai trò của Access Token (AT) và Refresh Token (RT)
+
+Tại sao không dùng một token duy nhất mà phải sinh ra 2 loại token khác nhau?
+
+| Đặc trưng | Access Token (AT) | Refresh Token (RT) |
+| :--- | :--- | :--- |
+| **Vai trò chính** | Dùng để xác thực và ủy quyền trực tiếp cho các request gọi API lấy dữ liệu. | Dùng duy nhất cho việc yêu cầu Server cấp lại một Access Token mới khi AT cũ hết hạn. |
+| **Nơi gửi đến** | Gửi kèm mọi API Request lấy dữ liệu (đính kèm trong Header `Authorization: Bearer <AT>`). | Chỉ gửi đến endpoint xác thực (ví dụ `/api/auth/refresh`) để đổi lấy AT mới. |
+| **Thời gian sống (TTL)** | Cực kỳ ngắn (thường từ 5 đến 15 phút). | Dài hạn (thường từ 7 ngày đến 30 ngày hoặc vài tháng). |
+| **Cách thức lưu trữ** | Nên lưu trong **RAM** (biến cục bộ của ứng dụng) đối với ứng dụng SPA, để Javascript sử dụng tạm thời. | Lưu trong **Cookie HttpOnly (SameSite=Strict, Secure)** để lưu trữ lâu dài trên trình duyệt. |
+
+---
+
+#### C. Tại sao cần cả hai? Nếu loại bỏ 1 cái chỉ dùng 1 cái thì có được không?
+
+**Về mặt kỹ thuật**: HOÀN TOÀN ĐƯỢC. Bạn chỉ cần phát hành 1 token duy nhất (chính là Access Token) và sử dụng nó mãi mãi.
+
+**Tuy nhiên, về mặt bảo mật và trải nghiệm người dùng (UX), điều này là một THẢM HỌA vì những lý do sau**:
+
+1.  **Nếu chỉ dùng 1 token và đặt hạn dùng ngắn (ví dụ: 15 phút)**:
+    *   *UX tệ hại*: Cứ sau mỗi 15 phút sử dụng ứng dụng, người dùng lại bị log out ra ngoài và bắt buộc phải nhập lại username/password. Điều này không thể chấp nhận được trong các ứng dụng thực tế.
+2.  **Nếu chỉ dùng 1 token và đặt hạn dùng dài (ví dụ: 7 ngày)**:
+    *   *Lỗ hổng bảo mật cực lớn*: Token này sẽ phải liên tục gửi kèm theo mọi API request. Nếu người dùng bị tấn công XSS hoặc bị nghe lén mạng, kẻ tấn công chiếm được token này sẽ có toàn quyền truy cập tài khoản người dùng trong suốt 7 ngày.
+    *   *Không thể thu hồi (Revoke)*: Vì JWT là stateless (không lưu trạng thái ở server), một khi token đã được phát hành và còn hạn, server KHÔNG THỂ vô hiệu hóa nó (trừ khi đổi Secret Key của toàn hệ thống, làm tất cả user bị logout). Kẻ tấn công có thể thoải mái phá hoại cho đến khi token tự hết hạn sau 7 ngày.
+
+**Giải pháp cứu cánh khi kết hợp AT và RT**:
+*   **Access Token (Hạn ngắn - 15 phút)**: Phải gửi đi liên tục nên nguy cơ bị lộ cao hơn. Nhưng nếu bị lộ, kẻ tấn công cũng chỉ dùng được tối đa 15 phút.
+*   **Refresh Token (Hạn dài - 7 ngày)**: Được cất giấu rất kỹ trong **Cookie HttpOnly** (Javascript không chạm vào được) và chỉ gửi đi rất ít (15 phút 1 lần). Do đó nguy cơ bị lộ gần như bằng 0.
+*   **Khả năng thu hồi (Revokable)**: Vì Refresh Token chỉ được dùng tại Auth Server để cấp AT mới, ta có thể lưu trữ danh sách các Refresh Token hợp lệ (hoặc một trường `token_version` trên DB). Nếu phát hiện tài khoản bị hack, Admin chỉ cần xóa Refresh Token đó trên Database. Khi AT cũ hết hạn (tối đa 15 phút), kẻ tấn công gửi RT lên để refresh sẽ bị từ chối và bị logout vĩnh viễn.
+
 ---
 
 ## 3. Tìm Hiểu Sâu Về JWT (JSON Web Token)
