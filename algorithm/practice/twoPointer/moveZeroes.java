@@ -17,18 +17,18 @@
  */
 class Solution {
     public void moveZeroes(int[] nums) {
-        int count = 0; 
+        int nonZeroInsertIndex = 0; 
         
-        for (int i = 0; i < nums.length; i++) {
-            if (nums[i] != 0) {
-                nums[count] = nums[i];
-                count++;
+        for (int scanIndex = 0; scanIndex < nums.length; scanIndex++) {
+            if (nums[scanIndex] != 0) {
+                nums[nonZeroInsertIndex] = nums[scanIndex];
+                nonZeroInsertIndex++;
             }
         }
 
-        while (count < nums.length) {
-            nums[count] = 0;
-            count++;
+        while (nonZeroInsertIndex < nums.length) {
+            nums[nonZeroInsertIndex] = 0;
+            nonZeroInsertIndex++;
         }
     }
 }
@@ -51,16 +51,16 @@ class Solution {
  */
 class Solution2 {
     public void moveZeroes(int[] nums) {
-        int lastNonZeroFoundAt = 0;
-        for (int cur = 0; cur < nums.length; cur++) {
-            if (nums[cur] != 0) {
+        int swapTargetIndex = 0;
+        for (int currentIndex = 0; currentIndex < nums.length; currentIndex++) {
+            if (nums[currentIndex] != 0) {
                 // Tránh swap không cần thiết khi con trỏ trùng nhau
-                if (cur != lastNonZeroFoundAt) {
-                    int temp = nums[lastNonZeroFoundAt];
-                    nums[lastNonZeroFoundAt] = nums[cur];
-                    nums[cur] = temp;
+                if (currentIndex != swapTargetIndex) {
+                    int temporaryValue = nums[swapTargetIndex];
+                    nums[swapTargetIndex] = nums[currentIndex];
+                    nums[currentIndex] = temporaryValue;
                 }
-                lastNonZeroFoundAt++;
+                swapTargetIndex++;
             }
         }
     }
