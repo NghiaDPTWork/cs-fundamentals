@@ -68,11 +68,97 @@ Trong quá trình code dưới máy local, việc bạn tạo ra hàng tá commi
 
 ## 4. Chiến Lược Merge Nhánh Cho Dự Án Lớn
 
-Để bảo vệ lịch sử commit trên các nhánh chính (`main`, `master`, `develop`) luôn thẳng đẹp và ổn định:
+Khi làm việc trong dự án lớn với hàng trăm lập trình viên, lịch sử Git rất dễ biến thành một "mạng nhện" đan xen chằng chịt nếu mọi người merge nhánh vô tội vạ. Dưới đây là cách triển khai chi tiết các chiến lược merge tối ưu và lý do vì sao chúng giúp lịch sử commit sạch đẹp hơn.
 
-1. **Cấm Push Trực Tiếp**: Thiết lập quyền bảo vệ nhánh (Branch Protection Rules), buộc lập trình viên phải tạo Pull Request (PR) và được phê duyệt (Code Review) trước khi merge.
-2. **Ưu tiên Squash and Merge trên PR**: Khi phê duyệt PR để gộp vào nhánh chính, hãy chọn tính năng **Squash and Merge**. Toàn bộ lịch sử chi tiết trên nhánh feature sẽ được nén thành **1 commit duy nhất** trên nhánh chính. Nhánh chính sẽ luôn có lịch sử tuyến tính (thẳng hàng), sạch đẹp và cực kỳ dễ theo dõi.
-3. **Rebase trước khi Merge**: Khuyến khích lập trình viên chạy `git pull --rebase origin main` trên nhánh feature của mình trước khi merge để giải quyết toàn bộ xung đột dưới máy local, đảm bảo quá trình merge vào nhánh chính diễn ra trơn tru (Fast-forward).
+---
+
+### 4.1 Cấm Push Trực Tiếp (Branch Protection Rules)
+
+#### Cách triển khai chi tiết trên GitHub:
+1. Truy cập vào kho chứa (Repository) của bạn trên GitHub.
+2. Chọn **Settings** -> mục **Branches** ở thanh menu bên trái.
+3. Tại phần **Branch protection rules**, nhấn **Add branch protection rule**.
+4. Trong ô **Branch name pattern**, nhập tên nhánh cần bảo vệ (ví dụ: `main`, `master` hoặc `develop`).
+5. Tích chọn các mục sau:
+   - **Require a pull request before merging**: Buộc phải tạo Pull Request (PR) để gộp code.
+   - **Require approvals**: Chọn số lượng người duyệt (thường là `1` hoặc `2` đồng nghiệp review).
+   - **Require status checks to pass before merging**: Bắt buộc hệ thống kiểm thử tự động (CI/CD) phải chạy thành công (Pass) thì mới cho phép merge.
+
+```
+[Máy Local] ──(git push bị chặn)──x   [Nhánh main trên GitHub]
+     │                                      ▲
+     └───(Tạo Pull Request + Code Review)───┘
+```
+
+#### Vì sao làm vậy lại tốt hơn?
+- **Ngăn chặn lỗi vô tình**: Loại bỏ hoàn toàn trường hợp lập trình viên lỡ tay chạy `git push origin main` khi code dưới máy đang bị lỗi hoặc chưa chạy thử.
+- **Đảm bảo chất lượng**: Ép buộc mọi dòng code đi vào nhánh chính đều phải qua hai tầng kiểm duyệt: con người (Code Review) và máy móc (Automated Tests).
+
+---
+
+### 4.2 Ưu tiên Squash and Merge trên Pull Request
+
+#### Cách triển khai chi tiết:
+Khi người quản lý dự án (Maintainer/Lead) phê duyệt một Pull Request trên giao diện GitHub:
+1. Thay vì nhấn nút **Merge pull request** thông thường.
+2. Hãy nhấn vào nút mũi tên hướng xuống ngay bên cạnh.
+3. Chọn tính năng **Squash and merge**.
+4. GitHub sẽ gộp toàn bộ các commit của nhánh feature đó lại thành 1 commit duy nhất, cho phép chỉnh sửa lại tin nhắn commit gộp cho gọn gàng rồi mới merge vào nhánh chính.
+
+```
+Lịch sử trên nhánh Feature:   f1 (code) ──> f2 (fix) ──> f3 (typo)
+                                              │
+                                   (Squash & Merge trên PR)
+                                              │
+                                              ▼
+Lịch sử trên nhánh Main:      C1 ───────────────────────────────────> C2 (Feature hoàn chỉnh)
+```
+
+#### Vì sao làm vậy lịch sử lại đẹp hơn?
+So sánh hai kết quả merge:
+
+| Đặc điểm | Merge thông thường (Normal Merge) | Gộp và Merge (Squash & Merge) |
+| :--- | :--- | :--- |
+| **Sơ đồ lịch sử** | **Dạng mạng nhện (Non-linear)**. Nhánh uốn lượn đan xen vào nhau, xuất hiện vô số commit merge rác kiểu `"Merge branch 'feature-A' into main"`. | **Dạng đường thẳng (Linear)**. Nhánh chính `main` là một đường thẳng tắp, không hề có nhánh con rẽ ra hay chập vào. |
+| **Commit rác** | Đầy rẫy commit phụ rác: `"wip"`, `"fix typo"`, `"thử lại"`. | Toàn bộ commit rác bị xóa bỏ, chỉ lưu 1 commit sạch đại diện cho cả tính năng. |
+| **Khả năng truy vết lỗi** | Rất khó khăn vì một lỗi có thể nằm rải rác ở 10 commit nhỏ lặt vặt đan xen với code của người khác. | Cực kỳ dễ dàng. Bạn chỉ cần dùng `git revert` 1 commit duy nhất là rút toàn bộ tính năng lỗi ra sạch sẽ. |
+
+---
+
+### 4.3 Rebase trước khi Merge (Local Rebase)
+
+#### Cách triển khai chi tiết dưới máy Local:
+Trước khi lập trình viên đẩy (push) nhánh tính năng của mình lên để tạo Pull Request, họ cần cập nhật code mới nhất từ `main` và đặt gốc nhánh mình lên đầu nhánh `main`:
+
+```bash
+# Bước 1: Chuyển về nhánh feature của bạn
+git checkout feature-payment
+
+# Bước 2: Tải code mới nhất của main từ GitHub về máy
+git fetch origin
+
+# Bước 3: Đặt gốc nhánh feature lên đầu commit mới nhất của main trên remote
+git rebase origin/main
+
+# Bước 4: Giải quyết xung đột (nếu có) trực tiếp trên từng commit dưới máy local
+# Bước 5: Push lên nhánh feature trên GitHub (cần dùng --force-with-lease vì lịch sử nhánh feature đã thay đổi)
+git push origin feature-payment --force-with-lease
+```
+
+```
+Trước Rebase:
+main   : C1 ──> C2 ──> C3
+feature:         └──> f1 ──> f2  (Gốc ban đầu của feature là C2)
+
+Sau Rebase:
+main   : C1 ──> C2 ──> C3
+feature:                 └──> f1' ──> f2' (Gốc mới của feature được đưa lên đầu C3)
+```
+
+#### Vì sao làm vậy lại tốt hơn?
+- **Giải quyết xung đột sớm**: Lập trình viên tự chịu trách nhiệm giải quyết xung đột trên máy của họ, tránh việc xung đột xảy ra trên GitHub làm nghẽn tiến độ của cả team.
+- **Fast-forward Merge**: Vì gốc của nhánh feature đã nằm ở đầu nhánh chính, khi merge, Git không cần tạo ra commit merge phụ nữa (no-merge-commit). Nó chỉ đơn giản là dịch chuyển con trỏ nhánh `main` lên đầu nhánh feature. Nhánh chính hoàn toàn sạch bóng các commit merge tự động rác.
+- **Lịch sử tuần tự**: Giúp bảo toàn thứ tự logic của các tính năng, giúp việc đọc hiểu luồng phát triển dự án dễ dàng hơn rất nhiều.
 
 ---
 
