@@ -26,17 +26,17 @@
  */
 class Solution {
     public int[] twoSum(int[] numbers, int target) {
-        int left = 0;
-        int right = numbers.length - 1;
+        int leftPointer = 0;
+        int rightPointer = numbers.length - 1;
 
-        while (left < right) {
-            int sum = numbers[left] + numbers[right];
-            if (sum == target) {
-                return new int[] {left + 1, right + 1}; // Trả về kết quả 1-indexed
-            } else if (sum < target) {
-                left++; // Cần tổng lớn hơn -> dịch con trỏ trái sang phải
+        while (leftPointer < rightPointer) {
+            int currentSum = numbers[leftPointer] + numbers[rightPointer];
+            if (currentSum == target) {
+                return new int[] {leftPointer + 1, rightPointer + 1}; // Trả về kết quả 1-indexed
+            } else if (currentSum < target) {
+                leftPointer++; // Cần tổng lớn hơn -> dịch con trỏ trái sang phải
             } else {
-                right--; // Cần tổng nhỏ hơn -> dịch con trỏ phải sang trái
+                rightPointer--; // Cần tổng nhỏ hơn -> dịch con trỏ phải sang trái
             }
         }
 
@@ -49,18 +49,18 @@ class Solution2 {
     public int[] twoSum(int[] numbers, int target) {
         int n = numbers.length;
         for (int i = 0; i < n; i++) {
-            int complement = target - numbers[i];
-            int left = i + 1;
-            int right = n - 1;
+            int neededValue = target - numbers[i];
+            int searchStart = i + 1;
+            int searchEnd = n - 1;
 
-            while (left <= right) {
-                int mid = left + (right - left) / 2;
-                if (numbers[mid] == complement) {
-                    return new int[] {i + 1, mid + 1};
-                } else if (numbers[mid] < complement) {
-                    left = mid + 1;
+            while (searchStart <= searchEnd) {
+                int middleIndex = searchStart + (searchEnd - searchStart) / 2;
+                if (numbers[middleIndex] == neededValue) {
+                    return new int[] {i + 1, middleIndex + 1};
+                } else if (numbers[middleIndex] < neededValue) {
+                    searchStart = middleIndex + 1;
                 } else {
-                    right = mid - 1;
+                    searchEnd = middleIndex - 1;
                 }
             }
         }
