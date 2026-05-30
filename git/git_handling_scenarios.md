@@ -1,280 +1,258 @@
-# Cẩm Nang Xử Lý Sự Cố & Tình Huống Git Thực Tế
+# Cẩm Nang Giải Quyết Sự Cố & Quản Lý Nhánh Git (1.1 - 1.10)
 
-Trong quá trình làm việc với Git, chúng ta thường xuyên gặp phải những tình huống muốn hoàn tác (undo), sửa đổi lịch sử commit hoặc gộp các commit để lịch sử dự án gọn gàng hơn. Tài liệu này cung cấp các giải pháp chi tiết cho các tình huống từ cơ bản đến nâng cao, phân tích ưu/nhược điểm và hướng dẫn cách lựa chọn phương án tối ưu nhất.
-
----
-
-## Bảng Tra Cứu Nhanh Các Tình Huống
-
-| Vị trí hiện tại của file/commit | Tình huống | Câu lệnh xử lý chính | Mức độ an toàn |
-| :--- | :--- | :--- | :--- |
-| **Working Directory** (Chưa add) | Muốn hủy bỏ toàn bộ thay đổi trong file | `git restore <file>` | ⚠️ Nguy hiểm (Mất code) |
-| **Staging Area** (Đã `git add`) | Muốn rút file ra khỏi Staging Area | `git restore --staged <file>` | ✅ Rất an toàn |
-| **Local Repo** (Đã `git commit`) | Chỉ muốn sửa tin nhắn commit gần nhất | `git commit --amend -m "tin nhắn mới"` | ✅ An toàn |
-| **Local Repo** (Đã `git commit`) | Muốn sửa đổi lịch sử commit cục bộ | `git reset --soft` / `--mixed` / `--hard` | ⚠️ Tùy thuộc vào tham số |
-| **Remote Repo** (Đã `git push`) | Muốn hoàn tác một commit một cách an toàn | `git revert <commit_id>` | ✅ Rất an toàn (Teamwork) |
-| **Remote Repo** (Đã `git push`) | Muốn xóa sạch commit trên cả Remote | `git reset` + `git push --force-with-lease` | 🚨 Nguy hiểm (Phá hủy lịch sử) |
-| **Nhiều Commits** | Muốn gộp nhiều commit lặt vặt lại | `git rebase -i HEAD~N` (Squash/Fixup) | ⚠️ Cần cẩn thận khi sửa lịch sử |
+Tài liệu này tổng hợp chi tiết các kiến thức cốt lõi và hướng dẫn thực hành xử lý 10 tình huống thực tế thường gặp khi sử dụng Git để quản lý mã nguồn và làm việc nhóm.
 
 ---
 
-## 1. Đã `git add` (Staging Area), làm sao để rút file ra?
+## 1.1 Thế nào là Repository, Branch?
+
+### 1. Repository (Kho chứa / Repo)
+Repository là nơi lưu trữ toàn bộ dữ liệu dự án của bạn, bao gồm các tệp tin, thư mục và quan trọng nhất là **lịch sử thay đổi** (mọi commit, branch, tag).
+- **Local Repository**: Kho chứa nằm cục bộ trên ổ cứng máy tính cá nhân của bạn (trong thư mục ẩn `.git`).
+- **Remote Repository**: Kho chứa được đặt trên một máy chủ từ xa dùng chung cho cả nhóm (như GitHub, GitLab, Bitbucket).
+
+### 2. Branch (Nhánh)
+Branch thực chất chỉ là một **con trỏ di động** trỏ đến một commit cụ thể trong lịch sử. Nó cho phép bạn tách khỏi nhánh phát triển chính (ví dụ: `main`/`master`) để viết tính năng mới hoặc sửa lỗi mà không sợ làm hỏng code hiện tại.
+
+```mermaid
+graph LR
+    C1[Commit 1] --> C2[Commit 2]
+    C2 --> C3["Commit 3 (main)"]
+    C2 --> C4["Commit 4 (feature)"]
+    C4 --> C5["Commit 5 (feature)"]
+```
+- Khi bạn commit trên nhánh `feature`, con trỏ nhánh `feature` sẽ tự động tịnh tiến lên commit mới, trong khi con trỏ nhánh `main` vẫn đứng yên ở commit cũ.
+
+---
+
+## 1.2 Làm thế nào để xóa một branch ở local, làm thế nào để xóa một branch remote?
+
+### 1. Xóa một branch ở Local
+Để xóa nhánh trên máy cục bộ của bạn, trước hết bạn phải chuyển sang một nhánh khác nhánh muốn xóa (ví dụ chuyển sang `main`):
+```bash
+git checkout main # hoặc git switch main
+```
+
+Sau đó sử dụng lệnh:
+- **Xóa an toàn (`-d` / `--delete`)**:
+  ```bash
+  git branch -d <tên_nhánh>
+  ```
+  *Lưu ý*: Lệnh này chỉ thành công khi nhánh đó đã được merge vào nhánh chính (`main`/`master`). Nếu nhánh chứa các commit chưa merge, Git sẽ từ chối để tránh mất code.
+- **Ép buộc xóa (`-D` / `-d --force`)**:
+  ```bash
+  git branch -D <tên_nhánh>
+  ```
+  *Lưu ý*: Lệnh này sẽ xóa nhánh ngay lập tức bất kể nó đã được merge hay chưa. Chỉ dùng khi chắc chắn muốn vứt bỏ các thay đổi trên nhánh đó.
+
+### 2. Xóa một branch trên Remote
+Để xóa nhánh trên server chung (ví dụ GitHub), sử dụng lệnh:
+```bash
+git push origin --delete <tên_nhánh>
+# Hoặc cú pháp cũ viết tắt (dấu hai chấm trước tên nhánh):
+git push origin :<tên_nhánh>
+```
+Lệnh này báo cho server xóa con trỏ nhánh đó đi. Code trên remote của nhánh đó sẽ biến mất khỏi server chung.
+
+---
+
+## 1.3 Xóa local branch và remote branch lưu ở local (Remote-Tracking Branch)
+
+### Vấn đề thực tế
+Khi một ai đó xóa nhánh `feature-A` trực tiếp trên GitHub, hoặc bạn đã chạy lệnh xóa nhánh remote ở mục 1.2, thì trong danh sách các nhánh remote trên máy bạn (gọi là **remote-tracking branches**, thường có dạng `origin/feature-A`) vẫn còn tồn tại. Khi chạy `git branch -a`, bạn vẫn thấy tên nhánh đó, gây rối mắt.
+
+### Cách giải quyết (Pruning)
+Bạn cần dọn dẹp các tham chiếu remote-tracking đã lỗi thời (stale references) bằng lệnh:
+```bash
+# Đồng bộ và xóa toàn bộ các remote-tracking branch không còn tồn tại trên server
+git fetch --prune
+
+# Hoặc chỉ dọn dẹp riêng một remote cụ thể:
+git remote prune origin
+```
+> [!TIP]
+> Bạn có thể cấu hình để Git tự động dọn dẹp mỗi khi bạn chạy lệnh `git fetch` hoặc `git pull` bằng lệnh cấu hình global:
+> `git config --global fetch.prune true`
+
+---
+
+## 1.4 Xóa remote branch
+
+*(Nội dung chi tiết đã được trình bày và thống nhất tại mục **1.2.2** ở trên. Cú pháp chính là: `git push origin --delete <tên_nhánh>`)*.
+
+---
+
+## 1.5 Làm thế nào để push một branch ở local lên remote dưới một cái tên khác?
 
 ### Thực tế cuộc sống
-Bạn vô tình chạy `git add .` và nhặt nhầm cả các file rác (như file log, file cấu hình cá nhân hoặc các file chưa code xong) vào "thùng carton" (Staging Area). Bạn muốn đưa các file này trở lại "sàn nhà" (Working Directory) để chỉnh sửa tiếp mà không muốn chúng xuất hiện trong commit tiếp theo.
+Bạn đang làm việc ở nhánh cục bộ tên là `dev-nghia`, nhưng theo quy định của dự án, nhánh trên GitHub phải có tên là `feature-payment`. Bạn muốn đẩy code từ `dev-nghia` lên remote nhưng đổi tên nhánh nhận thành `feature-payment`.
 
-### Các cách xử lý
-
-#### Cách 1: Sử dụng `git restore` (Khuyên dùng cho Git 2.23+)
+### Cách thực hiện
+Sử dụng cú pháp dấu hai chấm (`local_branch:remote_branch`):
 ```bash
-git restore --staged <tên_file>
-# Hoặc rút toàn bộ thư mục hiện tại ra:
-git restore --staged .
+git push origin dev-nghia:feature-payment
 ```
-- **Cơ chế**: Lệnh này chỉ tác động lên **Staging Area**, đưa trạng thái của file tại Staging Area về giống với commit gần nhất (`HEAD`).
-- **Trạng thái code**: Phần code bạn đã viết trong file vẫn giữ nguyên vẹn trong Working Directory.
-
-#### Cách 2: Sử dụng `git reset` (Cách truyền thống / Git cũ)
-```bash
-git reset HEAD <tên_file>
-```
-- **Cơ chế**: Hoàn toàn giống với `git restore --staged`. Lệnh này bỏ theo dõi (unstage) file khỏi commit tiếp theo.
-- **Sự khác biệt**:
-  - `git reset` là một lệnh đa năng và hơi "quá tải" (overloaded) vì nó vừa dùng để reset commit, vừa dùng để unstage file.
-  - Từ phiên bản Git 2.23, cộng đồng Git đã tách chức năng unstage ra thành `git restore --staged` để cú pháp tường minh và trực quan hơn đối với lập trình viên.
+- **Ý nghĩa**: Đẩy commit từ nhánh `dev-nghia` dưới máy lên nhánh `feature-payment` trên remote `origin`. Nếu nhánh `feature-payment` chưa tồn tại trên remote, Git sẽ tự động tạo mới nhánh đó.
 
 ---
 
-## 2. Đã `git commit` (Local Repo), làm sao để hủy hoặc sửa?
+## 1.6 Thế nào là Git Rebase? Phân biệt Rebase với Merge?
 
-### Thực tế cuộc sống
-Bạn đã nhấn nút "đóng thùng hàng" (commit) và dán băng keo. Nhưng ngay sau đó bạn phát hiện ra:
-- Viết sai chính tả trong tin nhắn commit (commit message).
-- Quên chưa lưu/add một file quan trọng vào commit đó.
-- Commit nhầm file hoặc muốn làm lại hoàn toàn từ đầu.
-
-### Các cách xử lý
-
-#### Tình huống A: Chỉ muốn sửa tin nhắn commit hoặc thêm file vào commit gần nhất
-```bash
-# Bước 1: Lưu file bị quên (nếu có)
-git add <file_bị_quên>
-
-# Bước 2: Gộp file đó và sửa tin nhắn commit
-git commit --amend -m "Tin nhắn mới chuẩn xác hơn"
-
-# Hoặc nếu không muốn đổi tin nhắn, chỉ muốn nhét thêm file:
-git commit --amend --no-edit
-```
-> [!NOTE]
-> **Bản chất**: Lệnh `--amend` không thực sự sửa commit cũ, mà nó sẽ **thay thế hoàn toàn** commit cũ bằng một commit mới có mã băm (SHA-1 hash) mới.
-
----
-
-#### Tình huống B: Muốn hủy bỏ hoàn toàn commit vừa tạo (Sử dụng `git reset`)
-Bạn có 3 chế độ reset chính. Việc lựa chọn chế độ nào phụ thuộc vào việc bạn muốn làm gì với phần code đã viết trong commit đó:
+### 1. Khái niệm Rebase
+Rebase là hành động "đặt lại gốc" cho nhánh. Nó lấy toàn bộ các commit mới trên nhánh hiện tại, lưu tạm lại, sau đó di chuyển gốc của nhánh hiện tại sang commit mới nhất của nhánh đích (ví dụ `main`), rồi lần lượt áp dụng (re-apply) các commit tạm thời kia lên gốc mới đó.
 
 ```mermaid
 graph TD
-    A["git reset HEAD~1"] --> B["--soft<br/>Giữ lại code ở Staging Area"]
-    A --> C["--mixed (Mặc định)<br/>Giữ lại code ở Working Directory"]
-    A --> D["--hard<br/>Xóa sạch code, không giữ lại gì"]
-    style B fill:#bfb,stroke:#333,stroke-width:1px
-    style C fill:#bbf,stroke:#333,stroke-width:1px
-    style D fill:#f99,stroke:#333,stroke-width:1px
-```
-
-##### So sánh chi tiết các chế độ Reset:
-
-| Chế độ Reset | Lịch sử Commit | Trạng thái Staging Area | Trạng thái Working Directory | Khi nào nên dùng? |
-| :--- | :--- | :--- | :--- | :--- |
-| **`--soft`** | Bị xóa (HEAD lùi lại 1) | **Giữ nguyên** (Các file đã add vẫn nằm ở Staging) | **Giữ nguyên** (Code không mất) | Bạn muốn gộp commit vừa rồi với các thay đổi tiếp theo, hoặc chỉ muốn sửa đổi nhẹ trước khi commit lại. |
-| **`--mixed`** *(Mặc định)* | Bị xóa (HEAD lùi lại 1) | **Bị dọn sạch** (Trở về trạng thái chưa `git add`) | **Giữ nguyên** (Code không mất, nằm ở dạng file chưa staged) | Bạn muốn tổ chức lại việc `git add` cho các file, chia nhỏ commit lớn vừa tạo thành các commit nhỏ hơn. |
-| **`--hard`** | Bị xóa (HEAD lùi lại 1) | **Bị dọn sạch** | **Bị dọn sạch** (Mọi thay đổi trong commit và file chưa commit đều biến mất) | 🚨 **Cực kỳ nguy hiểm!** Chỉ dùng khi bạn chắc chắn muốn vứt bỏ hoàn toàn code vừa viết và quay về trạng thái sạch sẽ của commit trước đó. |
-
-**Cú pháp thực thi:**
-```bash
-# Reset về trước đó 1 commit
-git reset --soft HEAD~1
-git reset --mixed HEAD~1
-git reset --hard HEAD~1
-
-# Reset về một mã commit cụ thể trong quá khứ
-git reset --soft <commit_hash>
-```
-
----
-
-## 3. Đã `git push` lên Remote (GitHub), làm sao để xóa hoặc quay lại?
-
-### Thực tế cuộc sống
-Thùng hàng đã được gửi ra bưu điện (GitHub). Bây giờ bạn phát hiện code trên nhánh chung bị lỗi nặng và cần rút lại commit đó để dự án của cả team không bị gián đoạn.
-
-### Các cách xử lý
-
-#### Cách 1: Sử dụng `git revert` (Cực kỳ an toàn - Khuyên dùng cho Teamwork)
-```bash
-git revert <commit_hash>
-```
-- **Cơ chế**: Lệnh này không xóa commit bị lỗi khỏi lịch sử. Thay vào đó, nó tạo ra một **commit mới** có nội dung hoàn toàn ngược lại (nghịch đảo) với commit lỗi nhằm triệt tiêu các thay đổi của commit đó.
-- **Tại sao an toàn?**:
-  - Không viết lại lịch sử commit (không thay đổi các mã băm cũ).
-  - Khi push lên GitHub, các thành viên khác chỉ cần `git pull` bình thường mà không bị xung đột lịch sử (non-fast-forward conflict).
-
-```mermaid
-sequenceDiagram
-    participant Local as Máy của bạn
-    participant Remote as GitHub (Lịch sử chung)
+    subgraph "Trước khi Rebase (Gốc ban đầu của Feature là C2)"
+        C1[Commit 1] --> C2[Commit 2]
+        C2 --> C3["C3 (main)"]
+        C2 --> F1["F1 (feature)"]
+        F1 --> F2["F2 (feature)"]
+    end
     
-    Note over Local, Remote: Trạng thái ban đầu: C1 -> C2 (lỗi)
-    Local->>Local: git revert C2
-    Note over Local: Tạo ra commit mới C3 (hủy bỏ các thay đổi của C2)
-    Local->>Remote: git push
-    Note over Remote: Lịch sử mới: C1 -> C2 -> C3 (An toàn, không phá vỡ nhánh)
+    subgraph "Sau khi Rebase (Gốc mới của Feature là C3)"
+        C3 --> F1_prime["F1' (rebased)"]
+        F1_prime --> F2_prime["F2' (rebased)"]
+    end
 ```
+
+### 2. So sánh chi tiết: Rebase vs Merge
+
+| Đặc điểm | Git Merge | Git Rebase |
+| :--- | :--- | :--- |
+| **Cơ chế hoạt động** | Tạo ra một **Merge Commit** mới gộp chung thay đổi của 2 nhánh. | Di chuyển gốc nhánh con lên đầu nhánh cha, viết lại lịch sử commit. |
+| **Lịch sử Commit** | Giữ nguyên lịch sử thực tế theo trình tự thời gian (nhìn như mạng nhện). | Tạo ra một lịch sử **tuyến tính, thẳng tắp**, cực kỳ sạch sẽ. |
+| **Giải quyết xung đột (Conflict)** | Giải quyết tất cả xung đột **chỉ 1 lần duy nhất** trong Merge Commit. | Phải giải quyết xung đột **từng commit một** trong quá trình rebase. |
+| **Mã băm Commit (SHA-1)** | Giữ nguyên mã băm của các commit cũ. | Thay đổi hoàn toàn mã băm của các commit được rebase. |
+| **Quy tắc vàng (Golden Rule)** | Sử dụng thoải mái mọi nơi, kể cả các nhánh công khai. | 🚨 **Không bao giờ dùng** rebase trên các nhánh đã push lên Remote và có người khác đang dùng chung. |
 
 ---
 
-#### Cách 2: Sử dụng `git reset` + `git push --force` (Nguy hiểm - Chỉ dùng khi làm việc một mình)
-Nếu bạn lỡ push mã bảo mật (API key, password) lên repo công khai và bắt buộc phải xóa sạch commit đó khỏi lịch sử để tránh bị lộ.
+## 1.7 Thế nào là Git Stash?
 
-```bash
-# Bước 1: Reset cục bộ về commit an toàn trước đó
-git reset --hard <commit_an_toàn_hash>
+### Khái niệm
+Git Stash đóng vai trò như một **tủ đồ tạm thời**. Nó cho phép bạn cất giấu toàn bộ các thay đổi chưa commit (cả file đã staged và chưa staged) vào một ngăn xếp (stack), đưa thư mục làm việc của bạn trở lại trạng thái sạch sẽ (`HEAD`). 
 
-# Bước 2: Ép buộc GitHub cập nhật theo máy của bạn
-git push origin <tên_nhánh> --force
-```
+### Quy trình lệnh quản lý Stash
 
-> [!CAUTION]
-> **Rủi ro cực lớn**: Nếu các thành viên khác đã `pull` commit lỗi đó về máy của họ, việc bạn dùng `--force` sẽ làm lịch sử ở máy họ bị lệch với GitHub. Khi họ push code mới lên, hệ thống sẽ gặp lỗi nghiêm trọng và rất dễ dẫn đến mất mát code của người khác.
-
-##### Giải pháp thông minh hơn: `--force-with-lease`
-Thay vì sử dụng `--force`, hãy luôn ưu tiên sử dụng:
-```bash
-git push origin <tên_nhánh> --force-with-lease
-```
-- **Cơ chế bảo vệ**: Lệnh này chỉ thực hiện ép buộc push nếu **không có ai khác** push thêm code lên nhánh đó kể từ lần cuối bạn `fetch`. Nếu có người khác đã push code mới lên, Git sẽ từ chối đè lịch sử, giúp bảo vệ code của đồng đội không bị bạn vô tình xóa mất.
+1. **Cất code đang viết dở**:
+   ```bash
+   git stash
+   # Hoặc lưu kèm ghi chú để dễ nhớ:
+   git stash save "Đang làm dở tính năng payment"
+   ```
+2. **Xem danh sách tủ đồ**:
+   ```bash
+   git stash list
+   # Kết quả dạng: stash@{0}: On feature: Đang làm dở...
+   ```
+3. **Lấy code ra để làm tiếp**:
+   - **Cách 1: Lấy ra và xóa khỏi tủ (`pop`)**:
+     ```bash
+     git stash pop
+     # Mặc định lấy phần tử trên cùng stash@{0}.
+     ```
+   - **Cách 2: Lấy ra nhưng vẫn giữ bản sao trong tủ (`apply`)**:
+     ```bash
+     git stash apply stash@{0}
+     ```
+4. **Xóa tủ đồ**:
+   - Xóa một stash cụ thể: `git stash drop stash@{0}`
+   - Dọn sạch toàn bộ stash: `git stash clear`
 
 ---
 
-## 4. Gộp các commit lại với nhau (Squash Commits)
+## 1.8 Làm thế nào xóa bỏ trạng thái của một vài commit gần đây?
 
-### Thực tế cuộc sống
-Trong quá trình làm tính năng, bạn thường commit rất nhiều lần với những tin nhắn vô nghĩa như "sửa lỗi typo", "thử lại lần 2", "fix bug". Trước khi gộp nhánh tính năng vào nhánh chính (`main`), bạn muốn làm sạch lịch sử bằng cách gom tất cả các commit nhỏ đó thành một commit duy nhất có ý nghĩa (ví dụ: "Feature: Tích hợp thanh toán Stripe").
+Khi bạn muốn hủy bỏ/xóa đi trạng thái của một số commit vừa tạo, bạn cần phân biệt rõ hai trường hợp:
 
-### Các cách xử lý
+### Trường hợp A: Commit CHƯA push lên mạng (Local Commit)
+Sử dụng lệnh `git reset` trỏ về commit an toàn cũ.
+```bash
+# Xóa bỏ trạng thái của 3 commit gần nhất nhưng GIỮ LẠI CODE trong máy
+git reset --mixed HEAD~3
 
-#### Cách 1: Sử dụng Interactive Rebase (Gom các commit cục bộ trước khi push)
-Giả sử bạn có 4 commit chưa push và muốn gộp chúng lại:
+# Xóa bỏ trạng thái của 3 commit gần nhất và XÓA SẠCH CODE
+git reset --hard HEAD~3
+```
+
+### Trường hợp B: Commit ĐÃ push lên mạng (Remote Commit)
+- **Cách 1: An toàn (Teamwork)**: Dùng `git revert`. Nó sẽ tạo các commit mới có nội dung ngược lại để phủ định các commit lỗi, giữ nguyên lịch sử chung.
+  ```bash
+  # Revert commit lỗi gần nhất
+  git revert HEAD
+  ```
+- **Cách 2: Ghi đè (Chỉ dùng khi làm một mình)**: Dùng `git reset` ở local để lùi lịch sử, sau đó push ép buộc lên remote.
+  ```bash
+  git reset --hard HEAD~3
+  git push origin <tên_nhánh> --force-with-lease
+  ```
+
+---
+
+## 1.9 Làm thế nào để gộp một vài commit thành 1 commit duy nhất?
+
+Có hai phương pháp phổ biến để gom (squash) nhiều commit lặt vặt lại với nhau:
+
+### Cách 1: Sử dụng Interactive Rebase (Gộp trước khi push)
+Để gộp 4 commit gần nhất cục bộ:
 ```bash
 git rebase -i HEAD~4
 ```
-Git sẽ mở ra một giao diện soạn thảo văn bản (thường là Vim hoặc VS Code) hiển thị danh sách 4 commit gần nhất từ cũ đến mới:
-
-```text
-pick a1b2c3d Thêm giao diện nút thanh toán
-pick e5f6g7h Sửa màu nút sang màu xanh
-pick i9j0k1l Fix lỗi click đúp
-pick m3n4o5p Hoàn thiện giao diện thanh toán
-```
-
-Để gộp commit số 2, 3, 4 vào commit số 1, hãy đổi chữ `pick` thành `squash` (hoặc viết tắt là `s`) trước các commit đó:
-
+Git hiển thị danh sách từ cũ đến mới. Giữ commit đầu tiên là `pick`, chuyển các commit sau thành `squash` (hoặc `s`):
 ```text
 pick a1b2c3d Thêm giao diện nút thanh toán
 squash e5f6g7h Sửa màu nút sang màu xanh
 squash i9j0k1l Fix lỗi click đúp
 squash m3n4o5p Hoàn thiện giao diện thanh toán
 ```
+Lưu file, Git sẽ tự động gom code lại và cho phép bạn đặt một tin nhắn commit duy nhất cho cả cụm thay đổi đó.
 
-- **Lưu và đóng trình soạn thảo**: Git sẽ gộp nội dung thay đổi của cả 4 commit lại và mở tiếp một cửa sổ để bạn đặt tên cho commit gộp duy nhất này.
-- **Sự khác biệt giữa `squash` và `fixup`**:
-  - `squash` (hoặc `s`): Gộp code và **giữ lại tin nhắn** của các commit phụ để bạn biên soạn lại.
-  - `fixup` (hoặc `f`): Gộp code nhưng **vứt bỏ hoàn toàn tin nhắn** của các commit phụ, chỉ giữ lại tin nhắn của commit đầu tiên (commit `pick`). Rất tiện khi các commit sau chỉ là sửa lỗi vặt.
-
----
-
-#### Cách 2: Sử dụng `git merge --squash` (Gom toàn bộ nhánh khi merge)
-Nếu bạn không muốn rebase từng commit thủ công trên nhánh tính năng, bạn có thể thực hiện gộp toàn bộ lịch sử nhánh đó khi merge vào nhánh chính:
-
+### Cách 2: Sử dụng `git merge --squash` (Gộp khi merge nhánh)
+Khi bạn muốn gộp toàn bộ lịch sử commit của nhánh `feature` thành 1 commit duy nhất trên nhánh `main` lúc merge:
 ```bash
-# Đang đứng ở nhánh main
 git checkout main
-
-# Merge nhánh feature và gom tất cả commit của nó thành 1 thay đổi chưa commit trên main
-git merge --squash feature-branch
-
-# Tạo commit gộp duy nhất
-git commit -m "Feature: Hoàn thành tính năng thanh toán Stripe"
+git merge --squash feature
+git commit -m "Feature: Hoàn thiện chức năng thanh toán"
 ```
-- **Ưu điểm**: Cực kỳ nhanh chóng, không cần tương tác phức tạp. Nhánh phụ vẫn giữ nguyên lịch sử chi tiết ban đầu (nếu cần tra cứu lại), trong khi nhánh chính có một lịch sử commit cực kỳ tuyến tính và sạch sẽ.
-- **Nhược điểm**: Lịch sử chi tiết của nhánh tính năng bị ẩn đi hoàn toàn trên nhánh chính, khiến việc `git blame` tìm người gây lỗi sau này khó khăn hơn do mọi thay đổi hiển thị dưới tên người thực hiện merge squash.
+Nhánh `main` chỉ nhận 1 commit mới duy nhất, giúp lịch sử trên `main` cực kỳ gọn gàng.
 
 ---
 
-## 5. Các tình huống oái oăm khác thường gặp
+## 1.10 Phân biệt Git Reset, Git Reset --hard, Git Reset --soft
 
-### Tình huống 5: Lỡ commit thẳng vào nhánh `main` thay vì nhánh tính năng
-Bạn đang hí hửng viết code và commit, chợt nhận ra mình đang đứng ở nhánh `main` (nhánh cấm commit trực tiếp).
+Lệnh `git reset` dịch chuyển con trỏ nhánh hiện tại và HEAD về một commit khác trong lịch sử. Độ ảnh hưởng của nó lên dự án được quyết định bởi 3 tham số:
 
-#### Cách giải quyết (Chỉ áp dụng khi CHƯA push):
-```bash
-# Bước 1: Tạo một nhánh tính năng mới từ commit hiện tại (nhánh này sẽ giữ lấy commit của bạn)
-git branch feature-tuy-chinh
+```mermaid
+flowchart TD
+    HEAD[Vị trí commit mới] --> Working["Working Directory (Sàn nhà)"]
+    HEAD --> Staging["Staging Area (Thùng hàng tạm)"]
+    
+    subgraph soft["--soft"]
+        direction TB
+        S1["Chỉ chuyển con trỏ HEAD về commit cũ."]
+        S2["Code của các commit bị hủy vẫn được giữ nguyên ở Staging Area (chờ commit tiếp)."]
+    end
 
-# Bước 2: Quay ngược nhánh main cục bộ về commit trước đó 1 bước
-git reset --hard HEAD~1
+    subgraph mixed["--mixed (Mặc định)"]
+        direction TB
+        M1["Chuyển con trỏ HEAD về commit cũ."]
+        M2["Dọn sạch Staging Area."]
+        M3["Code của các commit bị hủy nằm nguyên vẹn ở Working Directory dưới dạng file chưa add."]
+    end
 
-# Bước 3: Chuyển sang nhánh tính năng mới tạo để tiếp tục làm việc
-git checkout feature-tuy-chinh
+    subgraph hard["--hard"]
+        direction TB
+        H1["Chuyển con trỏ HEAD về commit cũ."]
+        H2["Dọn sạch Staging Area."]
+        H3["🚨 Xóa sạch code ở Working Directory (Mọi thay đổi biến mất)."]
+    end
 ```
 
----
+### Bảng so sánh tác động trực quan:
 
-### Tình huống 6: Đang code dở dang thì phải chuyển sang nhánh khác sửa lỗi gấp
-Bạn đang viết dở một tính năng (code chưa hoàn thiện nên không muốn commit tạo rác lịch sử), đột nhiên sếp yêu cầu chuyển sang nhánh `hotfix` để sửa một lỗi nghiêm trọng trên Production.
-
-#### Cách giải quyết: Sử dụng `git stash` (Cất đồ vào tủ)
-```bash
-# Bước 1: Lưu tạm toàn bộ thay đổi chưa commit vào một vùng nhớ tạm (stash)
-git stash
-
-# Bước 2: Bây giờ thư mục làm việc đã sạch sẽ. Bạn thoải mái chuyển nhánh sửa lỗi
-git checkout hotfix
-# (Tiến hành sửa lỗi, commit, push...)
-
-# Bước 3: Quay trở lại nhánh cũ
-git checkout feature-branch
-
-# Bước 4: Lấy lại phần code đang viết dở ra để làm tiếp
-git stash pop
-```
-> [!TIP]
-> Lệnh `git stash pop` sẽ lấy phần code ra và xóa nó khỏi tủ đồ tạm. Nếu muốn lấy ra nhưng vẫn giữ bản sao trong tủ đồ, hãy dùng `git stash apply`.
-
----
-
-### Tình huống 7: Lỡ tay chạy `git reset --hard` làm mất sạch code chưa push
-Bạn lỡ tay chạy `git reset --hard HEAD~5` và thấy toàn bộ các commit cục bộ cùng code viết trong vài ngày qua biến mất. Bạn hoảng loạn vì nghĩ đã mất sạch.
-
-#### Cách cứu cánh: Sử dụng `git reflog` (Nhật ký hành trình của Git)
-Git lưu lại nhật ký của mọi hành động di chuyển con trỏ `HEAD` (chuyển nhánh, reset, commit...) trong một file đặc biệt gọi là reflog.
-
-```bash
-# Bước 1: Xem nhật ký di chuyển của HEAD
-git reflog
-```
-Bạn sẽ nhìn thấy một danh sách như thế này:
-```text
-107ce20 (HEAD -> main) HEAD@{0}: reset: moving to HEAD~5
-3bc4a4e HEAD@{1}: commit: feat(practice): add validPalindrome.java
-613828a HEAD@{2}: commit: feat(practice): rename variables in twoSum.java
-```
-Mã băm `3bc4a4e` chính là commit trước khi bạn thực hiện cú reset định mệnh đó.
-
-```bash
-# Bước 2: Di chuyển HEAD quay trở lại commit đó để lấy lại toàn bộ code
-git reset --hard 3bc4a4e
-```
-Code của bạn đã quay trở lại như chưa hề có cuộc chia ly!
+| Tham số Reset | Dịch chuyển HEAD & Branch? | Giữ lại code ở Staging Area? | Giữ lại code ở Working Directory? | Mức độ nguy hiểm |
+| :--- | :--- | :--- | :--- | :--- |
+| **`--soft`** | ✅ Có | ✅ Có (Code nằm sẵn ở Staging, chỉ cần chạy lại `git commit`) | ✅ Có | 🟢 Rất an toàn |
+| **`--mixed`** | ✅ Có | ❌ Không (Các file bị unstage về trạng thái ban đầu) | ✅ Có (Code nằm ở sàn nhà, cần chạy lại `git add`) | 🟢 An toàn |
+| **`--hard`** | ✅ Có | ❌ Không | ❌ Không (Code bị xóa sạch không dấu vết) | 🔴 Cực kỳ nguy hiểm |
