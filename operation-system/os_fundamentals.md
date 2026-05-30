@@ -1,232 +1,175 @@
-# Nền Tảng Hệ Điều Hành: Mạch Kiến Thức Nhân Quả (Causal Knowledge Flow)
+# Hệ Điều Hành Là Gì? (Hiểu Bằng Hình Ảnh Ẩn Dụ Thực Tế)
 
-Hệ thống máy tính là sự kết hợp phức tạp giữa phần cứng vật lý và phần mềm ứng dụng. Để hiểu cách chúng hoạt động cùng nhau, chúng ta sẽ đi qua một mạch kiến thức liên kết nhân quả (mối quan hệ nguyên nhân - kết quả) chặt chẽ, bắt đầu từ khái niệm cơ bản nhất của Hệ điều hành cho đến kiến trúc của các hệ thống thực tế.
+Hệ thống máy tính rất phức tạp, nhưng bạn có thể hiểu toàn bộ cách thức hoạt động của nó thông qua những hình ảnh ẩn dụ rất gần gũi trong đời sống hàng ngày dưới đây. Các khái niệm sẽ được liên kết với nhau theo mối quan hệ Nhân - Quả tuần tự.
 
 ---
 
-## Sơ Đồ Mạch Liên Kết Nhân Quả (Knowledge Flow)
+## Sơ Đồ Mạch Kiến Thức (Knowledge Flow)
 
 ```mermaid
 graph TD
-    A["1. Hệ Điều Hành (OS)"] -- "Giao tiếp & Ra lệnh" --> B["2. UI vs. CMD (Giao diện dòng lệnh)"]
-    B -- "Thực thi lệnh chạy app" --> C["3. Từ Đĩa Cứng lên RAM (Double-click)"]
-    C -- "Cần nơi lưu trữ & nạp lệnh nhanh" --> D["4. RAM vs. Storage & Virtual Memory"]
-    D -- "Chương trình chạy trong bộ nhớ" --> E["5. Thực thể chạy: Process vs. Thread"]
-    E -- "Để hệ thống an toàn & ổn định" --> E2["5.1 Tại sao Process cần Độc lập?"]
-    E2 -- "Nhiều luồng tranh giành CPU" --> F["6. Bộ Điều Phối CPU (CPU Scheduling)"]
-    F -- "Nạp và ghi dữ liệu có cấu trúc" --> G["7. Hệ Thống Tập Tin (File System)"]
-    G -- "Các nền tảng triển khai thực tế" --> H["8. So Sánh: Windows, macOS & Linux"]
+    A["1. Hệ Điều Hành (OS)<br/>(Quản lý nhà hàng)"] -->|Cách giao tiếp| B["2. UI vs. CMD<br/>(Menu hình ảnh vs. Lệnh trực tiếp)"]
+    B -->|Ra lệnh khởi chạy app| C["3. Quá trình chạy App (Double-click)<br/>(Bê sách từ hầm lên bàn làm việc)"]
+    C -->|Cần vùng nhớ để làm việc| D["4. RAM vs. Storage & Virtual Memory<br/>(Bàn làm việc vs. Kho chứa hầm rượu)"]
+    D -->|Tạo ra thực thể đang chạy| E["5. Process vs. Thread<br/>(Công ty độc lập vs. Nhân viên)"]
+    E -->|Để bảo vệ an toàn hệ thống| E2["5.1 Tại sao Process cần độc lập?<br/>(Các văn phòng cô lập tránh cháy nổ)"]
+    E2 -->|Nhiều luồng tranh CPU| F["6. Bộ điều phối CPU (Scheduling)<br/>(Chia lượt dùng Máy In siêu tốc)"]
+    F -->|Đọc/Ghi dữ liệu có tổ chức| G["7. Hệ thống File (File System)<br/>(Tủ hồ sơ có dán nhãn phân loại)"]
+    G -->|Mỗi hệ thống triển khai khác nhau| H["8. So sánh: Windows, macOS & Linux<br/>(Thực dụng vs. Nghệ sĩ vs. Tự do)"]
 ```
 
 ---
 
-## 1. Hệ Điều Hành (Operating System - OS) là gì?
+## 1. Hệ Điều Hành (OS) là gì?
+* **Hình ảnh ẩn dụ**: OS giống như **Người Quản Lý Nhà Hàng**.
+* **Giải thích**: Phần cứng máy tính (CPU, RAM, Đĩa cứng) giống như các đầu bếp, nguyên liệu và dụng cụ nấu ăn. Phần mềm ứng dụng (Chrome, Facebook) giống như những người bồi bàn. Nếu không có người quản lý, bồi bàn sẽ tự ý chạy vào bếp tranh giành bếp nấu, đầu bếp không biết phải làm món gì trước, mọi thứ sẽ hỗn loạn.
+* **Nguyên nhân - Kết quả**: 
+  - *Nguyên nhân*: Phần cứng quá phức tạp để phần mềm có thể tự điều khiển trực tiếp.
+  - *Kết quả*: OS ra đời làm trung gian đứng ra quản lý toàn bộ tài nguyên, phân chia thời gian chạy cho các phần mềm một cách hợp lý và an toàn.
 
-Hệ điều hành là phần mềm nền tảng **quản lý toàn bộ phần cứng** (CPU, RAM, Đĩa cứng, GPU, thiết bị ngoại vi) và **cung cấp dịch vụ chung** cho các phần mềm ứng dụng (Chrome, VS Code, Game).
-
-* **Nguyên nhân**: Nếu không có OS, mỗi lập trình viên khi viết ứng dụng sẽ phải tự viết driver để giao tiếp trực tiếp với chip nhớ, mạch điện của đĩa cứng, card màn hình. Điều này là bất khả thi và cực kỳ kém hiệu quả.
-* **Kết quả**: OS ra đời đóng vai trò là **Người quản trị tài nguyên** và **Cầu nối trung gian**. Nó ẩn đi sự phức tạp của phần cứng và cung cấp các API chuẩn hóa để phần mềm giao tiếp với máy tính.
-
-> [!IMPORTANT]
-> **Mối liên kết nhân quả tiếp theo**: Vì OS quản lý mọi tài nguyên, làm thế nào con người (hoặc lập trình viên) có thể giao tiếp và ra lệnh cho OS điều khiển máy tính theo ý mình? Chúng ta cần các giao diện giao tiếp: **UI** và **CMD**.
-
----
-
-## 2. Giao Tiếp Với OS: UI vs. CMD (Command Line Interface)
-
-Để ra lệnh cho OS, chúng ta có hai phương thức chính:
-- **UI (User Interface / GUI)**: Giao diện đồ họa sử dụng chuột, nút bấm, icon trực quan (phù hợp người dùng phổ thông).
-- **CMD (Command Line Interface / CLI)**: Giao diện dòng lệnh, nơi người dùng gõ trực tiếp các lệnh văn bản để OS thực thi (như Command Prompt trên Windows, Terminal trên macOS/Linux).
-
-```
-   [Người dùng] ──(Gõ chữ)──> [CMD / Shell] ──(Gọi System Call)──> [Hệ Điều Hành (OS)]
-```
-
-### Tại sao lập trình viên luôn ưu tiên dùng CMD thay vì UI?
-
-1. **Hiệu suất và Tiết kiệm Tài nguyên**: UI tiêu tốn nhiều RAM và CPU để vẽ đồ họa, hiển thị cửa sổ. CMD cực kỳ nhẹ, không cần dựng đồ họa, giúp tối ưu tối đa tài nguyên cho các máy chủ (Servers) không có màn hình hiển thị (Headless).
-2. **Khả năng Tự động hóa (Automation & Scripting)**: Với UI, bạn không thể tự động hóa việc click chuột 100 lần. Với CMD, bạn có thể viết một file script ngắn (Bash, PowerShell) để thực hiện hàng ngàn thao tác phức tạp liên tiếp trong vài giây.
-3. **Giao tiếp Trực tiếp và Mạnh mẽ**: CMD cho phép truy cập trực tiếp vào các tính năng cấu hình sâu của hệ thống và các công cụ lập trình (Git, Docker, npm) vốn không hỗ trợ giao diện đồ họa.
-
-### Các lệnh CMD cơ bản thường dùng (Windows CMD vs Linux/macOS Terminal)
-
-| Chức năng | Lệnh Windows CMD | Lệnh Linux/macOS |
-| :--- | :--- | :--- |
-| **Xem thư mục hiện tại** | `cd` (không tham số) | `pwd` |
-| **Liệt kê file/thư mục** | `dir` | `ls -la` |
-| **Chuyển thư mục** | `cd <path>` | `cd <path>` |
-| **Tạo thư mục mới** | `mkdir <tên>` | `mkdir <tên>` |
-| **Xóa file** | `del <tên_file>` | `rm <tên_file>` |
-| **Kiểm tra mạng** | `ping <domain>` | `ping <domain>` |
-
-> [!IMPORTANT]
-> **Mối liên kết nhân quả tiếp theo**: Khi bạn ra lệnh cho OS chạy một ứng dụng (dù là gõ lệnh chạy trên CMD hay nhấp đúp chuột vào icon trên UI), OS sẽ làm gì để biến một ứng dụng tĩnh lưu trên đĩa cứng thành một chương trình đang chạy thực sự?
+> **Mối liên kết**: Vì OS là người quản lý tối cao, làm thế nào để chúng ta (hoặc lập trình viên) ra lệnh cho OS điều khiển máy tính? Chúng ta cần giao diện: **UI** và **CMD**.
 
 ---
 
-## 3. Chuyện gì xảy ra khi bạn Double-click (hoặc gõ lệnh CMD) để chạy một chương trình?
+## 2. Giao Tiếp Với OS: UI vs. CMD (Command Line)
 
-Quá trình khởi chạy một chương trình từ trạng thái "tĩnh" sang "động" diễn ra qua 5 bước tuần tự dưới sự điều khiển của OS:
+* **Hình ảnh ẩn dụ**: 
+  - **UI (Giao diện đồ họa)**: Giống như **Menu có sẵn hình ảnh** tại nhà hàng. Bạn chỉ cần dùng ngón tay chỉ vào hình món ăn (click chuột vào icon) để gọi món. Rất dễ dùng, nhưng bạn chỉ gọi được những món có sẵn trên menu.
+  - **CMD (Giao diện dòng lệnh)**: Giống như **Nói chuyện trực tiếp với bếp trưởng**. Bạn phải tự nhớ tên món ăn, công thức và gõ bằng chữ để yêu cầu. Khó dùng hơn vì phải nhớ lệnh, nhưng cực kỳ linh hoạt (có thể gọi những món tùy chỉnh không có trên menu).
 
 ```
-[Đĩa Cứng] ──(1. Đọc tệp tin .exe/.app)──> [Bộ nạp Loader của OS] 
-                                                  │
-                                          (2. Cấp phát RAM & Bộ nhớ ảo)
-                                                  │
-                                                  ▼
-[CPU] <──(5. Chạy luồng chính Main Thread)── [Tạo Process mới trong RAM]
+[Người dùng] ──(Gõ lệnh chữ)──> [CMD] ──(Dịch lệnh)──> [OS (Người quản lý)]
 ```
 
-1. **Gửi tín hiệu**: Khi bạn nhấp đúp chuột (UI) hoặc nhấn Enter (CMD) trên một tệp tin thực thi (ví dụ: `app.exe`), OS nhận được yêu cầu chạy ứng dụng này qua một **System Call** (Lời gọi hệ thống).
-2. **Đọc đĩa cứng**: Bộ nạp của OS (**Loader**) truy cập vào **File System** trên đĩa cứng, tìm file ứng dụng, đọc mã máy (binary code) và các dữ liệu liên quan.
-3. **Cấp phát bộ nhớ**: OS cấp phát một vùng không gian bộ nhớ trống trong **RAM** (và thiết lập **Virtual Memory** nếu cần) để nạp mã máy của ứng dụng vào đó.
-4. **Khởi tạo Tiến trình (Process)**: OS thiết lập một cấu trúc quản lý gọi là **Process** (Tiến trình), cấp cho nó một ID duy nhất (**PID - Process ID**), cấp phát các tài nguyên như file descriptor, quyền hạn bảo mật.
-5. **Thực thi trên CPU**: OS tạo ra luồng thực thi đầu tiên (**Main Thread**), trỏ con trỏ lệnh của CPU đến điểm bắt đầu của chương trình (hàm `main`) để CPU bắt đầu tính toán và chạy code.
+### Tại sao lập trình viên luôn thích dùng CMD hơn UI?
+1. **Rất nhẹ và nhanh**: Vẽ giao diện đồ họa (UI) tốn rất nhiều RAM và CPU. CMD chỉ hiển thị chữ nên hầu như không tốn tài nguyên. Điều này cực kỳ quan trọng khi quản lý các máy chủ (Servers) khổng lồ ở xa.
+2. **Khả năng tự động hóa**: Bạn không thể tự động hóa việc click chuột 100 lần vào 100 nút trên màn hình. Nhưng với CMD, bạn viết 1 dòng lệnh lặp lại và máy tính sẽ tự làm hàng triệu lần trong chớp mắt.
 
-> [!IMPORTANT]
-> **Mối liên kết nhân quả tiếp theo**: Ở bước 3, chúng ta thấy mã máy được nạp từ đĩa cứng vào RAM. Tại sao máy tính không chạy trực tiếp code trên đĩa cứng cho tiện mà bắt buộc phải nạp vào RAM? RAM và Storage khác nhau như thế nào?
+### Lệnh CMD cơ bản (So sánh Windows CMD vs Terminal Linux/macOS):
+
+| Mục tiêu | Lệnh Windows CMD | Lệnh Linux/macOS | Giải thích dễ hiểu |
+| :--- | :--- | :--- | :--- |
+| **Xem đang đứng ở đâu** | `cd` (không tham số) | `pwd` | Xem vị trí thư mục hiện tại |
+| **Xem trong thư mục có gì** | `dir` | `ls` | Liệt kê tất cả file đang có |
+| **Chuyển sang thư mục khác** | `cd <tên_thư_mục>` | `cd <tên_thư_mục>` | Đi vào thư mục đó |
+| **Tạo thư mục mới** | `mkdir <tên>` | `mkdir <tên>` | Tạo một thư mục trống mới |
+
+> **Mối liên kết**: Khi bạn ra lệnh chạy một ứng dụng (dù là nhấp đúp chuột vào icon trên UI hay gõ lệnh khởi chạy trên CMD), điều gì xảy ra bên trong máy tính?
 
 ---
 
-## 4. Quản lý Bộ nhớ: Storage vs. RAM và Virtual Memory
+## 3. Chuyện gì xảy ra khi bạn Double-click chạy một ứng dụng?
 
-Để cân bằng giữa tốc độ và dung lượng lưu trữ, kiến trúc máy tính chia bộ nhớ làm nhiều cấp độ.
+* **Hình ảnh ẩn dụ**: Giống như hành trình **Bê một cuốn sách hướng dẫn nấu ăn từ kho dưới hầm đặt lên bàn làm việc để đọc**.
 
 ```
-+---------------------------------------------------------------+
-|  [Storage: HDD/SSD]  ==> Rất chậm, Rất lớn (Lưu trữ vĩnh viễn) |
-+---------------------------------------------------------------+
-                              │  (Loader nạp khi khởi chạy)
-                              ▼
-+---------------------------------------------------------------+
-|  [RAM: Memory]       ==> Cực nhanh, Nhỏ (Lưu trữ tạm thời)     |
-+---------------------------------------------------------------+
-                              │  (Đọc trực tiếp)
-                              ▼
-+---------------------------------------------------------------+
-|  [CPU]               ==> Trực tiếp thực thi                   |
-+---------------------------------------------------------------+
+[Hầm tối lưu trữ (Storage)] ──(Loader bê lên)──> [Bàn làm việc (RAM)] ──> [Đầu bếp đọc & chạy (CPU)]
 ```
 
-### 1. Sự khác biệt giữa Storage (Đĩa cứng HDD/SSD) và RAM (Bộ nhớ trong)
+1. **Gửi yêu cầu**: Bạn nhấp đúp vào file `Chrome.exe`. OS nhận tín hiệu yêu cầu chạy Chrome.
+2. **Tìm file**: OS tìm file này trên **Đĩa cứng (Storage)** - nơi lưu trữ dữ liệu vĩnh viễn của máy tính.
+3. **Nạp vào bộ nhớ**: OS kích hoạt bộ nạp (**Loader**) để sao chép toàn bộ code của Chrome từ đĩa cứng lên **RAM** (Bộ nhớ tạm thời tốc độ cao).
+4. **Tạo Tiến trình**: OS cấp cho ứng dụng một không gian hoạt động riêng trong RAM, gọi là **Process (Tiến trình)**.
+5. **Chạy**: CPU (Đầu bếp) bắt đầu đọc các dòng code đã nạp trên RAM để thực thi chương trình.
 
-- **Storage (Đĩa lưu trữ)**:
-  - *Bản chất*: Bộ nhớ thứ cấp (Secondary Storage).
-  - *Đặc điểm*: Tốc độ truy xuất chậm hơn nhiều so với RAM, dung lượng cực lớn (hàng trăm GB đến TB), dữ liệu **vẫn tồn tại** khi tắt máy (Non-volatile).
-  - *Vai trò*: Nơi lưu trữ vĩnh viễn hệ điều hành, mã nguồn phần mềm và các file dữ liệu.
-- **RAM (Random Access Memory)**:
-  - *Bản chất*: Bộ nhớ sơ cấp (Primary Storage).
-  - *Đặc điểm*: Tốc độ cực kỳ nhanh (nhanh gấp hàng nghìn lần SSD), dung lượng nhỏ (8GB - 64GB), dữ liệu **biến mất hoàn toàn** khi mất điện (Volatile).
-  - *Vai trò*: Bộ nhớ đệm làm việc cho CPU. CPU chỉ có thể đọc và thực thi trực tiếp các lệnh khi chúng đã được nạp sẵn vào RAM.
-
-### 2. Virtual Memory (Bộ nhớ ảo) là gì và tại sao nó quan trọng?
-
-* **Nguyên nhân**: RAM vật lý có giới hạn (ví dụ máy bạn chỉ có 8GB RAM). Khi bạn mở quá nhiều ứng dụng nặng cùng lúc (Chrome ăn 4GB, Game ăn 6GB), tổng dung lượng yêu cầu vượt quá RAM vật lý hiện có. Nếu không có giải pháp, hệ thống sẽ báo lỗi tràn bộ nhớ (Out of Memory) và crash lập tức.
-* **Giải pháp (Virtual Memory)**: OS sử dụng một phần đĩa cứng (SSD/HDD) làm "RAM giả" (trên Windows gọi là `pagefile.sys`, trên Linux gọi là `Swap`).
-* **Cơ chế**: OS chia bộ nhớ thành các trang (**Pages**). Khi RAM thật bị đầy, OS sẽ tìm các trang bộ nhớ của các ứng dụng đang chạy ẩn (ít dùng nhất) để chuyển (ghi) xuống đĩa cứng (gọi là **Page Out** hoặc **Swapping**), giải phóng RAM thật cho ứng dụng bạn đang dùng. Khi bạn quay lại ứng dụng ẩn kia, OS lại đọc từ đĩa cứng và nạp ngược lại RAM (gọi là **Page In**).
-
-> [!IMPORTANT]
-> **Mối liên kết nhân quả tiếp theo**: Một khi ứng dụng đã được nạp vào không gian bộ nhớ (RAM), OS sẽ quản lý thực thể chạy đó dưới dạng một **Process**. Cấu trúc của Process và các phân nhánh thực thi của nó (**Thread**) hoạt động thế nào?
+> **Mối liên kết**: Ở bước này, chúng ta thấy dữ liệu được chuyển từ Đĩa cứng (Storage) sang RAM. RAM là gì và tại sao CPU không đọc thẳng từ Đĩa cứng cho tiện?
 
 ---
 
-## 5. Đơn Vị Thực Thi: Process (Tiến trình) vs. Thread (Luồng)
+## 4. RAM vs. Storage và Virtual Memory (Bộ nhớ ảo)
 
-Khi một chương trình được nạp vào RAM và bắt đầu chạy, nó trở thành một **Process**.
+* **RAM (Random Access Memory)**: Giống như **Mặt bàn làm việc** của bạn.
+  - *Đặc điểm*: Rất nhỏ (8GB - 16GB) nhưng cực kỳ dễ tiếp cận và tốc độ phản hồi siêu nhanh. Khi bạn dọn dẹp hoặc tắt máy (mất điện), mặt bàn sẽ bị lau sạch hoàn toàn (dữ liệu biến mất).
+* **Storage (Đĩa cứng HDD/SSD)**: Giống như **Kho lưu trữ dưới hầm**.
+  - *Đặc điểm*: Dung lượng khổng lồ (500GB - 2TB), dữ liệu cất ở đây không bị mất khi tắt máy. Nhưng mỗi lần muốn đọc, bạn phải mất thời gian đi xuống hầm để bê lên bàn, tốc độ rất chậm.
+* **Tại sao cần cả hai?**: CPU hoạt động với tốc độ siêu ánh sáng, nếu bắt CPU đợi đọc dữ liệu từ đĩa cứng (Storage) thì máy tính sẽ bị đơ cứng. Do đó, mọi thứ muốn chạy đều phải được đưa lên bàn làm việc (RAM) trước.
 
-* **Process (Tiến trình)**: Là một chương trình đang trong quá trình thực thi, được OS cấp phát một không gian địa chỉ bộ nhớ riêng độc lập, danh sách file đang mở, tài nguyên hệ thống.
-* **Thread (Luồng)**: Là một đơn vị thực thi mã lệnh nhỏ nhất nằm bên trong một Process. Một Process có thể chứa nhiều Thread, tất cả các Thread này chạy song song và **chia sẻ chung không gian bộ nhớ** của Process cha.
+### Thế còn Virtual Memory (Bộ nhớ ảo) là gì?
+* **Hình ảnh ẩn dụ**: Giống như **Hộc tủ/Ngăn kéo tạm thời sát bàn làm việc**.
+* **Giải thích**: Khi bàn làm việc (RAM) của bạn quá nhỏ nhưng bạn lại mở cùng lúc hàng chục ứng dụng nặng. Bàn bị tràn. 
+* Thay vì báo lỗi sập hệ thống, OS sẽ thông minh tự động bê các tập tài liệu của những ứng dụng bạn đang mở nhưng tạm thời không dùng đến (ví dụ tab Chrome đang mở ẩn phía sau) cất tạm vào ngăn kéo (Virtual Memory trên đĩa cứng) để lấy chỗ trống trên mặt bàn cho ứng dụng bạn đang dùng. Khi bạn click lại tab đó, OS lại bê tài liệu từ ngăn kéo đặt ngược lại lên bàn.
+
+> **Mối liên kết**: Khi ứng dụng đã nằm vững chắc trên RAM để chạy, nó tồn tại dưới dạng một **Process**. Cấu trúc của Process và các phân nhánh thực thi nhỏ hơn của nó (**Thread**) hoạt động ra sao?
+
+---
+
+## 5. Đơn vị thực thi: Process (Tiến trình) vs. Thread (Luồng)
+
+* **Process (Tiến trình)**: Giống như một **Công ty / Văn phòng làm việc độc lập**.
+  - Mỗi công ty có trụ sở riêng, tài sản riêng và không chung đụng với công ty khác.
+* **Thread (Luồng)**: Giống như các **Nhân viên làm việc trong công ty đó**.
+  - Một công ty (Process) có thể có nhiều nhân viên (Threads) cùng làm việc song song để hoàn thành dự án. Tất cả nhân viên trong cùng một công ty sẽ dùng chung bàn ghế, nước uống, hồ sơ tài liệu (chia sẻ chung vùng nhớ của Process).
 
 ```
 +-------------------------------------------------------+
-|  PROCESS (Tiến trình độc lập)                         |
-|  - Không gian bộ nhớ riêng (Memory Space)            |
-|  - Tài nguyên hệ thống (Files, I/O)                   |
+|  PROCESS (Văn phòng công ty)                          |
+|  - Tài sản, tài liệu riêng (Memory Space)             |
 |                                                       |
 |   +-------------------+       +-------------------+   |
 |   | THREAD 1          |       | THREAD 2          |   |
-|   | (Chạy song song)  |       | (Chạy song song)  |   |
+|   | (Nhân viên A)     |       | (Nhân viên B)     |   |
 |   +-------------------+       +-------------------+   |
 +-------------------------------------------------------+
 ```
 
-### Bảng so sánh chi tiết Process vs. Thread:
-
-| Đặc điểm | Process (Tiến trình) | Thread (Luồng) |
-| :--- | :--- | :--- |
-| **Cấp phát bộ nhớ** | Được OS cấp không gian bộ nhớ riêng độc lập. | Chia sẻ chung không gian bộ nhớ với các luồng khác trong cùng Process. |
-| **Tài nguyên** | Sở hữu tài nguyên riêng (tập tin, cổng kết nối). | Sử dụng chung tài nguyên của Process cha. |
-| **Tốc độ khởi tạo** | Chậm hơn, tốn nhiều tài nguyên của OS để thiết lập. | Rất nhanh, tốn ít tài nguyên. |
-| **Giao tiếp với nhau** | Khó khăn, cần các kỹ thuật IPC (Inter-Process Communication) như Socket, Pipe. | Dễ dàng vì chung vùng nhớ (đọc/ghi chung biến toàn cục). |
-| **Tính an toàn** | 🟢 Cực kỳ an toàn và cô lập. | 🔴 Kém an toàn (Một thread bị crash có thể kéo theo cả Process sập). |
+### So sánh nhanh dễ nhớ:
+* **Process**: Rất nặng, độc lập hoàn toàn, an toàn tuyệt đối.
+* **Thread**: Rất nhẹ, chạy chung vùng nhớ nên giao tiếp với nhau cực kỳ nhanh, nhưng kém an toàn hơn (nếu 1 nhân viên làm cháy văn phòng, cả công ty sẽ bị ảnh hưởng - 1 thread bị lỗi nghiêm trọng có thể làm sập toàn bộ Process).
 
 ---
 
-### 5.1 Tại sao các Process cần phải độc lập và cô lập bộ nhớ?
+### 5.1 Tại sao các Process cần phải Độc lập và Cô lập bộ nhớ?
 
-* **Nguyên nhân**: Hãy tưởng tượng máy tính của bạn chạy cùng lúc 2 ứng dụng: Ứng dụng ngân hàng (chứa mã PIN, số dư tài khoản) và một trò chơi tải từ nguồn không tin cậy. 
-* Nếu các Process không độc lập và dùng chung vùng nhớ:
-  1. Trò chơi có thể đọc trộm vùng nhớ của ứng dụng ngân hàng để lấy mã PIN (Lỗ hổng bảo mật nghiêm trọng).
-  2. Trò chơi bị crash, ghi đè dữ liệu rác vào vùng nhớ của ứng dụng ngân hàng làm ứng dụng ngân hàng sập theo.
-* **Kết quả**: OS thiết kế cơ chế **Virtual Address Space** để mỗi Process tin rằng nó đang sở hữu toàn bộ bộ nhớ máy tính một mình. Về mặt vật lý, OS sẽ ánh xạ địa chỉ ảo này vào các ô nhớ vật lý khác nhau trong RAM. Một Process **không thể đọc hoặc ghi** vào vùng nhớ của một Process khác trừ khi được OS cho phép. Điều này mang lại sự bảo mật tuyệt đối và tính cô lập lỗi (Fault Isolation) cho hệ thống.
+* **Hình ảnh ẩn dụ**: Hãy tưởng tượng bạn thuê mặt bằng và chia thành nhiều **văn phòng khóa kín bảo mật**.
+* **Giải thích**: 
+  - Nếu không cô lập bộ nhớ, nhân viên của "Công ty Trò chơi độc hại" có thể tự ý đi sang văn phòng của "Công ty Ngân hàng" để xem trộm mật khẩu và số dư tài khoản của khách hàng.
+  - Hoặc nếu "Công ty Trò chơi" làm ăn đổ bể (crash), nó có thể làm đổ bể lây sang toàn bộ các công ty bên cạnh.
+* **Kết quả**: OS thiết lập một bức tường bảo mật nghiêm ngặt. Mỗi Process được cấp một vùng nhớ ảo riêng và tuyệt đối không thể đọc hay ghi đè lên vùng nhớ của Process khác. Điều này bảo vệ an toàn cho dữ liệu của bạn trước các phần mềm độc hại.
 
-> [!IMPORTANT]
-> **Mối liên kết nhân quả tiếp theo**: Bây giờ chúng ta có hàng chục Process đang chạy, mỗi Process lại có hàng trăm Thread cần được xử lý. Nhưng CPU máy tính chỉ có hữu hạn số nhân (Core) vật lý (ví dụ: 4 cores hoặc 8 cores). Làm sao tất cả chúng có thể chạy mượt mà cùng lúc? OS cần đến **CPU Scheduling**.
-
----
-
-## 6. Bộ Điều Phối CPU (CPU Scheduling - Sơ lược cấp cao)
-
-CPU Scheduling là cơ chế OS lựa chọn Thread nào được phép sử dụng CPU để thực thi lệnh tại một thời điểm cụ thể.
-
-```
-[Các luồng đang đợi chạy] ──> [Bộ điều phối Scheduler] ──> [Đưa vào CPU chạy một lúc (Time Slice)] ──> [Đưa ra ngoài đợi tiếp]
-```
-
-* **Cơ chế chia thời gian (Time-slicing / Quantum)**: OS không cho phép một Thread chiếm dụng CPU mãi mãi. Nó chia thời gian CPU thành các lát cắt siêu nhỏ (chỉ vài mili-giây). Mỗi Thread sẽ được chạy trên CPU trong một lát cắt, sau đó bị OS tạm dừng để nhường chỗ cho Thread khác.
-* **Context Switching (Chuyển đổi ngữ cảnh)**: Khi chuyển đổi giữa các Thread, OS lưu lại toàn bộ trạng thái hiện tại của CPU (thông tin trong các thanh ghi - registers) của Thread cũ và nạp trạng thái của Thread mới vào CPU để chạy tiếp từ điểm bị ngắt quãng.
-* **Các thuật toán điều phối phổ biến**:
-  1. **FIFO (First In First Out)**: Thread nào đăng ký trước thì chạy trước (đơn giản nhưng dễ gây tắc nghẽn).
-  2. **Shortest Job First (SJF)**: Ưu tiên Thread có thời gian thực thi ngắn nhất chạy trước.
-  3. **Round Robin (RR)**: Mỗi Thread nhận một khoảng thời gian bằng nhau để chạy luân phiên (phổ biến nhất cho đa nhiệm).
-  4. **Priority Scheduling**: Ưu tiên các Thread quan trọng của hệ thống (ví dụ: tiến trình render màn hình, chuột) chạy trước các tiến trình chạy ẩn.
-
-> [!IMPORTANT]
-> **Mối liên kết nhân quả tiếp theo**: Khi các chương trình chạy và tính năng hoạt động trên CPU, chúng luôn cần đọc dữ liệu cấu hình hoặc ghi kết quả đầu ra vào các tệp tin trên đĩa cứng. Làm thế nào OS biết cách định vị, tổ chức và quản lý các tệp tin này trên bề mặt vật lý của đĩa cứng? Đó là nhờ **File System**.
+> **Mối liên kết**: Có hàng trăm Thread (nhân viên) của nhiều Process khác nhau đang muốn làm việc, nhưng văn phòng chỉ có một vài chiếc máy tính/máy in (nhân CPU). Làm sao chia sẻ tài nguyên này? -> Chúng ta cần **CPU Scheduling**.
 
 ---
 
-## 7. Quản lý Dữ liệu Vật lý: File System (Hệ thống tập tin) là gì?
+## 6. Bộ Điều Phối CPU (CPU Scheduling) là gì?
 
-Đĩa cứng vật lý (SSD/HDD) bản chất chỉ là một chuỗi các khối nhớ chứa các bit `0` và `1` thô sơ. Nó không biết khái niệm "file thư mục", "tên file" hay "ngày tạo".
-
-* **Định nghĩa**: File System là cấu trúc và thuật toán của OS dùng để **định dạng, tổ chức, lưu trữ và đặt tên** cho dữ liệu trên thiết bị lưu trữ. Nó biến các khối nhớ 0/1 vật lý khô khan thành cấu trúc thư mục cây trực quan mà chúng ta nhìn thấy hàng ngày.
-
-```
-[Bit 0/1 Vật lý trên đĩa] <──(Ánh xạ qua File System)──> [Thư mục Cây / File / metadata (Tên, ngày tạo)]
-```
-
-* **Metadata**: Hệ thống tập tin lưu trữ các thông tin phụ của file (Metadata) như: Tên file, kích thước, quyền truy cập (đọc/ghi), thời gian tạo, và quan trọng nhất là danh sách địa chỉ vật lý nơi chứa dữ liệu thực tế của file trên đĩa.
-* **Các hệ thống tập tin phổ biến**:
-  - **NTFS**: Hệ thống tập tin mặc định của Windows (hỗ trợ bảo mật phân quyền tốt, phục hồi lỗi nhanh).
-  - **APFS (Apple File System)**: Dùng trên macOS và iOS (tối ưu hóa cho ổ SSD, mã hóa mạnh mẽ, sao chép siêu nhanh).
-  - **ext4**: Hệ thống tập tin tiêu chuẩn của Linux (độ ổn định cực cao, hiệu năng tốt cho máy chủ).
-
-> [!IMPORTANT]
-> **Mối liên kết nhân quả tiếp theo**: Các hệ điều hành khác nhau (Windows, macOS, Linux) áp dụng các triết lý thiết kế khác nhau cho các khái niệm Kernel, File System và giao diện CMD. Hãy cùng so sánh chúng ở cấp độ vĩ mô.
+* **Hình ảnh ẩn dụ**: Giống như việc **Chia lượt sử dụng chiếc Máy In siêu tốc duy nhất trong văn phòng**.
+* **Giải thích**: 
+  - Hàng trăm nhân viên (Threads) đều muốn in tài liệu của mình ngay lập tức. Nhưng máy in (CPU Core) tại một thời điểm chỉ có thể in cho 1 người.
+  - Người quản lý (OS Scheduler) sẽ đứng ra điều phối: Cho nhân viên A in trong vòng 5 giây, sau đó bắt nhân viên A dừng lại để nhường cho nhân viên B in 5 giây, rồi đến nhân viên C...
+  - Vì tốc độ luân chuyển của máy in này quá nhanh (chỉ tính bằng phần triệu giây - mili-giây), nên ở góc nhìn của con người, ta có cảm giác như tất cả nhân viên đều đang được in tài liệu cùng một lúc (đa nhiệm song song giả lập).
 
 ---
 
-## 8. So Sánh Cấp Cao: Windows, macOS và Linux
+## 7. Hệ Thống Tập Tin (File System) là gì?
 
-Cả ba hệ điều hành này đều triển khai các khái niệm cơ bản trên (Process, Memory, Scheduling, File System) nhưng theo các triết lý thiết kế và mục tiêu sử dụng khác nhau.
+* **Hình ảnh ẩn dụ**: Giống như **Hệ thống nhãn dán, mã vạch và cách phân chia ngăn kéo trong tủ hồ sơ**.
+* **Giải thích**: 
+  - Đĩa cứng vật lý giống như một đống giấy trắng thô sơ chất đống dưới hầm. Nếu không có quy ước, bạn sẽ không thể tìm thấy thông tin mình cần nằm ở tờ giấy nào.
+  - **File System** là quy tắc do OS đặt ra để tổ chức đống giấy đó thành các tập tài liệu (Files), đặt tên cho chúng, ghi chú ngày tạo (Metadata) và sắp xếp chúng vào các ngăn kéo có dán nhãn (Folders/Thư mục).
+* **Các loại phổ biến**: Windows dùng **NTFS**, macOS dùng **APFS**, Linux dùng **ext4**. Chúng là các cách phân loại hồ sơ khác nhau, mỗi cách có ưu điểm riêng về tốc độ tìm kiếm và độ an toàn bảo mật.
 
-| Tiêu chí | Windows | macOS | Linux |
-| :--- | :--- | :--- | :--- |
-| **Nhà phát triển** | Microsoft | Apple | Cộng đồng mã nguồn mở (Linus Torvalds khởi xướng) |
-| **Bản quyền** | Thương mại (Đóng gói, trả phí) | Thương mại (Độc quyền trên phần cứng của Apple) | Mã nguồn mở (Miễn phí hoàn toàn) |
-| **Nhân hệ điều hành (Kernel)** | Hybrid Kernel (Windows NT) | Microkernel hybrid (XNU / Darwin - dựa trên BSD Unix) | Monolithic Kernel (Nhân Linux) |
-| **File System mặc định** | **NTFS** (New Technology File System) | **APFS** (Apple File System) | **ext4** (Fourth Extended Filesystem) |
-| **Giao diện Dòng lệnh (CLI)** | Command Prompt (CMD), PowerShell | Terminal (Zsh / Bash) | Terminal (Bash / Zsh / Fish) |
-| **Triết lý thiết kế** | Tương thích ngược tốt nhất, hướng tới người dùng phổ thông và doanh nghiệp. | Trải nghiệm mượt mà, tối ưu hóa phần cứng đồng bộ, bảo mật cao. | Tự do tùy biến tuyệt đối, bảo mật, nhẹ và cực kỳ ổn định. |
-| **Thị phần phổ biến** | 🖥️ Bá chủ trên máy tính cá nhân (Desktop/Laptop). | 🎨 Phổ biến trong giới thiết kế đồ họa, sáng tạo nội dung, lập trình viên. | 🌐 Bá chủ trên máy chủ (Servers), siêu máy tính, điện thoại di động (Android). |
+---
+
+## 8. So Sánh Tính Cách: Windows vs. macOS vs. Linux
+
+Cả ba hệ điều hành đều làm những nhiệm vụ quản lý giống nhau ở trên, nhưng mang 3 tính cách và triết lý hoàn toàn khác biệt:
+
+```
+                  ┌───────────────┐
+                  │    KERNEL     │
+                  └───────┬───────┘
+         ┌────────────────┼────────────────┐
+         ▼                ▼                ▼
+    [Windows]          [macOS]          [Linux]
+  (Thực dụng)        (Nghệ sĩ)         (Tự do)
+```
+
+1. **Windows (Người thực dụng)**:
+   - *Triết lý*: Tương thích ngược tốt nhất thế giới. Bạn có thể chạy các phần mềm viết từ 20 năm trước trên Windows 11 bình thường.
+   - *Nhược điểm*: Vì phải ôm đồm quá nhiều thứ cũ kỹ để tương thích nên hệ thống đôi khi cồng kềnh, dễ gặp lỗi màn hình xanh.
+2. **macOS (Người nghệ sĩ kỹ tính)**:
+   - *Triết lý*: Đồng bộ và khép kín tối đa. Apple tự làm cả phần cứng (máy Mac) lẫn hệ điều hành nên mọi thứ chạy cực kỳ mượt mà, tối ưu pin và màn hình đẹp.
+   - *Nhược điểm*: Rất đắt đỏ và không thể tùy biến phần cứng bên trong.
+3. **Linux (Kỹ sư thích tự do)**:
+   - *Triết lý*: Mã nguồn mở, miễn phí và cho phép can thiệp vào mọi ngóc ngách của hệ thống. Nhẹ đến mức có thể chạy trên chiếc máy tính tí hon (Raspberry Pi) hay siêu máy tính vũ trụ.
+   - *Nhược điểm*: Khó sử dụng đối với người dùng phổ thông vì phải thao tác qua dòng lệnh CMD rất nhiều.
