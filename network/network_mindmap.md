@@ -111,15 +111,12 @@ Mạng máy tính được chia làm nhiều loại tùy thuộc vào phạm vi 
 
 Để chuẩn hóa cách thức giao tiếp phức tạp trên mạng, các nhà khoa học đã xây dựng các mô hình phân tầng. Dưới đây là 4 mô hình tiêu biểu theo dòng lịch sử:
 
-```
-+-------------------------------------------------------------------------+
-| Lịch sử phát triển các mô hình mạng                                      |
-|                                                                         |
-|  1970s                  1974               1980s               1984     |
-|  DoD/TCP-IP             SNA (IBM)          AppleTalk / IPX     OSI      |
-|  (Chuẩn thực tế)        (Độc quyền)        (Mạng cục bộ cũ)    (Lý thuyết)|
-+-------------------------------------------------------------------------+
-```
+| Thời gian | Mô hình Mạng | Đặc trưng / Trạng thái |
+| :--- | :--- | :--- |
+| **1970s** | **DoD / TCP-IP** | Chuẩn thực tế vận hành Internet |
+| **1974** | **SNA (IBM)** | Thiết kế độc quyền cho Mainframe |
+| **1980s** | **AppleTalk / IPX** | Mạng cục bộ cũ (Apple & Novell) |
+| **1984** | **OSI Model** | Chuẩn tham chiếu lý thuyết học thuật |
 
 ### 1. DoD / TCP/IP (Department of Defense - 1970)
 *   **Lịch sử ra đời:** Được phát triển bởi Bộ Quốc phòng Hoa Kỳ cho dự án ARPANET (tiền thân của Internet ngày nay).

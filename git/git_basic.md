@@ -67,15 +67,10 @@ graph TD
 
 Nhiều lập trình viên mới bắt đầu thường nhầm lẫn giữa ba khái niệm này. Thực tế chúng nằm ở các lớp công nghệ và môi trường hoạt động hoàn toàn khác nhau:
 
-```
-+-----------------------------------------------------------------------+
-| Phân cấp công nghệ Git                                                 |
-|                                                                       |
-| [ Máy tính cá nhân ] ───────────────> [ Đám mây / Máy chủ doanh nghiệp ]|
-|  Git (Local CLI)                        GitHub (Cloud SaaS / Public)  |
-|  (Theo dõi thay đổi)                    GitLab (DevOps / Enterprise)  |
-+-----------------------------------------------------------------------+
-```
+| Môi trường | Máy tính cá nhân (Cục bộ) | Đám mây / Máy chủ doanh nghiệp (Từ xa) |
+| :--- | :--- | :--- |
+| **Công nghệ** | **Git (Local CLI)** | **GitHub** (Cloud SaaS / Public)<br>**GitLab** (DevOps / Enterprise / Self-hosted) |
+| **Vai trò** | Theo dõi và ghi lại các thay đổi cục bộ dưới máy cá nhân. | Lưu trữ, chia sẻ mã nguồn và cộng tác phát triển nhóm. |
 
 ### 1. Git (Hạt nhân công cụ)
 *   **Định nghĩa:** Là phần mềm quản lý phiên bản phân tán cốt lõi (Core engine).
