@@ -168,84 +168,119 @@ Mạng máy tính được chia làm nhiều loại tùy thuộc vào phạm vi 
 
 Để hiểu sâu sắc cách thức mạng vận hành, hãy cùng phân tích hai kịch bản cụ thể:
 
-### 💬 Tình huống 1: Luồng gửi tin nhắn (Chat Message)
-Giả sử bạn dùng điện thoại để gửi tin nhắn `"Hello"` cho một người bạn thông qua một ứng dụng chat (như Messenger). Quá trình này diễn ra qua cơ chế **Đóng gói (Encapsulation)** tại máy gửi và **Giải đóng gói (Decapsulation)** tại máy nhận.
+### 💬 Tình huống 1: Nhắn tin Zalo ("Học internet nè mọi người")
+* **Đặc trưng:** Giao tiếp văn bản, yêu cầu độ tin cậy tuyệt đối 100% (Không được mất chữ).
 
 ```mermaid
 sequenceDiagram
     autonumber
-    participant ClientA as Điện thoại gửi (Client A)
+    participant ClientA as Điện thoại của bạn (Client A)
     participant Router as Router Wi-Fi trung gian
-    participant Server as Server Chat
+    participant Server as Server Zalo
     
-    Note over ClientA: Ứng dụng chat đóng gói dữ liệu
-    Note over ClientA: Tầng 7: JSON {"msg": "Hello"} + TLS
-    Note over ClientA: Tầng 4: TCP Segment (Port: 54321 -> 443)
-    Note over ClientA: Tầng 3: IP Packet (IP: 192.168.1.5 -> Server IP)
-    Note over ClientA: Tầng 2: MAC Frame (MAC: ClientA -> Router MAC)
-    Note over ClientA: Tầng 1: Đổi thành Bits & phát sóng Wi-Fi
+    Note over ClientA: Quá trình Đóng gói (Encapsulation)
+    Note over ClientA: Tầng 4 (Application): UTF-8 + Mã hóa TLS + Gắn Token + "Học internet nè mọi người"
+    Note over ClientA: Tầng 3 (Transport): TCP Segment (Port 54321 -> 443, Sequence Number)
+    Note over ClientA: Tầng 2 (Internet): IP Packet (IP Nguồn -> IP Đích Server Zalo)
+    Note over ClientA: Tầng 1 (Network Access): MAC Frame (MAC Nguồn -> MAC Router)
     
-    ClientA->>Router: Truyền dòng bit vật lý qua Wi-Fi
+    ClientA->>Router: Phát tín hiệu nhị phân (Bits) qua sóng Wi-Fi
     
-    Note over Router: Router mở Frame MAC kiểm tra
-    Note over Router: Router đọc Packet IP định tuyến
-    Note over Router: Router đóng gói lại Frame mới để gửi qua cáp quang
+    Note over Router: Router nhận và mở Frame MAC, đọc IP Packet để định tuyến đi tiếp
     
-    Router->>Server: Truyền gói tin qua các chặng trên Internet (WAN)
+    Router->>Server: Truyền qua cáp quang & các Routers trên Internet (WAN)
     
-    Note over Server: Server giải đóng gói dữ liệu
-    Note over Server: Tầng 2: Đọc Frame MAC Server
-    Note over Server: Tầng 3: Đọc Packet IP Server
-    Note over Server: Tầng 4: Đọc Segment TCP (Port 443)
-    Note over Server: Tầng 7: Giải mã TLS -> Nhận chuỗi JSON {"msg": "Hello"}
-    Note over Server: Server xử lý và gửi tiếp cho người nhận
+    Note over Server: Quá trình Mở gói (Decapsulation)
+    Note over Server: Tầng 1 & 2: Dịch tín hiệu -> Tháo vỏ MAC & IP -> Chuyển lên tầng Giao vận
+    Note over Server: Tầng 3 (Transport): Kiểm tra TCP -> Ráp Segment -> Phản hồi ACK (Đã gửi)
+    Note over Server: Tầng 4 (Application): Xác thực Token -> Giải mã TLS/UTF-8 -> Lưu DB
 ```
 
-#### Chi tiết các bước:
-1.  **Tầng Ứng dụng (Application - Lớp 7, 6, 5):**
-    *   Bạn nhấn "Gửi". Ứng dụng chat đóng gói tin nhắn thành một chuỗi dữ liệu (ví dụ JSON): `{"msg": "Hello"}`.
-    *   Giao thức HTTPS hoặc WebSocket mã hóa gói tin này bằng SSL/TLS để tránh bị nghe lén.
-    *   *Đơn vị dữ liệu:* **Message / Data**.
-2.  **Tầng Giao vận (Transport - Lớp 4):**
-    *   Hệ điều hành nhận Message và gắn thêm thông tin cổng giao tiếp.
-    *   *Source Port:* Cổng ngẫu nhiên do máy khách tạo ra (ví dụ: `54321`).
-    *   *Destination Port:* Cổng dịch vụ của Server Chat (ví dụ: `443` cho HTTPS bảo mật).
-    *   Nếu dùng giao thức TCP, hệ điều hành sẽ gắn thêm số thứ tự phân mảnh (`Sequence Number`) để đảm bảo gói tin không bị mất và được ráp lại đúng thứ tự ở máy nhận.
-    *   *Đơn vị dữ liệu:* **Segment**.
-3.  **Tầng Mạng/Internet (Network - Lớp 3):**
-    *   Segment được đẩy xuống tầng dưới để bọc thêm nhãn địa chỉ IP.
-    *   *Source IP:* Địa chỉ IP của máy bạn (ví dụ: `192.168.1.5`).
-    *   *Destination IP:* Địa chỉ IP của Server Chat (ví dụ: `31.13.77.36` - IP của Facebook).
-    *   *Đơn vị dữ liệu:* **Packet** (Gói tin).
-4.  **Tầng Liên kết dữ liệu (Data Link - Lớp 2):**
-    *   Packet tiếp tục được bọc thêm nhãn địa chỉ vật lý MAC.
-    *   *Source MAC:* Địa chỉ MAC vĩnh viễn trên card mạng của điện thoại bạn.
-    *   *Destination MAC:* Địa chỉ MAC của thiết bị kế cận tiếp theo (chính là Router Wi-Fi nhà bạn - đóng vai trò Default Gateway). *Lưu ý: Địa chỉ MAC đích sẽ thay đổi qua từng chặng (hop), còn địa chỉ IP đích thì giữ nguyên trong suốt hành trình.*
-    *   *Đơn vị dữ liệu:* **Frame** (Khung tin).
-5.  **Tầng Vật lý (Physical - Lớp 1):**
-    *   Frame được biên dịch thành dòng nhị phân gồm các bit `0` và `1`.
-    *   Card mạng chuyển đổi các bit này thành sóng vô tuyến điện từ phát ra không trung (Wi-Fi) hướng tới Router.
-6.  **Tại các Router trung gian:**
-    *   Nhận tín hiệu vật lý -> Chuyển thành bit -> Lắp lại thành Frame -> Kiểm tra MAC đích có phải của mình không.
-    *   Nếu đúng, Router bóc vỏ Frame ra để đọc Packet IP. Router nhìn vào IP đích, tra cứu bảng định tuyến (Routing Table) để quyết định chặng tiếp theo.
-    *   Nó bọc Packet đó vào một Frame mới (với MAC nguồn là Router hiện tại và MAC đích là Router tiếp theo) và gửi đi qua dây cáp quang.
-7.  **Tại Server nhận (Giải đóng gói - Decapsulation):**
-    *   Server nhận dòng bit vật lý -> Lắp ráp thành Frame (đọc MAC khớp) -> Bóc Frame lấy Packet (đọc IP khớp) -> Bóc Packet lấy Segment (đọc Port khớp) -> Bóc Segment lấy Message gốc -> Giải mã TLS và chuyển dữ liệu text `"Hello"` lên cho phần mềm Server xử lý.
+#### 1. Máy Gửi (Điện thoại của bạn) - Quá trình Đóng gói (Encapsulation)
+Dữ liệu đi từ tầng cao nhất xuống tầng thấp nhất:
+*   **Tầng 4: Application Layer (Tầng Ứng dụng)**
+    *   *Chức năng Tầng 7 (Tạo thông điệp):* Ứng dụng Zalo tiếp nhận chuỗi `"Học internet nè mọi người"`. Nhúng vào giao thức giao tiếp (VD: HTTPS) kèm theo metadata (ID người gửi, Thời gian).
+    *   *Chức năng Tầng 6 (Dịch & Mã hóa):* Dịch chuỗi văn bản sang mã UTF-8 để không bị lỗi font Tiếng Việt. Sau đó, chạy qua thuật toán Mã hóa (TLS/SSL) xáo trộn dòng chữ thành một chuỗi ký tự mật mã vô nghĩa để bảo mật.
+    *   *Chức năng Tầng 5 (Quản lý phiên):* Gắn Token xác thực để chứng minh bạn đang đăng nhập hợp lệ. Đánh dấu số thứ tự hội thoại để phần mềm biết luồng tin nhắn nào hiện trước/sau.
+    *   $\rightarrow$ **Kết quả:** Tạo ra một khối Data hoàn chỉnh.
+*   **Tầng 3: Transport Layer (Tầng Giao vận)**
+    *   *Giao thức:* TCP.
+    *   *Xử lý:* Cắt khối Data thành các đoạn nhỏ. Gắn Port đích (VD: 443) và gán Số thứ tự (Sequence Number) cho từng đoạn để máy nhận biết đường ghép lại.
+    *   $\rightarrow$ **Kết quả:** Tạo ra các Segment (Đoạn dữ liệu).
+*   **Tầng 2: Internet Layer (Tầng Mạng)**
+    *   *Giao thức:* IP.
+    *   *Xử lý:* Gắn Địa chỉ IP Nguồn (Điện thoại) và Địa chỉ IP Đích (Máy chủ Zalo) vào các Segment để hệ thống mạng toàn cầu biết đường định tuyến.
+    *   $\rightarrow$ **Kết quả:** Tạo ra các Packet (Gói tin).
+*   **Tầng 1: Network Access Layer (Tầng Truy cập mạng)**
+    *   *Xử lý:* Gắn Địa chỉ MAC Nguồn (Card Wi-Fi điện thoại) và MAC Đích (Router Wi-Fi nhà bạn). Băm nhỏ tất cả thành luồng nhị phân (01010) và phát thành Sóng Wi-Fi.
+    *   $\rightarrow$ **Kết quả:** Tạo ra Frame $\rightarrow$ Truyền tải dưới dạng Bits.
+
+#### 2. Môi trường truyền dẫn (Internet)
+Sóng Wi-Fi bay đến cục Router $\rightarrow$ Chuyển thành tín hiệu quang/điện chạy qua cáp quang của nhà mạng $\rightarrow$ Đi qua nhiều trạm định tuyến (Routers) để tìm đường tối ưu nhất đến Server Zalo.
+
+#### 3. Máy Nhận (Server Zalo) - Quá trình Mở gói (Decapsulation)
+Dữ liệu đi ngược từ tầng thấp nhất lên tầng cao nhất:
+*   **Tầng 1 & Tầng 2:** Nhận tín hiệu vật lý $\rightarrow$ Dịch thành Frame $\rightarrow$ Tháo vỏ MAC $\rightarrow$ Đẩy lên Tầng 2. Tháo vỏ IP (Xác nhận đúng IP máy chủ của mình) $\rightarrow$ Đẩy lên Tầng 3.
+*   **Tầng 3 (Transport Layer):** Đọc lớp vỏ TCP. Ghép các Segment lại theo đúng số thứ tự. Phản hồi lại điện thoại của bạn một tín hiệu xác nhận (ACK) để điện thoại hiện chữ "Đã gửi". Tháo vỏ TCP $\rightarrow$ Đẩy Data lên tầng trên.
+*   **Tầng 4 (Application Layer):**
+    *   Kiểm tra Token phiên bản (Tầng 5).
+    *   Dùng khóa để Giải mã và dịch ngược UTF-8 (Tầng 6).
+    *   Ứng dụng Server (Tầng 7) nhận được dòng chữ `"Học internet nè mọi người"` nguyên vẹn, lưu vào cơ sở dữ liệu và chuẩn bị lặp lại quy trình Đóng gói để đẩy tin nhắn đó về điện thoại của các thành viên trong nhóm.
 
 ---
 
-### 🎥 Tình huống 2: Luồng xem video YouTube
-Khi bạn truy cập `youtube.com` và nhấn xem một video, một chuỗi tương tác phức tạp của nhiều giao thức mạng xảy ra chỉ trong vài mili-giây:
+### 🎥 Tình huống 2: Xem Video trên YouTube
+* **Đặc trưng:** Truyền tải đa phương tiện, yêu cầu tốc độ cực cao, thời gian thực, chấp nhận mất mát dữ liệu nhỏ (Rớt khung hình) nhưng không được dừng tải.
 
 ```mermaid
 sequenceDiagram
     autonumber
-    participant Client as Trình duyệt (Client)
-    participant DNS as DNS Server (Danh bạ)
-    participant YT_Server as YouTube Server
+    participant Server as Server YouTube
+    participant DNS as DNS Server
+    participant Client as Máy tính của bạn (Client)
     
-    %% Bước 1: DNS
-    Client->>DNS: Truy vấn DNS: youtube.com có IP là gì? (UDP Port 53)
+    Note over Client: DNS Lookup: youtube.com -> IP Server
+    Client->>DNS: Truy vấn IP youtube.com
+    DNS-->>Client: Trả về IP Server YouTube
+    
+    Note over Server: Quá trình Đóng gói (Encapsulation)
+    Note over Server: Tầng 4 (Application): Lấy Video -> Nén (VP9/AV1) -> Mở Streaming Session
+    Note over Server: Tầng 3 (Transport): UDP/QUIC (Datagram, không đợi bắt tay, xả liên tục)
+    Note over Server: Tầng 2 & 1: Gắn IP/MAC -> Chuyển thành xung ánh sáng
+    
+    Server->>Client: Stream luồng Datagram liên tục qua cáp quang biển (WAN)
+    Note over Client: Gói tin số 10 bị rớt mất trên đường truyền
+    
+    Note over Client: Quá trình Mở gói & Hiển thị
+    Note over Client: Tầng 1 & 2: Nhận tín hiệu -> Tháo MAC & IP
+    Note over Client: Tầng 3 (Transport): Gom gói 8, 9, 11, 12 và BỎ QUA gói 10
+    Note over Client: Tầng 4 (Application): Lưu bộ đệm (Buffer) -> Giải nén video -> Render hình ảnh
+```
+
+#### 1. Máy Gửi (Máy chủ YouTube) - Quá trình Đóng gói
+*   **Tầng 4: Application Layer (Tầng Ứng dụng)**
+    *   *Chức năng Tầng 7:* Server lấy tệp video mà bạn yêu cầu xem.
+    *   *Chức năng Tầng 6:* Nén video cực mạnh bằng các chuẩn (như VP9, AV1) để tối ưu băng thông. Mã hóa luồng truyền phát.
+    *   *Chức năng Tầng 5:* Mở một luồng truyền phát liên tục (Streaming Session).
+    *   $\rightarrow$ **Kết quả:** Khối Data video khổng lồ.
+*   **Tầng 3: Transport Layer (Tầng Giao vận)**
+    *   *Giao thức:* UDP (hoặc giao thức hiện đại QUIC dựa trên UDP).
+    *   *Xử lý:* Cắt dữ liệu thành các phần nhỏ. KHÔNG cần bắt tay xác nhận, KHÔNG đợi phản hồi. Cứ thế "xả" dữ liệu liên tục về phía người xem để đảm bảo tốc độ.
+    *   $\rightarrow$ **Kết quả:** Tạo ra hàng ngàn Datagram.
+*   **Tầng 2 (Internet Layer) & Tầng 1 (Network Access Layer):**
+    *   Gắn IP Server (Nguồn) và IP nhà bạn (Đích). Gắn MAC. Bắn tín hiệu dưới dạng chớp sáng qua cáp quang biển.
+
+#### 2. Môi trường truyền dẫn (Internet)
+Hàng triệu gói tin mang hình ảnh và âm thanh đua nhau chạy về Việt Nam. Do đường truyền xa và dùng UDP, một vài gói tin bị kẹt xe hoặc rớt mất là chuyện bình thường.
+
+#### 3. Máy Nhận (Máy tính của bạn) - Quá trình Mở gói & Hiển thị
+*   **Tầng 1 & Tầng 2:** Nhận tín hiệu, tháo MAC, tháo IP, đưa lên tầng trên.
+*   **Tầng 3 (Transport Layer):** Nhận các Datagram (UDP). *Lưu ý quan trọng: Nếu phát hiện gói số 10 bị rớt, Tầng 3 sẽ Bỏ qua luôn, không bắt YouTube gửi lại. Nó gom các gói 8, 9, 11, 12 đưa thẳng lên trên để video chạy tiếp.*
+*   **Tầng 4 (Application Layer):**
+    *   Duy trì luồng tải vào bộ nhớ đệm (Buffer).
+    *   Giải nén liên tục luồng video (Tầng 6).
+    *   Trình duyệt web (Tầng 7) nhận dữ liệu và vẽ lên màn hình.
+    *   *Kết quả:* Do thiếu gói tin số 10 ở tầng dưới, video của bạn có thể bị vỡ hạt (pixelated) trong 0.1 giây, nhưng hình ảnh vẫn trôi chảy mượt mà, không bị khựng lại bắt bạn phải nhìn vòng tròn "Loading...".3)
     DNS-->>Client: Trả về IP: 172.217.161.206
     
     %% Bước 2: Bắt tay TCP
