@@ -63,7 +63,19 @@ graph TD
 
 ---
 
-## 🌐 3. PHÂN BIỆT: GIT - GITHUB - GITLAB
+## 📖 3. LỊCH SỬ RA ĐỜI & LÝ DO XUẤT HIỆN CỦA GIT (THE ORIGIN OF GIT)
+
+*   **Người sáng lập:** Được sáng lập bởi **Linus Torvalds** (cha đẻ của hệ điều hành Linux) vào năm **2005**.
+*   **Bối cảnh ra đời:** 
+    Trong quá trình phát triển nhân hệ điều hành Linux (Linux Kernel), cộng đồng đã sử dụng một công cụ quản lý mã nguồn độc quyền tên là **BitKeeper** được cấp phép miễn phí. Vào năm 2005, mối quan hệ giữa cộng đồng Linux và BitKeeper đổ vỡ, BitKeeper rút lại quyền sử dụng miễn phí này. Không hài lòng với các hệ thống VCS hiện có thời bấy giờ (như SVN hay CVS), Linus Torvalds đã tự thiết kế và viết ra Git chỉ trong vài tuần với triết lý: Tốc độ cao, phân tán 100%, an toàn dữ liệu và hỗ trợ hàng triệu file/commit đồng thời.
+*   **Các vấn đề thực tế mà Git khắc phục (so với các VCS cũ như SVN):**
+    1.  **Tránh điểm lỗi duy nhất (Single Point of Failure):** Trong các hệ thống tập trung (CVCS) như SVN, nếu máy chủ trung tâm bị sập hoặc mất điện, toàn bộ lập trình viên phải dừng làm việc (không thể commit hay xem lịch sử). Git giải quyết bằng cơ chế phân tán: Mỗi lập trình viên có một bản sao lưu (clone) đầy đủ lịch sử dự án dưới máy local, có thể làm việc ngoại tuyến 100% và khôi phục lại server bất cứ lúc nào.
+    2.  **Tối ưu hóa cơ chế tạo nhánh (Branching) cực nhanh:** Trong SVN, tạo một nhánh mới đòi hỏi server phải copy toàn bộ thư mục dự án sang một thư mục mới (cực kỳ tốn dung lượng và thời gian). Git quản lý nhánh bằng các **Con trỏ (Pointers)** dung lượng 41 bytes trỏ thẳng đến mã băm của Commit. Việc tạo nhánh hay gộp nhánh (merge) trong Git diễn ra gần như lập tức trong thời gian hằng số $O(1)$.
+    3.  **Bảo vệ tính toàn vẹn dữ liệu (Data Integrity):** Các VCS cũ không có cơ chế phát hiện file bị lỗi vật lý hay bị thay đổi nội dung ngầm trong quá trình truyền tải qua mạng. Git giải quyết bằng cách chạy thuật toán băm mật mã **SHA-1** cho tất cả các đối tượng (file, commit, cây thư mục). Bất kỳ thay đổi nhỏ nào đối với file đều làm thay đổi mã hash SHA-1 tương ứng, giúp phát hiện lỗi hoặc sự can thiệp dữ liệu lập tức.
+
+---
+
+## 🌐 4. PHÂN BIỆT: GIT - GITHUB - GITLAB
 
 Nhiều lập trình viên mới bắt đầu thường nhầm lẫn giữa ba khái niệm này. Thực tế chúng nằm ở các lớp công nghệ và môi trường hoạt động hoàn toàn khác nhau:
 
@@ -99,7 +111,7 @@ Nhiều lập trình viên mới bắt đầu thường nhầm lẫn giữa ba k
 
 ---
 
-## 🏗️ 4. KIẾN TRÚC & CÁC VÙNG NHỚ TRONG GIT (CORE ARCHITECTURE)
+## 🏗️ 5. KIẾN TRÚC & CÁC VÙNG NHỚ TRONG GIT (CORE ARCHITECTURE)
 
 ### Logic cốt lõi: Snapshots vs Deltas
 Hầu hết các hệ thống VCS cũ (như SVN) tiếp cận dữ liệu dưới dạng **Deltas** (lưu trữ danh sách các thay đổi nhỏ lũy tiến của từng tệp tin).
@@ -140,7 +152,7 @@ graph LR
 
 ---
 
-## 🔄 5. QUY TRÌNH LÀM VIỆC CƠ BẢN HÀNG NGÀY (DAILY WORKFLOW)
+## 🔄 6. QUY TRÌNH LÀM VIỆC CƠ BẢN HÀNG NGÀY (DAILY WORKFLOW)
 
 Vòng đời làm việc cơ bản hàng ngày của lập trình viên với Git thường xoay quanh các lệnh sau:
 
