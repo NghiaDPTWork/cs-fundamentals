@@ -6,7 +6,7 @@ Tài liệu này tập trung chi tiết vào cú pháp, các thành phần cấu
 
 ## 1. THÀNH PHẦN VÀ CẤU TRÚC CÂU LỆNH SELECT
 
-Một câu lệnh truy vấn dữ liệu (SELECT) trong SQL có cấu trúc chặt chẽ. Khi viết và khi Database Engine thực thi, thứ tự xử lý hoàn toàn khác nhau. Đây là điểm mấu chốt thường xuyên được khai thác khi phỏng vấn.
+Một câu lệnh truy vấn dữ liệu (SELECT) trong SQL có cấu trúc chặt chẽ. Khi viết và khi Database Engine thực thi, thứ tự xử lý hoàn toàn khác nhau. Đây là điểm mấu chốt cần nắm vững để tối ưu hóa truy vấn.
 
 ### 1.1. Thứ tự viết (Writing Order) vs Thứ tự thực thi thực tế (Execution Order)
 
@@ -27,7 +27,7 @@ Khi viết code, ta tuân theo cú pháp ngữ pháp quy định. Tuy nhiên, Da
 
 ### 1.2. Giải thích logic tại sao có sự khác biệt?
 
-Sự chênh lệch giữa thứ tự viết và thực thi dẫn đến các quy tắc bắt buộc trong SQL. Hãy nhớ câu trả lời phỏng vấn kinh điển sau:
+Sự chênh lệch giữa thứ tự viết và thực thi dẫn đến các quy tắc bắt buộc trong SQL. Hãy lưu ý cơ chế logic sau:
 
 *   **Tại sao không thể dùng ALIAS (Tên giả lập) của cột được định nghĩa trong SELECT ở mệnh đề WHERE?**
     *   *Câu trả lời:* Bởi vì mệnh đề `WHERE` được thực thi **trước** mệnh đề `SELECT`. Tại thời điểm `WHERE` đang lọc dữ liệu, Database Engine vẫn chưa chạy đến bước `SELECT` nên nó hoàn toàn chưa biết gì về các ALIAS được định nghĩa ở đó.

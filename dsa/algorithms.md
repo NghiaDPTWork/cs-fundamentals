@@ -1,6 +1,6 @@
 # GIẢI THUẬT (ALGORITHMS)
 
-Tài liệu này tổng hợp toàn bộ các giải thuật cốt lõi. Mỗi phần được cấu trúc tối giản: Định nghĩa phỏng vấn trực diện, ẩn dụ trực quan ngắn gọn, từ khóa chuyên môn cốt lõi (Big O, Trade-offs) và code demo Java tinh gọn nhất.
+Tài liệu này tổng hợp toàn bộ các giải thuật cốt lõi. Mỗi phần được cấu trúc tối giản: Định nghĩa trực diện, ẩn dụ trực quan ngắn gọn, từ khóa chuyên môn cốt lõi (Big O, Trade-offs) và code demo Java tinh gọn nhất.
 
 ---
 
@@ -8,7 +8,7 @@ Tài liệu này tổng hợp toàn bộ các giải thuật cốt lõi. Mỗi p
 
 *   **Định nghĩa:** Giải thuật (Algorithm) là một tập hợp các chỉ dẫn logic, có tuần tự và hữu hạn để xử lý dữ liệu đầu vào (Input) nhằm giải quyết một bài toán cụ thể và cho ra kết quả mong muốn (Output).
 *   **Ẩn dụ trực quan:** Giống như một công thức nấu ăn chuẩn xác từng bước dành cho máy tính.
-*   **Đặc trưng cốt lõi khi phỏng vấn:**
+*   **Đặc trưng cốt lõi:**
     1.  **Finiteness (Tính hữu hạn):** Phải dừng lại sau một số bước hữu hạn, không lặp vô hạn.
     2.  **Definiteness (Tính xác định):** Mỗi bước phải rõ ràng, chỉ có duy nhất một cách hiểu cho máy tính.
     3.  **Feasibility (Tính khả thi):** Có thể thực thi được bằng tài nguyên phần cứng thực tế.
@@ -386,7 +386,7 @@ Tài liệu này tổng hợp toàn bộ các giải thuật cốt lõi. Mỗi p
 
 ## 3. KỸ THUẬT TỐI ƯU HÓA THỰC CHIẾN (TECHNIQUES)
 
-Các mẫu kỹ thuật quan trọng giúp tối ưu chương trình khi phỏng vấn Coding:
+Các mẫu kỹ thuật quan trọng giúp tối ưu chương trình khi lập trình thực tế:
 
 ### 3.1. Kỹ thuật hai con trỏ (Two Pointers)
 *   **Định nghĩa:** Sử dụng hai biến chỉ số (chỉ vào đầu và cuối mảng, hoặc cùng đi từ đầu) dịch chuyển ngược chiều hoặc cùng chiều để quét mảng, giảm độ phức tạp thời gian từ $O(n^2)$ về $O(n)$.
@@ -494,7 +494,7 @@ Các kịch bản tính toán bộ nhớ phổ biến:
 
 ### 4.3. Bảng đối chiếu hiệu năng Big O (Big O Comparison Table)
 
-Bảng xếp hạng hiệu năng thuật toán giúp bạn so sánh trực tiếp khi trao đổi với người phỏng vấn:
+Bảng xếp hạng hiệu năng thuật toán giúp bạn so sánh trực tiếp các giải thuật:
 
 | Big O | Tốc độ | Nhận xét thực tế | Ví dụ tiêu biểu |
 | :--- | :--- | :--- | :--- |

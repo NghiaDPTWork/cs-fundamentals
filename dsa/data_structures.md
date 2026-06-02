@@ -1,6 +1,6 @@
 # CẤU TRÚC DỮ LIỆU (DATA STRUCTURES)
 
-Tài liệu này tổng hợp toàn bộ các cấu trúc dữ liệu cốt lõi. Mỗi phần chỉ tập trung vào: Định nghĩa phỏng vấn trực diện, bảng phân loại các dạng con kèm cách nhận biết khi đọc đề, cơ chế duyệt cây (Tree Traversal) và phân tích sâu sắc xung đột băm (Hash Collision) của HashMap.
+Tài liệu này tổng hợp toàn bộ các cấu trúc dữ liệu cốt lõi. Mỗi phần chỉ tập trung vào: Định nghĩa trực diện, bảng phân loại các dạng con kèm cách nhận biết khi đọc đề, cơ chế duyệt cây (Tree Traversal) và phân tích sâu sắc xung đột băm (Hash Collision) của HashMap.
 
 ---
 
@@ -18,7 +18,7 @@ Tài liệu này tổng hợp toàn bộ các cấu trúc dữ liệu cốt lõi
         *   *Insert (Thêm mới):* Chèn phần tử mới vào cấu trúc.
         *   *Delete (Xóa bỏ):* Gỡ bỏ phần tử khỏi cấu trúc.
     *Mỗi cấu trúc dữ liệu thực chất là một sự đánh đổi (Trade-off) về hiệu năng của 4 thao tác trên trên nền tảng 2 dạng lưu trữ vật lý để giải quyết một bài toán cụ thể.*
-*   **Đặc trưng cốt lõi khi phỏng vấn:**
+*   **Đặc trưng cốt lõi:**
     *   **Time Complexity (Độ phức tạp thời gian):** Thời gian thực hiện các tác vụ (Insert, Delete, Access, Search) được biểu diễn bằng Big O.
     *   **Space Complexity (Độ phức tạp không gian):** Lượng bộ nhớ RAM cần tiêu thụ để cấu trúc tự duy trì.
     *   **Memory Layout (Bố cục bộ nhớ):** Vùng nhớ liên tục (như Mảng) hay rải rác qua liên kết (như Danh sách liên kết).
@@ -85,18 +85,18 @@ Tài liệu này tổng hợp toàn bộ các cấu trúc dữ liệu cốt lõi
 | **Cây tiền tố (Trie)** | Mỗi nút đại diện cho một ký tự, các từ có chung tiền tố sẽ chia sẻ chung nhánh. | Bài toán về chuỗi: Gợi ý từ khóa (Auto-complete), kiểm tra chính tả, tìm kiếm từ điển. | Đi từ Root dọc theo từng ký tự của từ cần tìm. Tốc độ tìm kiếm $O(L)$ với $L$ là độ dài từ. |
 | **Segment / Fenwick Tree** | Cây quản lý thông tin các đoạn/khoảng của một mảng số. | Đề bài yêu cầu cập nhật phần tử và truy vấn tổng/min/max đoạn $[L, R]$ với tần suất lớn. | Cập nhật và truy vấn đoạn trong thời gian $O(\log n)$ thay vì duyệt mảng tuần tự $O(n)$. |
 
-#### Quy tắc duyệt cây (Tree Traversal) - Cốt lõi phỏng vấn
+#### Quy tắc duyệt cây (Tree Traversal)
 Để duyệt qua toàn bộ các nút của cây, ta có hai phương pháp:
 
 1.  **Duyệt theo chiều sâu (DFS):**
     *   **Pre-order (NLR - Duyệt trước):** Thăm nút cha $\rightarrow$ duyệt con trái $\rightarrow$ duyệt con phải.
-        *   *Phỏng vấn trả lời:* Dùng để **sao chép cây, tạo biểu thức tiền tố**.
+        *   *Ứng dụng:* Dùng để **sao chép cây, tạo biểu thức tiền tố**.
     *   **In-order (LNR - Duyệt giữa):** Duyệt con trái $\rightarrow$ thăm nút cha $\rightarrow$ duyệt con phải.
-        *   *Phỏng vấn trả lời:* Dùng để **duyệt cây BST theo thứ tự tăng dần**.
+        *   *Ứng dụng:* Dùng để **duyệt cây BST theo thứ tự tăng dần**.
     *   **Post-order (LRN - Duyệt sau):** Duyệt con trái $\rightarrow$ duyệt con phải $\rightarrow$ thăm nút cha.
-        *   *Phỏng vấn trả lời:* Dùng để **xóa cây (xóa con trước khi xóa cha) hoặc tính kích thước thư mục**.
+        *   *Ứng dụng:* Dùng để **xóa cây (xóa con trước khi xóa cha) hoặc tính kích thước thư mục**.
 2.  **Duyệt theo chiều rộng (BFS / Level-order):** Duyệt theo từng tầng từ trên xuống, trái sang phải (sử dụng Hàng đợi - Queue).
-    *   *Phỏng vấn trả lời:* Dùng để **tìm nút gần gốc nhất, duyệt cây theo khoảng cách**.
+    *   *Ứng dụng:* Dùng để **tìm nút gần gốc nhất, duyệt cây theo khoảng cách**.
 
 ---
 

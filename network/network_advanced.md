@@ -57,24 +57,24 @@ sequenceDiagram
 ## 2. KHAI THÁC CÁC NGÁCH SÂU HỆ THỐNG (NICHE & CORNER CASES)
 
 ### 2.1. Socket Descriptor vs TCP Connection
-*   **Phỏng vấn hỏi:** Hệ điều hành quản lý kết nối TCP như thế nào?
+*   **Câu hỏi thực tế:** Hệ điều hành quản lý kết nối TCP như thế nào?
 *   **Trả lời:** OS Kernel coi mỗi Socket là một file đặc biệt và cấp cho nó một số nguyên gọi là **Socket File Descriptor (FD)**. Khi kết nối được thiết lập, OS cấp phát hai vùng đệm RAM cho riêng Socket đó: `Send Buffer` (để gửi) và `Receive Buffer` (để nhận).
 *   **Từ khóa cần nhớ:** 
     *   **SYN Backlog Queue:** Hàng đợi lưu các kết nối chưa hoàn tất bắt tay 3 bước.
     *   **SYN Flood Attack:** Kẻ tấn công gửi hàng loạt gói SYN nhưng không phản hồi ACK cuối để làm tràn hàng đợi SYN Backlog. OS chống lại bằng cờ **SYN Cookies**.
 
 ### 2.2. NIC Hardware Interrupts & Direct Memory Access (DMA)
-*   **Phỏng vấn hỏi:** Làm thế nào dữ liệu từ cáp mạng đi vào RAM mà không làm CPU quá tải?
+*   **Câu hỏi thực tế:** Làm thế nào dữ liệu từ cáp mạng đi vào RAM mà không làm CPU quá tải?
 *   **Trả lời:** Card mạng (NIC) sử dụng công nghệ **DMA (Direct Memory Access)** để ghi dữ liệu trực tiếp từ cổng vật lý vào RAM của hệ thống (Rx Ring Buffer) mà không cần CPU tham gia. Khi chép xong, NIC phát tín hiệu ngắt phần cứng (**IRQ**) gửi tới CPU. CPU tạm dừng tác vụ hiện tại để gọi SoftIRQ xử lý gói tin mạng từ RAM lên ứng dụng.
 
 ### 2.3. Event Polling: epoll/kqueue vs select/poll
-*   **Phỏng vấn hỏi:** Tại sao Web Server (Nginx, Node.js) chịu tải được hàng triệu kết nối đồng thời?
+*   **Câu hỏi thực tế:** Tại sao Web Server (Nginx, Node.js) chịu tải được hàng triệu kết nối đồng thời?
 *   **Trả lời:** Nhờ mô hình Event-driven thay thế cho kiểm tra tuần tự.
     *   **select/poll (Cũ):** Duyệt tuần tự qua toàn bộ danh sách kết nối để kiểm tra có dữ liệu hay không ($O(N)$ time). Cực kỳ chậm khi số kết nối lớn.
     *   **epoll (Linux) / kqueue (macOS) (Hiện đại):** OS Kernel lưu các socket vào cây đỏ-đen, khi có sự kiện mạng, Kernel tự gọi callback đưa socket vào hàng đợi sẵn sàng. Ứng dụng chỉ đọc các socket đã sẵn sàng với độ phức tạp **$O(1)$ time**.
 
 ### 2.4. TCP Congestion Control: BBR vs Cubic
-*   **Phỏng vấn hỏi:** Sự khác biệt giữa thuật toán kiểm soát tắc nghẽn BBR và Cubic?
+*   **Câu hỏi thực tế:** Sự khác biệt giữa thuật toán kiểm soát tắc nghẽn BBR và Cubic?
 *   **Trả lời:**
     *   **Cubic (Loss-based):** Tăng tốc độ gửi cho đến khi xảy ra mất gói (packet loss) thì đột ngột giảm 50% cửa sổ truyền. Gây răng cưa và tích tụ hàng đợi tại router.
     *   **BBR (Bandwidth/RTT-based):** Do Google phát triển. Nó chủ động đo đạc băng thông thực tế (Bottleneck Bandwidth) và thời gian RTT ngắn nhất của đường truyền để điều phối tốc độ gửi tối ưu, tránh tích tụ hàng đợi và hoạt động rất tốt trên mạng không dây chập chờn.

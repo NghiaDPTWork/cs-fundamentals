@@ -7,20 +7,20 @@ Tài liệu này hệ thống hóa các kiến thức nền tảng về Cơ sở
 ## 1. TÍNH CHẤT HỆ QUẢN TRỊ CƠ SỞ DỮ LIỆU (DBMS PROPERTIES)
 
 ### 1.1. Tính chất ACID (ACID Properties)
-Khi đi phỏng vấn, ACID là câu hỏi kinh điển để đánh giá sự hiểu biết về độ tin cậy giao dịch. Dưới đây là cách giải nghĩa trực diện, phi hàn lâm:
+ACID là tiêu chuẩn cốt lõi để đánh giá sự hiểu biết về độ tin cậy giao dịch. Dưới đây là cách giải nghĩa trực diện, phi hàn lâm:
 
 *   **Atomicity (Tính nguyên tử - "Tất cả hoặc không có gì"):**
     *   *Cách hiểu đơn giản:* Giống như việc bạn chuyển tiền ngân hàng. Tiến trình gồm 2 bước: trừ tiền tài khoản bạn và cộng tiền tài khoản kia. Nếu bước 2 bị lỗi mất mạng, bước 1 phải được thu hồi (rollback). Không bao giờ có chuyện tài khoản bạn bị trừ tiền mà người kia không nhận được.
-    *   *Câu trả lời phỏng vấn:* Đảm bảo một giao dịch (transaction) gồm nhiều câu lệnh SQL phải được thực hiện thành công trọn vẹn 100%. Chỉ cần một câu lệnh bị lỗi, toàn bộ giao dịch sẽ thất bại và dữ liệu quay về trạng thái ban đầu.
+    *   *Ý nghĩa kỹ thuật:* Đảm bảo một giao dịch (transaction) gồm nhiều câu lệnh SQL phải được thực hiện thành công trọn vẹn 100%. Chỉ cần một câu lệnh bị lỗi, toàn bộ giao dịch sẽ thất bại và dữ liệu quay về trạng thái ban đầu.
 *   **Consistency (Tính nhất quán - "Luôn tuân thủ luật chơi"):**
     *   *Cách hiểu đơn giản:* Giống như luật chơi bóng đá: bóng chạm tay trong vòng cấm là penalty. Nếu hệ thống quy định "Số dư tài khoản không được nhỏ hơn 0", thì bất kỳ giao dịch nào cố tình rút quá số dư đều sẽ bị hệ thống từ chối để bảo vệ luật.
-    *   *Câu trả lời phỏng vấn:* Đảm bảo dữ liệu trước và sau giao dịch luôn hợp lệ, tuân thủ mọi ràng buộc (constraints), quy tắc nghiệp vụ (business rules) và trigger đã được định nghĩa trong cơ sở dữ liệu.
+    *   *Ý nghĩa kỹ thuật:* Đảm bảo dữ liệu trước và sau giao dịch luôn hợp lệ, tuân thủ mọi ràng buộc (constraints), quy tắc nghiệp vụ (business rules) và trigger đã được định nghĩa trong cơ sở dữ liệu.
 *   **Isolation (Tính cô lập - "Việc ai nấy làm, không xen vào nhau"):**
     *   *Cách hiểu đơn giản:* Giống như hai người cùng mua chiếc vé máy bay cuối cùng trên hệ thống tại cùng một giây. Hệ thống phải xử lý tuần tự: người nào bấm mua trước sẽ giữ vé, người kia sẽ nhận thông báo hết vé, không được phép xảy ra chuyện một chiếc vé bán cho cả hai người.
-    *   *Câu trả lời phỏng vấn:* Đảm bảo các giao dịch chạy đồng thời (concurrently) không được can thiệp hoặc nhìn thấy trạng thái tạm thời của nhau. Kết quả của hệ thống khi chạy nhiều giao dịch song song phải giống như khi chạy chúng tuần tự.
+    *   *Ý nghĩa kỹ thuật:* Đảm bảo các giao dịch chạy đồng thời (concurrently) không được can thiệp hoặc nhìn thấy trạng thái tạm thời của nhau. Kết quả của hệ thống khi chạy nhiều giao dịch song song phải giống như khi chạy chúng tuần tự.
 *   **Durability (Tính bền vững - "Đã lưu là không bao giờ mất"):**
     *   *Cách hiểu đơn giản:* Khi bạn nộp bài thi thành công và hệ thống báo "Đã nhận bài", dù ngay sau đó server trường bị mất điện hay cháy chip, kết quả bài thi của bạn vẫn phải được lưu trữ an toàn trong ổ đĩa cứng không bị mất.
-    *   *Câu trả lời phỏng vấn:* Đảm bảo một khi giao dịch đã xác nhận thành công (committed), các thay đổi dữ liệu sẽ được ghi xuống đĩa cứng vật lý vĩnh viễn và không bị mất ngay cả khi hệ thống crash hoặc mất điện đột ngột.
+    *   *Ý nghĩa kỹ thuật:* Đảm bảo một khi giao dịch đã xác nhận thành công (committed), các thay đổi dữ liệu sẽ được ghi xuống đĩa cứng vật lý vĩnh viễn và không bị mất ngay cả khi hệ thống crash hoặc mất điện đột ngột.
 
 ---
 
@@ -44,7 +44,7 @@ Tùy vào tình huống, DBMS sẽ khóa ở các phạm vi khác nhau để câ
 ### 1.3. Đảm bảo toàn vẹn dữ liệu (Data Integrity)
 Toàn vẹn dữ liệu là sự bảo đảm tính chính xác, nhất quán và đáng tin cậy của dữ liệu trong suốt vòng đời của nó. DBMS hỗ trợ 3 loại toàn vẹn dữ liệu cốt lõi:
 
-| Loại toàn vẹn dữ liệu | Định nghĩa phỏng vấn | Cơ chế đảm bảo | Ví dụ thực tế |
+| Loại toàn vẹn dữ liệu | Bản chất | Cơ chế đảm bảo | Ví dụ thực tế |
 | :--- | :--- | :--- | :--- |
 | **Entity Integrity** *(Toàn vẹn thực thể)* | Đảm bảo mỗi bản ghi trong bảng phải là duy nhất và có thể định danh được. | Sử dụng **Khóa chính (Primary Key)**. Khóa chính bắt buộc phải duy nhất và không được phép chứa giá trị `NULL`. | Bảng `users` có cột `user_id` làm khóa chính. Không thể có 2 user có cùng ID. |
 | **Referential Integrity** *(Toàn vẹn tham chiếu)* | Đảm bảo mối liên kết dữ liệu giữa các bảng luôn chính xác và không bị đứt gãy. | Sử dụng **Khóa ngoại (Foreign Key)**. Dữ liệu cột khóa ngoại ở bảng con phải tồn tại ở bảng cha, hoặc là `NULL`. | Bảng `orders` có cột `user_id` trỏ sang bảng `users`. Không thể tạo order của một user không tồn tại. |
@@ -140,7 +140,7 @@ graph TD
 
 ## 6. QUẢN LÝ GIAO DỊCH DỄ HIỂU (TRANSACTION TERMS)
 
-Khi phỏng vấn, hãy giải thích các thuật ngữ giao dịch một cách thực tế và trực quan nhất:
+Dưới đây là cách giải thích các thuật ngữ giao dịch một cách thực tế và trực quan nhất:
 
 *   **Transaction (Giao dịch) là gì?**
     *   *Giải thích bình dân:* Là một nhóm các hành động được bó lại với nhau. Nếu cả nhóm cùng hoàn thành thì mới được công nhận, nếu một hành động thất bại thì cả nhóm coi như chưa làm gì cả.
