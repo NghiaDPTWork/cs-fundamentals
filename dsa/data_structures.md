@@ -49,137 +49,111 @@ graph TD
 
 ---
 
-## 📶 3. CẤU TRÚC DỮ LIỆU TUYẾN TÍNH (LINEAR DATA STRUCTURES)
+## 📶 3. PHÂN TÍCH CHI TIẾT CÁC CẤU TRÚC DỮ LIỆU TUYẾN TÍNH (LINEAR DATA STRUCTURES)
 
-### Định nghĩa
-**Cấu trúc dữ liệu tuyến tính** là loại cấu trúc mà các phần tử dữ liệu được sắp xếp theo một thứ tự tuần tự hoặc tuyến tính. Trong đó, mỗi phần tử được liên kết mật thiết với phần tử kế tiếp (Next) và phần tử trước đó (Previous) của nó.
+Cấu trúc dữ liệu tuyến tính là loại cấu trúc mà các phần tử được sắp xếp theo một thứ tự tuần tự logic. Mỗi phần tử được liên kết với phần tử trước và sau nó.
 
-### Phân loại
+### 3.1. Mảng (Array - Tĩnh và Động)
+*   **Định nghĩa tổng quan:** Tập hợp các phần tử có cùng kiểu dữ liệu, nằm ở các ô nhớ liên tiếp nhau trong bộ nhớ RAM.
 
-#### A. Tuyến tính Tĩnh (Static Linear)
-*   **Cơ chế:** Cấp phát một vùng nhớ liên tục có kích thước cố định (fixed size) ngay tại thời điểm biên dịch (Compile-time).
-*   **Đặc điểm:** Không thể thay đổi kích thước của vùng chứa trong suốt quá trình chương trình chạy.
-*   **Ví dụ tiêu biểu:** Mảng tĩnh (**Array**).
-    *   *Ưu điểm:* Truy cập phần tử bất kỳ cực nhanh với độ phức tạp $O(1)$ nhờ công thức tính địa chỉ trực tiếp.
-    *   *Nhược điểm:* Dễ gây lãng phí bộ nhớ (nếu khai báo quá lớn mà không dùng hết) hoặc tràn bộ nhớ (nếu dữ liệu thực tế vượt quá kích thước khai báo).
-
-#### B. Tuyến tính Động (Dynamic Linear)
-*   **Định nghĩa:** Là cấu trúc dữ liệu có kích thước không cố định, có thể tự động co giãn, mở rộng hoặc thu hẹp dung lượng một cách linh hoạt trong thời gian chạy chương trình (Runtime).
-*   **Ưu điểm:** Tối ưu hóa việc sử dụng bộ nhớ RAM, linh hoạt tối đa khi thêm hoặc bớt dữ liệu mà không cần biết trước số lượng phần tử.
-*   **Ví dụ tiêu biểu:** Danh sách liên kết (Linked list), Ngăn xếp (Stack), Hàng đợi (Queue).
+| Loại mảng | Định nghĩa | Cách nhận biết khi đọc đề bài / Yêu cầu | Flow truy xuất dữ liệu |
+| :--- | :--- | :--- | :--- |
+| **Mảng tĩnh (Static Array)** | Bộ nhớ được cấp phát cố định ngay khi biên dịch (Compile-time), không thể thay đổi kích thước khi đang chạy. | Đề bài cho trước số phần tử tối đa (Ví dụ: $N \le 10^5$) và không có nhu cầu thêm, bớt làm thay đổi kích thước mảng. | Tính toán địa chỉ trực tiếp qua index trong $O(1)$: `Address = BaseAddress + index * SizeOfElement`. Nhảy trực tiếp đến ô nhớ RAM. |
+| **Mảng động (Dynamic Array / ArrayList)** | Bộ nhớ tự động co giãn linh hoạt trong thời gian chạy (Runtime) khi phần tử vượt quá sức chứa. | Thêm phần tử liên tục mà không biết trước số lượng, hoặc cần xóa/chèn ở cuối một cách linh hoạt. | Dữ liệu vẫn nằm liên tục. Khi mảng đầy, hệ thống tự tạo mảng mới lớn gấp đôi, copy phần tử cũ sang và giải phóng mảng cũ. Truy xuất vẫn là $O(1)$ qua index. |
 
 ---
 
-### 🔗 3.1. Danh sách liên kết (Linked List)
+### 3.2. Danh sách liên kết (Linked List)
+*   **Định nghĩa tổng quan:** Tập hợp các phần tử (Node) nằm rải rác trên RAM, liên kết với nhau bằng địa chỉ con trỏ (Link). Mỗi Node gồm giá trị dữ liệu và địa chỉ của Node tiếp theo.
 
-#### Định nghĩa
-Danh sách liên kết là một cấu trúc dữ liệu tuyến tính động, trong đó các phần tử (được gọi là các **Node**) không được lưu trữ ở các vị trí bộ nhớ liền kề nhau trong RAM. Thay vào đó, mỗi Node được cấu tạo bởi hai phần:
-1.  **Dữ liệu (Data):** Giá trị thực tế cần lưu trữ.
-2.  **Liên kết (Pointer/Link):** Địa chỉ bộ nhớ trỏ đến Node tiếp theo trong danh sách.
-
-```
-Singly Linked List:
-[ Head ] ──> [ Data | Next ] ──> [ Data | Next ] ──> [ Data | Null ]
-```
-
-#### Đặc trưng chính (Characteristics)
-*   **Cấp phát bộ nhớ động (Dynamic memory allocation):** Các Node được tạo ra ở các vùng nhớ trống rải rác trên RAM (vùng Heap) tại Runtime.
-*   **Kích thước không cố định:** Danh sách có thể lớn lên vô hạn (miễn là còn RAM trống) bằng cách nối thêm các Node mới.
-*   **Truy cập tuần tự (Sequential access):** Không hỗ trợ truy cập ngẫu nhiên. Để tìm phần tử thứ $k$, ta bắt buộc phải đi tuần tự từ Node đầu tiên (`Head`) qua các con trỏ liên kết.
-
-#### Các loại Linked List phổ biến
-1.  **Danh sách liên kết đơn (Singly Linked List):** Mỗi Node chỉ chứa 1 con trỏ trỏ đến Node kế tiếp (`Next`). Chỉ duyệt được theo 1 chiều từ đầu đến cuối.
-2.  **Danh sách liên kết đôi (Doubly Linked List):** Mỗi Node chứa 2 con trỏ, một trỏ đến Node kế tiếp (`Next`) và một trỏ ngược về Node phía trước (`Prev`). Cho phép duyệt linh hoạt theo cả 2 chiều.
-3.  **Danh sách liên kết vòng (Circular Linked List):** Node cuối cùng thay vì trỏ đến `Null` sẽ trỏ ngược về Node đầu tiên (`Head`), tạo thành một vòng khép kín.
-
-#### Ưu & Nhược điểm
-
-*   **Ưu điểm (Pros):**
-    *   Kích thước động linh hoạt, dễ dàng mở rộng hoặc thu hẹp tại Runtime.
-    *   Thao tác thêm (Insert) và xóa (Delete) phần tử diễn ra cực kỳ nhanh chóng với độ phức tạp **$O(1)$** (khi ta đã đứng sẵn tại vị trí con trỏ cần sửa đổi, chỉ cần thay đổi hướng trỏ của liên kết mà không cần dịch chuyển dữ liệu vật lý).
-*   **Nhược điểm (Cons):**
-    *   **Tốn thêm bộ nhớ:** Mỗi Node bắt buộc phải tốn thêm dung lượng để lưu trữ các con trỏ liên kết (đặc biệt là Doubly Linked List tốn bộ nhớ gấp đôi cho con trỏ).
-    *   **Truy cập chậm:** Thời gian truy cập phần tử ngẫu nhiên chậm với độ phức tạp **$O(n)$** do phải duyệt tuần tự từ đầu danh sách.
-
-#### Khi nào sử dụng?
-*   Khi không biết trước chính xác số lượng dữ liệu cần lưu trữ.
-*   Khi ứng dụng yêu cầu các thao tác thêm và xóa phần tử diễn ra liên tục, chiếm tỷ trọng lớn hơn thao tác tìm kiếm.
-*   **Ví dụ thực tế:**
-    *   **Danh sách phát nhạc (Music Playlist):** Bài hát tiếp theo và bài hát trước đó được liên kết với nhau. Bạn dễ dàng chèn một bài hát mới vào giữa danh sách.
-    *   **Nút Back/Forward của trình duyệt:** Sử dụng danh sách liên kết đôi để lưu lịch sử duyệt web, cho phép bạn tiến hoặc lùi qua các trang.
-    *   **Hạ tầng cho Stack & Queue:** Thường dùng Linked List làm nền tảng bên dưới để cài đặt Stack và Queue động nhằm tránh giới hạn kích thước của mảng.
+| Loại Linked List | Định nghĩa | Cách nhận biết khi đọc đề bài / Yêu cầu | Flow truy xuất dữ liệu |
+| :--- | :--- | :--- | :--- |
+| **Đơn (Singly Linked List)** | Mỗi Node chỉ có 1 con trỏ trỏ đến Node tiếp theo (`Next`). Node cuối cùng trỏ đến `null`. | Chỉ cần duyệt dữ liệu theo một chiều duy nhất từ đầu đến cuối và cần tiết kiệm bộ nhớ tối đa cho con trỏ. | Đi từ `Head`, dùng `Next` để nhảy sang Node kế tiếp. Không thể đi lùi. Thời gian truy cập ngẫu nhiên là $O(n)$. |
+| **Đôi (Doubly Linked List)** | Mỗi Node có 2 con trỏ: 1 trỏ đến Node tiếp theo (`Next`), 1 trỏ về Node phía trước (`Prev`). | Cần duyệt dữ liệu qua lại linh hoạt cả hai chiều, hoặc thường xuyên xóa/chèn tại vị trí bất kỳ đã biết trước con trỏ. | Từ một Node hiện tại có thể tiến lên bằng `Next` hoặc lùi lại bằng `Prev`. Thuận tiện nhưng tốn gấp đôi bộ nhớ cho con trỏ. |
+| **Vòng (Circular Linked List)** | Node cuối cùng thay vì trỏ đến `null` thì trỏ ngược lại Node đầu tiên (`Head`). | Dữ liệu có tính tuần hoàn, lặp lại liên tục (Ví dụ: Lập lịch tiến trình CPU chạy vòng tròn, chia lượt chơi game của các game thủ). | Duyệt liên tục không điểm dừng. Khi đi đến Node cuối cùng, con trỏ đưa bạn quay lại `Head`, tạo thành vòng khép kín. |
 
 ---
 
-### 🥞 3.2. Ngăn xếp (Stack)
+### 3.3. Ngăn xếp (Stack)
+*   **Định nghĩa tổng quan:** Cấu trúc dữ liệu hoạt động theo nguyên lý **LIFO (Last In First Out - Vào sau, Ra trước)**.
 
-#### Cơ chế hoạt động
-Ngăn xếp là một cấu trúc dữ liệu tuyến tính động hoạt động theo nguyên lý **LIFO (Last In First Out - Vào sau, Ra trước)**. Phần tử cuối cùng được đưa vào ngăn xếp sẽ là phần tử đầu tiên được lấy ra khỏi ngăn xếp.
+| Loại Stack | Định nghĩa | Cách nhận biết khi đọc đề bài / Yêu cầu | Flow truy xuất dữ liệu |
+| :--- | :--- | :--- | :--- |
+| **Stack bằng Mảng (Array-based)** | Sử dụng mảng tĩnh/mảng động để lưu phần tử, có biến `top` làm con trỏ đỉnh. | Biết trước số lượng phần tử tối đa để tối ưu hiệu năng bộ nhớ, tránh tạo rác và overhead con trỏ. | Truy cập cực nhanh qua index mảng (`arr[top]`). Bị giới hạn kích thước nếu dùng mảng tĩnh. |
+| **Stack bằng Linked List (List-based)** | Sử dụng danh sách liên kết để cài đặt Stack. Thêm/xóa thực hiện tại đầu danh sách (`Head`). | Số lượng phần tử thay đổi liên tục, không giới hạn dung lượng trước. | Thêm (Push) là chèn Node vào `Head` ($O(1)$), xóa (Pop) là xóa Node tại `Head` ($O(1)$). |
 
-```
-      |   Data C   |  <- Đỉnh ngăn xếp (Top) - Lấy ra đầu tiên
-      |   Data B   |
-      |   Data A   |  <- Đáy ngăn xếp
-      +------------+
-```
-
-#### Các thao tác chính
-*   **`Push`:** Thêm một phần tử vào đỉnh ngăn xếp ($O(1)$).
-*   **`Pop`:** Loại bỏ phần tử ở đỉnh ngăn xếp và trả về giá trị của nó ($O(1)$).
-*   **`Peek` / `Top`:** Xem giá trị của phần tử ở đỉnh ngăn xếp mà không loại bỏ nó ($O(1)$).
-
-#### Ứng dụng thực tế
-*   **Chức năng Undo (Ctrl + Z):** Các hành động soạn thảo của bạn liên tục được `push` vào Stack. Khi bạn nhấn Ctrl+Z, hành động gần nhất trên đỉnh Stack sẽ được `pop` ra để hủy bỏ.
-*   **Nút Back trình duyệt:** Lưu các URL trang web. Nhấn Back sẽ pop URL hiện tại ra để hiển thị URL ngay bên dưới.
-*   **Call Stack trong ngôn ngữ lập trình:** Quản lý việc gọi hàm lồng nhau. Khi hàm A gọi hàm B, hàm B được push lên đỉnh Call Stack để thực thi trước. Khi chạy xong, nó bị pop ra để hàm A tiếp tục thực thi.
+*   **Cách nhận biết khi đọc đề:** Đề bài có tính chất "đảo ngược" (Undo/Redo), kiểm tra tính hợp lệ của các cặp đóng-mở ngoặc lồng nhau, hoặc bài toán tìm phần tử lớn hơn tiếp theo (Next Greater Element).
 
 ---
 
-### 🎟️ 3.3. Hàng đợi (Queue)
+### 3.4. Hàng đợi (Queue)
+*   **Định nghĩa tổng quan:** Cấu trúc dữ liệu hoạt động theo nguyên lý **FIFO (First In First Out - Vào trước, Ra trước)**.
 
-#### Cơ chế hoạt động
-Hàng đợi là một cấu trúc dữ liệu tuyến tính động hoạt động theo nguyên lý **FIFO (First In First Out - Vào trước, Ra trước)**. Phần tử đầu tiên được đưa vào hàng đợi sẽ là phần tử đầu tiên được lấy ra.
-
-```
-Vào (Enqueue) -> [ Data C | Data B | Data A ] -> Ra (Dequeue)
-```
-
-#### Các thao tác chính
-*   **`Enqueue`:** Thêm phần tử vào cuối hàng đợi (`Rear`) ($O(1)$).
-*   **`Dequeue`:** Loại bỏ phần tử ở đầu hàng đợi (`Front`) ($O(1)$).
-*   **`Peek` / `Front`:** Xem phần tử ở đầu hàng đợi mà không loại bỏ nó ($O(1)$).
-
-#### Ứng dụng thực tế
-*   **Hàng đợi in ấn (Printer Spooler):** Nhiều máy tính cùng gửi lệnh in đến một máy in chung, máy in sẽ đưa các yêu cầu vào hàng đợi và in tài liệu nào gửi đến trước.
-*   **Hệ thống xử lý đơn hàng (Săn sale Shopee):** Tránh quá tải máy chủ bằng cách đưa hàng nghìn lượt ấn mua của người dùng vào hàng đợi tin nhắn (Message Queue) để xử lý tuần tự theo thời gian gửi.
-*   **Thuật toán tìm kiếm theo chiều rộng (BFS):** Sử dụng Queue để lưu trữ các đỉnh hàng xóm cần duyệt tiếp theo.
+| Loại Queue | Định nghĩa | Cách nhận biết khi đọc đề bài / Yêu cầu | Flow truy xuất dữ liệu |
+| :--- | :--- | :--- | :--- |
+| **Hàng đợi thường (Linear Queue)** | Thêm phần tử ở cuối (Rear) và lấy ra ở đầu (Front). | Xử lý tuần tự các yêu cầu gửi đến theo thứ tự thời gian (như in ấn, xử lý tin nhắn gửi tới). | Khi lấy ra (Dequeue), đầu `Front` dịch sang phải. Các ô nhớ bên trái bị bỏ trống lãng phí. |
+| **Hàng đợi vòng (Circular Queue)** | Kết nối vị trí cuối mảng quay lại vị trí đầu mảng bằng toán tử chia lấy dư `%`. | Cài đặt Queue bằng mảng nhưng muốn tái sử dụng các ô nhớ trống đã lấy ra trước đó. | Khi con trỏ `Rear` chạm cuối mảng, nó sẽ nhảy về vị trí đầu mảng (index 0) nếu vị trí đó trống. |
+| **Hàng đợi hai đầu (Deque)** | Cho phép thêm và xóa phần tử ở cả 2 đầu (Front và Rear). | Bài toán cần trượt cửa sổ tối ưu (Sliding Window Maximum) hoặc cần thêm/xóa linh hoạt ở cả 2 phía. | Truy xuất dữ liệu: Thêm/Xóa ở cả đầu Front và cuối Rear đều đạt độ phức tạp $O(1)$. |
+| **Hàng đợi ưu tiên (Priority Queue)** | Mỗi phần tử đi kèm một độ ưu tiên. Phần tử có độ ưu tiên cao nhất sẽ được lấy ra trước. | Cần lấy ra phần tử lớn nhất/nhỏ nhất liên tục tại mỗi bước (như thuật toán Dijkstra, Prim, lập lịch khẩn cấp). | Thường cài đặt bằng **Heap**. Khi lấy phần tử ra ($O(\log n)$), cây tự sắp xếp lại để đưa đỉnh ưu tiên nhất lên đầu. |
 
 ---
 
-## 🏗️ 4. CẤU TRÚC DỮ LIỆU PHI TUYẾN TÍNH (NON-LINEAR DATA STRUCTURES)
+## 🏗️ 4. PHÂN TÍCH CHI TIẾT CÁC CẤU TRÚC DỮ LIỆU PHI TUYẾN TÍNH (NON-LINEAR DATA STRUCTURES)
 
-### Định nghĩa
-**Cấu trúc dữ liệu phi tuyến tính** là cấu trúc dữ liệu mà các phần tử không được sắp xếp theo một trình tự tuần tự. Mối quan hệ giữa các phần tử mang tính chất phân cấp (Hierarchical) hoặc mạng lưới chằng chịt (Network).
+Cấu trúc dữ liệu phi tuyến tính quản lý dữ liệu theo cấu trúc phân cấp hoặc mạng lưới, không đi theo hàng lối tuần tự.
 
-### Các loại phi tuyến tính phổ biến
+### 4.1. Cấu trúc Cây (Tree)
+*   **Định nghĩa tổng quan:** Cấu trúc phân cấp gồm các nút (Node) kết nối với nhau bằng các cạnh (Edge), không có chu trình. Nút trên cùng gọi là Root.
 
-#### 🌳 1. Tree (Cây)
-*   **Cơ chế:** Cấu trúc dữ liệu phân cấp bao gồm các nút (Nodes) được kết nối với nhau bằng các cạnh (Edges). Có một nút đặc biệt ở trên cùng gọi là **Nút gốc (Root)**. Mỗi nút có thể kết nối với các nút con (Children) bên dưới nó.
-*   **Đặc điểm:** Không có chu trình (no cycles). Cây tìm kiếm nhị phân (Binary Search Tree) cho phép thực hiện tìm kiếm, chèn, xóa cực nhanh với độ phức tạp trung bình là **$O(\log n)$**.
-*   **Ví dụ thực tế:**
-    *   **Cấu trúc thư mục máy tính:** Thư mục gốc `C:` chứa các thư mục con, mỗi thư mục con lại chứa tệp và thư mục con bên dưới.
-    *   **Cấu trúc DOM trong phát triển Web:** Thẻ `<html>` là gốc chứa thẻ `<head>` và `<body>`, bên trong `<body>` chứa tiếp các thẻ `<div>`, `<p>`...
+| Loại Cây (Tree) | Định nghĩa | Cách nhận biết khi đọc đề bài / Yêu cầu | Flow truy xuất dữ liệu |
+| :--- | :--- | :--- | :--- |
+| **Cây nhị phân thường (Binary Tree)** | Mỗi nút có tối đa 2 nút con (con trái và con phải). | Biểu diễn các mối quan hệ phân nhánh nhị phân đơn giản. | Đi từ Root, rẽ nhánh sang con trái hoặc con phải. |
+| **Cây tìm kiếm nhị phân (BST)** | Nhánh con bên trái luôn nhỏ hơn nút cha, nhánh con bên phải luôn lớn hơn nút cha. | Cần tìm kiếm, chèn, xóa phần tử động liên tục và muốn giữ dữ liệu luôn có thứ tự. | So sánh khóa tìm kiếm với nút hiện tại: Nhỏ hơn $\rightarrow$ rẽ trái; Lớn hơn $\rightarrow$ rẽ phải. Tìm kiếm trong $O(\log n)$ nếu cây cân bằng. |
+| **Cây cân bằng tự động (AVL / Đỏ-Đen)** | Tự động xoay cây để đảm bảo độ cao chênh lệch không quá 1 (AVL) hoặc tuân thủ quy tắc màu sắc (Đỏ-Đen). | Dữ liệu đầu vào cực kỳ lớn và ngẫu nhiên (tránh BST bị thoái hóa thành một đường thẳng có độ phức tạp $O(n)$). | Nhờ cơ chế tự cân bằng, các thao tác tìm kiếm, chèn, xóa luôn được đảm bảo ở mức $O(\log n)$ trong mọi trường hợp. |
+| **Cây tiền tố (Trie)** | Mỗi nút đại diện cho một ký tự, các chuỗi chia sẻ chung tiền tố sẽ nằm chung nhánh. | Bài toán xử lý chuỗi ký tự: Gợi ý tìm kiếm (Auto-complete), kiểm tra chính tả, kiểm tra từ điển từ khóa. | Đi từ Root theo từng ký tự của từ cần tìm. Thời gian tìm kiếm cực nhanh $O(L)$ với $L$ là độ dài của từ, không phụ thuộc số từ trong từ điển. |
+| **Segment Tree / Fenwick Tree** | Cây quản lý thông tin các đoạn/khoảng của một mảng số. | Đề bài yêu cầu cập nhật giá trị phần tử và truy vấn tổng/min/max trên một đoạn $[L, R]$ liên tục với tần suất cực lớn. | Cập nhật và truy vấn trong thời gian $O(\log n)$ thay vì duyệt tuần tự $O(n)$ trên mảng. |
 
-#### 🔑 2. Hash Table (Bảng băm)
-*   **Cơ chế:** Lưu trữ dữ liệu dưới dạng các cặp khóa và giá trị (**Key-Value**). Nó sử dụng một hàm băm (**Hash Function**) để biến đổi Khóa đầu vào thành một chỉ số (Index) số học, sau đó lưu trữ Giá trị trực tiếp vào ô nhớ tương ứng với chỉ số đó.
-*   **Đặc điểm:** Tốc độ truy xuất dữ liệu cực kỳ nhanh chóng. Độ phức tạp trung bình cho các tác vụ Tìm kiếm, Chèn và Xóa là **$O(1)$** (thời gian hằng số).
-*   **Ví dụ thực tế:**
-    *   **Từ điển điện tử:** Gõ từ khóa tiếng Anh (Key), hàm băm định vị ngay nghĩa tiếng Việt (Value) mà không cần duyệt qua cả cuốn từ điển.
-    *   **Danh bạ điện thoại:** Tìm tên "Mẹ" ra số điện thoại ngay lập tức.
+#### 🔄 Deep Dive: Các cách duyệt cây (Tree Traversal)
+Để đi qua toàn bộ các nút của cây, ta có hai hướng tiếp cận chính:
 
-#### 🕸️ 3. Graph (Đồ thị)
-*   **Cơ chế:** Một mạng lưới các đỉnh (Vertices / Nodes) kết nối với nhau bởi các cạnh (Edges). Đồ thị có thể có hướng (chỉ đi được 1 chiều) hoặc vô hướng (đi được 2 chiều) và có thể có trọng số (chi phí đi qua mỗi cạnh).
-*   **Đặc điểm:** Mô tả các mối quan hệ mạng lưới phức tạp nhất trong thế giới thực.
-*   **Ví dụ thực tế:**
-    *   **Mạng xã hội (Facebook/LinkedIn):** Mỗi người dùng là một Đỉnh, mối quan hệ bạn bè là một Cạnh kết nối họ.
-    *   **Bản đồ giao thông (Google Maps):** Mỗi ngã tư/thành phố là một Đỉnh, con đường nối giữa chúng là Cạnh với trọng số là độ dài quãng đường hoặc thời gian di chuyển.
+1.  **Duyệt theo chiều sâu (Depth-First Search - DFS):** Đi sâu xuống các nhánh trước khi sang nhánh khác. Có 3 kiểu duyệt dựa trên thứ tự thăm nút cha (N - Node), con trái (L - Left), con phải (R - Right):
+    *   **Pre-order (Duyệt trước - NLR):** Thăm nút cha trước $\rightarrow$ sang con trái $\rightarrow$ sang con phải.
+        *   *Ứng dụng:* Sao chép cấu trúc cây, tạo biểu thức tiền tố.
+    *   **In-order (Duyệt giữa - LNR):** Duyệt hết nhánh trái $\rightarrow$ Thăm nút cha $\rightarrow$ duyệt nhánh phải.
+        *   *Ứng dụng:* Duyệt cây BST sẽ cho ra danh sách các phần tử được sắp xếp tăng dần.
+    *   **Post-order (Duyệt sau - LRN):** Duyệt hết con trái $\rightarrow$ duyệt con phải $\rightarrow$ Thăm nút cha sau cùng.
+        *   *Ứng dụng:* Giải phóng/Xóa cây (phải xóa con trước khi xóa cha), tính tổng kích thước các thư mục con trước khi cộng vào cha.
+2.  **Duyệt theo chiều rộng (Breadth-First Search - BFS / Level-order):** Duyệt cây theo từng tầng từ trên xuống dưới, từ trái sang phải.
+    *   *Ứng dụng:* Tìm phần tử gần gốc nhất, duyệt cây theo mức độ. Thường dùng Queue để hỗ trợ lập lịch duyệt.
+
+---
+
+### 4.2. Bảng băm (Hash Table)
+*   **Định nghĩa tổng quan:** Lưu trữ dữ liệu dưới dạng cặp `Key-Value` bằng cách dùng hàm băm (Hash Function) để tính toán địa chỉ lưu trữ của Key trong mảng, cho phép tìm kiếm trong $O(1)$.
+
+#### 💥 Phân tích chuyên sâu về Xung đột mã băm (Hash Collision)
+*   **Xung đột mã băm là gì?**
+    Vì không gian khóa đầu vào (tất cả các chuỗi, đối tượng có thể làm Key) là vô hạn, trong khi kích thước mảng lưu trữ của bảng băm là hữu hạn. 
+    Theo **Nguyên lý chuồng bồ câu (Pigeonhole Principle)**: Nếu có 10 cái chuồng bồ câu mà có 11 con bồ câu bay vào, chắc chắn sẽ có ít nhất một chuồng chứa từ 2 con bồ câu trở lên.
+    Xung đột mã băm xảy ra khi hai Key khác nhau khi chạy qua hàm băm lại cho ra cùng một chỉ số Index (`hash(Key1) == hash(Key2)`).
+
+*   **Các phương pháp xử lý xung đột băm (Collision Resolution Techniques):**
+    Khi xảy ra xung đột, chúng ta có các phương pháp xử lý chi tiết được so sánh qua bảng dưới đây:
+
+| Phương pháp xử lý | Cơ chế hoạt động | Ưu điểm (Pros) | Nhược điểm (Cons) | Hiệu năng khi xung đột cao |
+| :--- | :--- | :--- | :--- | :--- |
+| **Separate Chaining (Chaining bằng Linked List)** | Mỗi ô nhớ của bảng băm là đầu của một danh sách liên kết. Khi có Key mới bị trùng index, ta chỉ việc chèn thêm Node mới vào danh sách liên kết tại ô nhớ đó. | * Đơn giản, dễ cài đặt.<br>* Bảng băm không bao giờ bị "đầy" thật sự.<br>* Ít bị ảnh hưởng bởi hàm băm kém chất lượng. | * Tốn thêm bộ nhớ để lưu trữ con trỏ liên kết của các Node.<br>* Truy xuất danh sách liên kết làm giảm hiệu năng lưu đệm cache CPU. | Nếu nhiều phần tử rơi vào cùng 1 ô, tìm kiếm từ $O(1)$ bị thoái hóa thành duyệt Linked List $O(n)$. *(Trong Java 8+, danh sách liên kết này tự động chuyển thành Cây đỏ-đen khi độ dài $\ge 8$ để giữ hiệu năng $O(\log n)$).* |
+| **Open Addressing: Linear Probing (Dò tuyến tính)** | Dò tìm tuần tự sang ô nhớ trống tiếp theo ngay bên cạnh: `Index = (hash(Key) + i) % Size`. | * Tiết kiệm bộ nhớ (không dùng con trỏ).<br>* Hiệu năng cache CPU cực tốt do dữ liệu nằm liên tục trên mảng. | Xảy ra hiện tượng **Primary Clustering**: Các ô nhớ bị lấp đầy liên tiếp tạo thành các cụm lớn, làm số lần dò tìm tăng vọt. | Khi bảng băm gần đầy, hiệu năng tìm kiếm giảm mạnh vì phải duyệt qua hàng loạt ô liên tiếp để tìm chỗ trống hoặc tìm phần tử. |
+| **Open Addressing: Quadratic Probing (Dò bậc hai)** | Dò tìm ô trống bằng cách tăng khoảng cách nhảy theo bình phương: `Index = (hash(Key) + i^2) % Size`. | Giảm thiểu hiện tượng tụ tập cụm lớn (Primary Clustering) của Linear Probing. | Xảy ra hiện tượng **Secondary Clustering**: Các phần tử có cùng mã băm ban đầu vẫn sẽ đi theo cùng một lộ trình dò tìm bậc hai. | Tốt hơn dò tuyến tính nhưng vẫn bị chậm lại đáng kể khi tải trọng (Load Factor) của bảng băm tăng cao. |
+| **Open Addressing: Double Hashing (Băm kép)** | Sử dụng một hàm băm thứ hai $hash_2(Key)$ để tính toán bước nhảy: `Index = (hash(Key) + i * hash_2(Key)) % Size`. | * Khắc phục hoàn toàn hiện tượng tụ tập nhóm.<br>* Phân phối các phần tử rất đều trên bảng băm. | * Tốn chi phí CPU để tính toán 2 hàm băm khác nhau.<br>* Yêu cầu hàm băm thứ hai không bao giờ trả về giá trị 0. | Đạt hiệu năng tốt nhất và đồng đều nhất trong các phương pháp Open Addressing khi có xung đột. |
+
+---
+
+### 4.3. Đồ thị (Graph)
+*   **Định nghĩa tổng quan:** Một mạng lưới các đỉnh (Vertices / Nodes) kết nối với nhau bởi các cạnh (Edges).
+
+| Loại Đồ thị | Định nghĩa | Cách nhận biết khi đọc đề bài / Yêu cầu | Flow truy xuất dữ liệu |
+| :--- | :--- | :--- | :--- |
+| **Có hướng vs Vô hướng (Directed vs Undirected)** | * Có hướng: Cạnh chỉ đi một chiều từ A sang B.<br>* Vô hướng: Đường đi tự do hai chiều giữa hai đỉnh. | * Có hướng: Mạng lưới follow (Twitter/Insta), các bước thực hiện phụ thuộc công việc.<br>* Vô hướng: Kết bạn (Facebook), kết nối cáp mạng vật lý. | Khi duyệt đồ thị, vô hướng cho phép đi cả hai chiều của cạnh, có hướng bắt buộc đi đúng chiều mũi tên chỉ định. |
+| **Có trọng số vs Vô trọng số (Weighted vs Unweighted)** | * Có trọng số: Mỗi cạnh mang một chi phí/độ dài/thời gian đi qua.<br>* Vô trọng số: Các cạnh bình đẳng, chi phí đi qua bằng 1. | * Có trọng số: Bản đồ giao thông (tìm đường ngắn nhất có khoảng cách thực tế), tính chi phí vận chuyển.<br>* Vô trọng số: Tìm số bước ít nhất (Friend-of-friend) để đến đích. | Khi tìm đường đi ngắn nhất: Có trọng số dùng Dijkstra/Bellman-Ford. Vô trọng số chỉ cần dùng BFS là tối ưu. |
+| **Chu trình vs Không chu trình (Cyclic vs Acyclic)** | * Chu trình: Có đường đi đi qua các đỉnh và quay lại chính nó.<br>* Không chu trình: Không tồn tại đường đi khép kín. | Đồ thị không chu trình có hướng (**DAG**) xuất hiện trong bài toán phụ thuộc gói thư viện (Maven/npm), lập lịch học môn tiên quyết. | Duyệt đồ thị để phát hiện chu trình (DFS tô màu đỉnh). DAG cho phép thực hiện thuật toán Sắp xếp Topo (Topological Sort). |
