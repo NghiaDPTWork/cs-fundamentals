@@ -1,4 +1,4 @@
-# CẨM NANG VẤN ĐÁP MẠNG NÂNG CAO (INTERVIEW-READY NETWORK ADVANCED)
+﻿# CẨM NANG VẤN ĐÁP MẠNG NÂNG CAO (INTERVIEW-READY NETWORK ADVANCED)
 
 Tài liệu này tổng hợp các kiến thức mạng máy tính nâng cao chuyên biệt cho việc ôn luyện phỏng vấn kỹ thuật. Mỗi phần chỉ tập trung vào câu trả lời trực diện, từ khóa chuyên môn cốt lõi, luồng truyền tải dữ liệu và liên kết liên môn.
 
@@ -102,3 +102,4 @@ sequenceDiagram
 ### 🔧 3.3. Liên kết với Git
 *   **git push qua SSH (Port 22):** Thiết lập kênh mã hóa qua Diffie-Hellman TCP. Git chạy giải thuật nén tạo ra tệp tin nhị phân **Packfile** và stream tệp tin này qua luồng TCP đến GitHub.
 *   **git push qua HTTPS (Port 443):** Thực hiện bắt tay bảo mật TLS, sau đó truyền tải Packfile thông qua các yêu cầu HTTP POST chuẩn.
+

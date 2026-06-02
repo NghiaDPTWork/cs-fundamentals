@@ -1,4 +1,4 @@
-# CẨM NANG VẤN ĐÁP GIẢI THUẬT (INTERVIEW-READY ALGORITHMS)
+﻿# CẨM NANG VẤN ĐÁP GIẢI THUẬT (INTERVIEW-READY ALGORITHMS)
 
 Tài liệu này tổng hợp toàn bộ các giải thuật cốt lõi được tinh chỉnh chuyên biệt cho việc ôn luyện phỏng vấn kỹ thuật. Mỗi phần được cấu trúc tối giản: Định nghĩa phỏng vấn trực diện, ẩn dụ trực quan ngắn gọn, từ khóa chuyên môn cốt lõi (Big O, Trade-offs) và code demo Java tinh gọn nhất.
 
@@ -6,7 +6,7 @@ Tài liệu này tổng hợp toàn bộ các giải thuật cốt lõi được
 
 ## 📖 1. ĐỊNH NGHĨA GIẢI THUẬT
 
-*   **Trả lời phỏng vấn (1 câu):** Giải thuật (Algorithm) là một tập hợp các chỉ dẫn logic, có tuần tự và hữu hạn để xử lý dữ liệu đầu vào (Input) nhằm giải quyết một bài toán cụ thể và cho ra kết quả mong muốn (Output).
+*   **Định nghĩa:** Giải thuật (Algorithm) là một tập hợp các chỉ dẫn logic, có tuần tự và hữu hạn để xử lý dữ liệu đầu vào (Input) nhằm giải quyết một bài toán cụ thể và cho ra kết quả mong muốn (Output).
 *   **Ẩn dụ trực quan:** Giống như một công thức nấu ăn chuẩn xác từng bước dành cho máy tính.
 *   **Đặc trưng cốt lõi khi phỏng vấn:**
     1.  **Finiteness (Tính hữu hạn):** Phải dừng lại sau một số bước hữu hạn, không lặp vô hạn.
@@ -21,7 +21,7 @@ Tài liệu này tổng hợp toàn bộ các giải thuật cốt lõi được
 ### 2.1. Tìm kiếm (Searching)
 
 #### 1. Tìm kiếm tuần tự (Linear Search)
-*   **Trả lời phỏng vấn:** Duyệt tuần tự qua từng phần tử của mảng từ đầu đến cuối để tìm kiếm giá trị mục tiêu.
+*   **Định nghĩa:** Duyệt tuần tự qua từng phần tử của mảng từ đầu đến cuối để tìm kiếm giá trị mục tiêu.
 *   **Ẩn dụ trực quan:** Dò tìm từng quyển sách trên kệ từ trái sang phải cho đến khi thấy.
 *   **Từ khóa cốt lõi:** $O(n)$ time, $O(1)$ space. Dùng khi dữ liệu chưa được sắp xếp hoặc mảng quá nhỏ.
 *   **Code Demo:**
@@ -35,7 +35,7 @@ Tài liệu này tổng hợp toàn bộ các giải thuật cốt lõi được
     ```
 
 #### 2. Tìm kiếm nhị phân (Binary Search)
-*   **Trả lời phỏng vấn:** Tìm kiếm trên mảng đã sắp xếp bằng cách liên tục chia đôi khoảng tìm kiếm. So sánh giá trị giữa (`mid`) với `target` để loại bỏ một nửa khoảng không chứa kết quả.
+*   **Định nghĩa:** Tìm kiếm trên mảng đã sắp xếp bằng cách liên tục chia đôi khoảng tìm kiếm. So sánh giá trị giữa (`mid`) với `target` để loại bỏ một nửa khoảng không chứa kết quả.
 *   **Ẩn dụ trực quan:** Mở đôi cuốn từ điển và chỉ tìm ở nửa chứa chữ cái cần tìm, bỏ nửa còn lại.
 *   **Từ khóa cốt lõi:** $O(\log n)$ time, $O(1)$ space. **Bắt buộc mảng phải được sắp xếp trước**.
 *   **Code Demo:**
@@ -57,7 +57,7 @@ Tài liệu này tổng hợp toàn bộ các giải thuật cốt lõi được
 ### 2.2. Sắp xếp (Sorting)
 
 #### 1. Sắp xếp nổi bọt (Bubble Sort)
-*   **Trả lời phỏng vấn:** Liên tục so sánh hai phần tử kề nhau và đổi chỗ nếu chúng sai thứ tự. Sau mỗi lượt quét, phần tử lớn nhất sẽ "nổi" về cuối mảng.
+*   **Định nghĩa:** Liên tục so sánh hai phần tử kề nhau và đổi chỗ nếu chúng sai thứ tự. Sau mỗi lượt quét, phần tử lớn nhất sẽ "nổi" về cuối mảng.
 *   **Ẩn dụ trực quan:** Các bong bóng khí lớn hơn sẽ nổi lên mặt nước nhanh hơn.
 *   **Từ khóa cốt lõi:** $O(n^2)$ time, $O(1)$ space. Stable, In-place. Rất chậm, thực tế chỉ dùng để giảng dạy.
 *   **Code Demo:**
@@ -75,7 +75,7 @@ Tài liệu này tổng hợp toàn bộ các giải thuật cốt lõi được
     ```
 
 #### 2. Sắp xếp chèn (Insertion Sort)
-*   **Trả lời phỏng vấn:** Duyệt mảng và xây dựng một danh sách đã sắp xếp ở đầu bằng cách lấy từng phần tử mới chèn vào đúng vị trí thích hợp của nó trong danh sách đó.
+*   **Định nghĩa:** Duyệt mảng và xây dựng một danh sách đã sắp xếp ở đầu bằng cách lấy từng phần tử mới chèn vào đúng vị trí thích hợp của nó trong danh sách đó.
 *   **Ẩn dụ trực quan:** Cách bạn bốc thêm một lá bài tây mới và chèn vào đúng vị trí trên tay.
 *   **Từ khóa cốt lõi:** $O(n^2)$ time, $O(1)$ space. Stable, In-place. Cực nhanh đối với mảng gần như đã được sắp xếp trước.
 *   **Code Demo:**
@@ -93,7 +93,7 @@ Tài liệu này tổng hợp toàn bộ các giải thuật cốt lõi được
     ```
 
 #### 3. Sắp xếp nhanh (Quick Sort)
-*   **Trả lời phỏng vấn:** Chọn một phần tử làm mốc (`pivot`). Phân chia mảng sao cho các phần tử nhỏ hơn pivot nằm bên trái, lớn hơn pivot nằm bên phải. Tiếp tục đệ quy hai nửa đó.
+*   **Định nghĩa:** Chọn một phần tử làm mốc (`pivot`). Phân chia mảng sao cho các phần tử nhỏ hơn pivot nằm bên trái, lớn hơn pivot nằm bên phải. Tiếp tục đệ quy hai nửa đó.
 *   **Ẩn dụ trực quan:** Chọn một người làm cột mốc chiều cao, chia hàng thành hai nhóm đứng hai bên cột mốc.
 *   **Từ khóa cốt lõi:** $O(n \log n)$ average time, $O(n^2)$ worst-case (khi chọn pivot tệ). $O(\log n)$ space. Unstable, In-place.
 *   **Code Demo:**
@@ -119,7 +119,7 @@ Tài liệu này tổng hợp toàn bộ các giải thuật cốt lõi được
     ```
 
 #### 4. Sắp xếp trộn (Merge Sort)
-*   **Trả lời phỏng vấn:** Sử dụng tư duy Chia để trị. Chia đôi mảng liên tục cho đến khi còn các mảng con 1 phần tử, sau đó trộn (merge) các mảng con đã sắp xếp lại với nhau theo thứ tự tăng dần.
+*   **Định nghĩa:** Sử dụng tư duy Chia để trị. Chia đôi mảng liên tục cho đến khi còn các mảng con 1 phần tử, sau đó trộn (merge) các mảng con đã sắp xếp lại với nhau theo thứ tự tăng dần.
 *   **Ẩn dụ trực quan:** Chia bó đũa ra thành từng chiếc đơn lẻ rồi gộp chúng lại theo cặp có thứ tự.
 *   **Từ khóa cốt lõi:** Luôn là $O(n \log n)$ time trong mọi trường hợp. Tốn $O(n)$ space cho mảng tạm để trộn. Stable.
 *   **Code Demo:**
@@ -149,7 +149,7 @@ Tài liệu này tổng hợp toàn bộ các giải thuật cốt lõi được
 
 ### 2.3. Đệ quy (Recursion)
 
-*   **Trả lời phỏng vấn:** Cơ chế một hàm tự gọi lại chính nó với các tham số nhỏ hơn cho đến khi chạm tới điểm dừng (Base Case).
+*   **Định nghĩa:** Cơ chế một hàm tự gọi lại chính nó với các tham số nhỏ hơn cho đến khi chạm tới điểm dừng (Base Case).
 *   **Ẩn dụ trực quan:** Bộ búp bê Nga Matryoshka - mở búp bê lớn chứa búp bê nhỏ hơn bên trong cho đến con nhỏ nhất.
 *   **Từ khóa cốt lõi:** Nguy cơ tràn bộ nhớ stack (**Stack Overflow**) nếu không có Base Case hoặc độ sâu đệ quy quá lớn.
 
@@ -202,7 +202,7 @@ Tài liệu này tổng hợp toàn bộ các giải thuật cốt lõi được
 
 ### 2.4. Quy hoạch động (Dynamic Programming)
 
-*   **Trả lời phỏng vấn:** Phương pháp giải quyết bài toán lớn bằng cách chia nhỏ thành các bài toán con, giải quyết chúng một lần duy nhất và lưu kết quả lại để tái sử dụng mà không cần tính toán lại.
+*   **Định nghĩa:** Phương pháp giải quyết bài toán lớn bằng cách chia nhỏ thành các bài toán con, giải quyết chúng một lần duy nhất và lưu kết quả lại để tái sử dụng mà không cần tính toán lại.
 *   **Ẩn dụ trực quan:** Ghi nhớ kết quả phép tính $1+1+1+1+1=5$, khi viết thêm $+1$ bạn trả lời ngay là $6$ thay vì đếm lại từ đầu.
 *   **Từ khóa cốt lõi:** Overlapping Subproblems (bài toán con trùng lặp), Optimal Substructure (cấu trúc con tối ưu).
 
@@ -237,12 +237,12 @@ Tài liệu này tổng hợp toàn bộ các giải thuật cốt lõi được
 
 ### 2.5. Tham lam (Greedy)
 
-*   **Trả lời phỏng vấn:** Tại mỗi bước đi, thuật toán luôn đưa ra lựa chọn tốt nhất hiện tại (tối ưu cục bộ) với hy vọng sẽ dẫn tới kết quả tốt nhất ở cuối cùng (tối ưu toàn cục).
+*   **Định nghĩa:** Tại mỗi bước đi, thuật toán luôn đưa ra lựa chọn tốt nhất hiện tại (tối ưu cục bộ) với hy vọng sẽ dẫn tới kết quả tốt nhất ở cuối cùng (tối ưu toàn cục).
 *   **Ẩn dụ trực quan:** Siêu thị giới hạn số món đồ được nhặt, bạn cứ ưu tiên nhặt món đắt tiền nhất có thể mua được tại thời điểm đó.
 *   **Từ khóa cốt lõi:** Lựa chọn tối ưu cục bộ (locally optimal choice), không phải bài toán nào giải thuật tham lam cũng cho ra kết quả đúng toàn cục.
 
 #### 1. Thuật toán Dijkstra (Tìm đường đi ngắn nhất)
-*   **Trả lời phỏng vấn:** Tìm đường đi ngắn nhất từ một đỉnh nguồn đến tất cả các đỉnh khác trên đồ thị có trọng số không âm. Tại mỗi bước, chọn đỉnh chưa duyệt có khoảng cách ngắn nhất, cập nhật khoảng cách cho các đỉnh kề của nó.
+*   **Định nghĩa:** Tìm đường đi ngắn nhất từ một đỉnh nguồn đến tất cả các đỉnh khác trên đồ thị có trọng số không âm. Tại mỗi bước, chọn đỉnh chưa duyệt có khoảng cách ngắn nhất, cập nhật khoảng cách cho các đỉnh kề của nó.
 *   **Từ khóa cốt lõi:** Greedy, $O((V+E) \log V)$ dùng Heap/Priority Queue. **Không hoạt động trên đồ thị có trọng số âm**.
 *   **Code Demo:**
     ```java
@@ -276,14 +276,14 @@ Tài liệu này tổng hợp toàn bộ các giải thuật cốt lõi được
     *   *Từ khóa:* $O(E \log V)$ hoặc $O(V^2)$ time. Cực kỳ hiệu quả đối với đồ thị dày đặc.
 
 #### 3. Mã hóa Huffman (Huffman Coding)
-*   **Trả lời phỏng vấn:** Giải thuật nén dữ liệu không mất mát (Lossless Compression). Tham lam gom các ký tự có tần suất xuất hiện nhỏ nhất lại để xây dựng cây nhị phân, gán mã bít ngắn nhất cho ký tự xuất hiện nhiều nhất và ngược lại.
+*   **Định nghĩa:** Giải thuật nén dữ liệu không mất mát (Lossless Compression). Tham lam gom các ký tự có tần suất xuất hiện nhỏ nhất lại để xây dựng cây nhị phân, gán mã bít ngắn nhất cho ký tự xuất hiện nhiều nhất và ngược lại.
 *   **Từ khóa cốt lõi:** Greedy, nén dữ liệu, mã độ dài biến đổi (variable-length code).
 
 ---
 
 ### 2.6. Chia để trị (Divide and Conquer)
 
-*   **Trả lời phỏng vấn:** Chia bài toán lớn thành các bài toán con độc lập cùng loại, giải quyết các bài toán con một cách độc lập (thường dùng đệ quy), sau đó gộp kết quả của chúng lại để giải quyết bài toán lớn.
+*   **Định nghĩa:** Chia bài toán lớn thành các bài toán con độc lập cùng loại, giải quyết các bài toán con một cách độc lập (thường dùng đệ quy), sau đó gộp kết quả của chúng lại để giải quyết bài toán lớn.
 *   **Ẩn dụ trực quan:** Thay vì bẻ cả bó đũa, chia ra bẻ từng chiếc rồi gom đũa đã gãy lại.
 *   **Từ khóa cốt lõi:** Chia (Divide), Trị (Conquer), Gộp (Combine). Ví dụ điển hình: Merge Sort, Quick Sort, Binary Search.
 *   **Demo (Tính Lũy thừa nhanh $x^n$):**
@@ -301,7 +301,7 @@ Tài liệu này tổng hợp toàn bộ các giải thuật cốt lõi được
 
 ### 2.7. Vét cạn (Brute Force)
 
-*   **Trả lời phỏng vấn:** Duyệt qua tất cả các ứng viên hoặc tất cả các trường hợp có thể xảy ra để tìm ra kết quả chính xác nhất.
+*   **Định nghĩa:** Duyệt qua tất cả các ứng viên hoặc tất cả các trường hợp có thể xảy ra để tìm ra kết quả chính xác nhất.
 *   **Ẩn dụ trực quan:** Thử bẻ khóa vali số 4 chữ số bằng cách quay số lần lượt từ `0000` đến `9999`.
 *   **Từ khóa cốt lõi:** Luôn đúng, cực kỳ dễ cài đặt nhưng độ phức tạp thời gian rất lớn ($O(2^n)$, $O(n!)$). Chỉ dùng khi tập dữ liệu cực nhỏ.
 *   **Code Demo (Tìm kiếm chuỗi con thô):**
@@ -324,7 +324,7 @@ Tài liệu này tổng hợp toàn bộ các giải thuật cốt lõi được
 ### 2.8. Duyệt đồ thị (Graph Traversal)
 
 #### 1. Duyệt theo chiều rộng (Breadth-First Search - BFS)
-*   **Trả lời phỏng vấn:** Duyệt đồ thị bắt đầu từ một đỉnh gốc, thăm hết toàn bộ các đỉnh kề trực tiếp (tầng 1) trước khi chuyển sang các đỉnh ở tầng tiếp theo. Sử dụng **Hàng đợi (Queue)** để lưu vết.
+*   **Định nghĩa:** Duyệt đồ thị bắt đầu từ một đỉnh gốc, thăm hết toàn bộ các đỉnh kề trực tiếp (tầng 1) trước khi chuyển sang các đỉnh ở tầng tiếp theo. Sử dụng **Hàng đợi (Queue)** để lưu vết.
 *   **Ẩn dụ trực quan:** Giống như sóng nước loang ra khi bạn ném một viên đá.
 *   **Từ khóa cốt lõi:** $O(V + E)$ time, $O(V)$ space. Ứng dụng để **tìm đường đi ngắn nhất trên đồ thị không trọng số**.
 *   **Code Demo:**
@@ -346,7 +346,7 @@ Tài liệu này tổng hợp toàn bộ các giải thuật cốt lõi được
     ```
 
 #### 2. Duyệt theo chiều sâu (Depth-First Search - DFS)
-*   **Trả lời phỏng vấn:** Duyệt đồ thị bắt đầu từ một đỉnh gốc, đi sâu nhất có thể theo một nhánh cho đến khi gặp ngõ cụt mới quay lui lại ngã rẽ gần nhất để đi nhánh khác. Sử dụng **Đệ quy (Call Stack)** hoặc **Ngăn xếp (Stack)**.
+*   **Định nghĩa:** Duyệt đồ thị bắt đầu từ một đỉnh gốc, đi sâu nhất có thể theo một nhánh cho đến khi gặp ngõ cụt mới quay lui lại ngã rẽ gần nhất để đi nhánh khác. Sử dụng **Đệ quy (Call Stack)** hoặc **Ngăn xếp (Stack)**.
 *   **Ẩn dụ trực quan:** Khám phá một mê cung bằng cách đi sâu hết mức, gặp ngõ cụt thì lùi lại ngã ba gần nhất.
 *   **Từ khóa cốt lõi:** $O(V + E)$ time, $O(V)$ space. Ứng dụng để **phát hiện chu trình, sắp xếp topo**.
 *   **Code Demo:**
@@ -366,7 +366,7 @@ Tài liệu này tổng hợp toàn bộ các giải thuật cốt lõi được
 
 ### 2.9. Quay lui (Backtracking)
 
-*   **Trả lời phỏng vấn:** Một kỹ thuật cải tiến của Vét cạn bằng đệ quy. Thuật toán xây dựng dần các ứng viên cho lời giải, nếu phát hiện ứng viên hiện tại không thể dẫn tới lời giải đúng, nó sẽ **hủy bỏ lựa chọn đó (quay lui)** để thử hướng đi khác.
+*   **Định nghĩa:** Một kỹ thuật cải tiến của Vét cạn bằng đệ quy. Thuật toán xây dựng dần các ứng viên cho lời giải, nếu phát hiện ứng viên hiện tại không thể dẫn tới lời giải đúng, nó sẽ **hủy bỏ lựa chọn đó (quay lui)** để thử hướng đi khác.
 *   **Ẩn dụ trực quan:** Đi giải mê cung, đến ngõ cụt thì quay ngược lại ngã rẽ và xóa các bước đi sai lầm trước đó.
 *   **Từ khóa cốt lõi:** Thử và sai (trial and error), tỉa nhánh (pruning) để giảm thiểu không gian trạng thái tìm kiếm.
 *   **Code Demo (Tìm tất cả các tập hợp con):**
@@ -389,7 +389,7 @@ Tài liệu này tổng hợp toàn bộ các giải thuật cốt lõi được
 Các mẫu kỹ thuật quan trọng giúp tối ưu chương trình khi phỏng vấn Coding:
 
 ### 3.1. Kỹ thuật hai con trỏ (Two Pointers)
-*   **Trả lời phỏng vấn:** Sử dụng hai biến chỉ số (chỉ vào đầu và cuối mảng, hoặc cùng đi từ đầu) dịch chuyển ngược chiều hoặc cùng chiều để quét mảng, giảm độ phức tạp thời gian từ $O(n^2)$ về $O(n)$.
+*   **Định nghĩa:** Sử dụng hai biến chỉ số (chỉ vào đầu và cuối mảng, hoặc cùng đi từ đầu) dịch chuyển ngược chiều hoặc cùng chiều để quét mảng, giảm độ phức tạp thời gian từ $O(n^2)$ về $O(n)$.
 *   **Từ khóa cốt lõi:** Thường áp dụng trên **mảng đã sắp xếp**. Tránh các vòng lặp lồng nhau.
 *   **Code Demo (Tìm 2 số có tổng bằng target trong mảng đã sort):**
     ```java
@@ -406,7 +406,7 @@ Các mẫu kỹ thuật quan trọng giúp tối ưu chương trình khi phỏng
     ```
 
 ### 3.2. Cửa sổ trượt (Sliding Window)
-*   **Trả lời phỏng vấn:** Duy trì một phân đoạn (cửa sổ) liên tục trên mảng. Khi dịch chuyển cửa sổ sang phải, chỉ cần cộng phần tử mới lọt vào bên phải và trừ phần tử bị đẩy ra bên trái để tính toán kết quả mới trong $O(1)$.
+*   **Định nghĩa:** Duy trì một phân đoạn (cửa sổ) liên tục trên mảng. Khi dịch chuyển cửa sổ sang phải, chỉ cần cộng phần tử mới lọt vào bên phải và trừ phần tử bị đẩy ra bên trái để tính toán kết quả mới trong $O(1)$.
 *   **Từ khóa cốt lõi:** Áp dụng cho các bài toán tìm **mảng con liên tục**. Giảm từ $O(k \cdot n)$ về $O(n)$.
 *   **Code Demo (Tổng lớn nhất của mảng con kích thước K):**
     ```java
@@ -443,3 +443,4 @@ Bảng xếp hạng hiệu năng thuật toán giúp bạn so sánh trực tiế
 | **$O(n^2)$** | Chậm | Thường gặp ở các thuật toán có hai vòng lặp lồng nhau. | Bubble Sort, chèn ép thô sơ. |
 | **$O(2^n)$** | Rất chậm | Phân nhánh nhị phân ở mỗi bước, số phép tính bùng nổ. | Fibonacci đệ quy thô không nhớ, tìm tập con. |
 | **$O(n!)$** | Ác mộng | Duyệt qua tất cả các hoán vị của dữ liệu. | Bài toán người đi du lịch (Traveling Salesman). |
+

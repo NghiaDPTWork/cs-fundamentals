@@ -1,4 +1,4 @@
-# CẨM NANG VẤN ĐÁP CẤU TRÚC DỮ LIỆU (INTERVIEW-READY DATA STRUCTURES)
+﻿# CẨM NANG VẤN ĐÁP CẤU TRÚC DỮ LIỆU (INTERVIEW-READY DATA STRUCTURES)
 
 Tài liệu này tổng hợp toàn bộ các cấu trúc dữ liệu cốt lõi được cấu trúc chuyên biệt cho việc ôn luyện phỏng vấn kỹ thuật. Mỗi phần chỉ tập trung vào: Định nghĩa phỏng vấn trực diện, bảng phân loại các dạng con kèm cách nhận biết khi đọc đề, cơ chế duyệt cây (Tree Traversal) và phân tích sâu sắc xung đột băm (Hash Collision) của HashMap.
 
@@ -6,7 +6,7 @@ Tài liệu này tổng hợp toàn bộ các cấu trúc dữ liệu cốt lõi
 
 ## 📖 1. ĐỊNH NGHĨA CẤU TRÚC DỮ LIỆU
 
-*   **Trả lời phỏng vấn (1 câu):** Cấu trúc dữ liệu (Data Structure) là cách thức tổ chức, quản lý và lưu trữ dữ liệu trong bộ nhớ máy tính một cách khoa học để có thể truy xuất, thao tác và tối ưu hóa tài nguyên hiệu quả nhất.
+*   **Định nghĩa:** Cấu trúc dữ liệu (Data Structure) là cách thức tổ chức, quản lý và lưu trữ dữ liệu trong bộ nhớ máy tính một cách khoa học để có thể truy xuất, thao tác và tối ưu hóa tài nguyên hiệu quả nhất.
 *   **Đặc trưng cốt lõi khi phỏng vấn:**
     *   **Time Complexity (Độ phức tạp thời gian):** Thời gian thực hiện các tác vụ (Insert, Delete, Access, Search) được biểu diễn bằng Big O.
     *   **Space Complexity (Độ phức tạp không gian):** Lượng bộ nhớ RAM cần tiêu thụ để cấu trúc tự duy trì.
@@ -17,7 +17,7 @@ Tài liệu này tổng hợp toàn bộ các cấu trúc dữ liệu cốt lõi
 ## 📶 2. PHÂN TÍCH CẤU TRÚC DỮ LIỆU TUYẾN TÍNH (LINEAR DATA STRUCTURES)
 
 ### 2.1. Mảng (Array - Tĩnh và Động)
-*   **Trả lời phỏng vấn:** Mảng là cấu trúc dữ liệu lưu trữ một tập hợp các phần tử có cùng kiểu dữ liệu tại các vị trí bộ nhớ liên tiếp nhau trên RAM.
+*   **Định nghĩa:** Mảng là cấu trúc dữ liệu lưu trữ một tập hợp các phần tử có cùng kiểu dữ liệu tại các vị trí bộ nhớ liên tiếp nhau trên RAM.
 
 | Loại mảng | Định nghĩa ngắn gọn | Nhận biết khi đọc đề bài | Flow truy xuất dữ liệu |
 | :--- | :--- | :--- | :--- |
@@ -27,7 +27,7 @@ Tài liệu này tổng hợp toàn bộ các cấu trúc dữ liệu cốt lõi
 ---
 
 ### 2.2. Danh sách liên kết (Linked List)
-*   **Trả lời phỏng vấn:** Danh sách liên kết là một cấu trúc dữ liệu tuyến tính động, gồm nhiều nút (Node) nằm rải rác trên RAM kết nối với nhau bằng con trỏ địa chỉ (Link).
+*   **Định nghĩa:** Danh sách liên kết là một cấu trúc dữ liệu tuyến tính động, gồm nhiều nút (Node) nằm rải rác trên RAM kết nối với nhau bằng con trỏ địa chỉ (Link).
 
 | Loại Linked List | Định nghĩa ngắn gọn | Nhận biết khi đọc đề bài | Flow truy xuất dữ liệu |
 | :--- | :--- | :--- | :--- |
@@ -38,7 +38,7 @@ Tài liệu này tổng hợp toàn bộ các cấu trúc dữ liệu cốt lõi
 ---
 
 ### 2.3. Ngăn xếp (Stack)
-*   **Trả lời phỏng vấn:** Ngăn xếp là một cấu trúc dữ liệu tuyến tính động hoạt động theo nguyên lý **LIFO (Last In First Out - Vào sau, Ra trước)**.
+*   **Định nghĩa:** Ngăn xếp là một cấu trúc dữ liệu tuyến tính động hoạt động theo nguyên lý **LIFO (Last In First Out - Vào sau, Ra trước)**.
 
 | Loại Stack | Định nghĩa ngắn gọn | Nhận biết khi đọc đề bài | Flow truy xuất dữ liệu |
 | :--- | :--- | :--- | :--- |
@@ -50,7 +50,7 @@ Tài liệu này tổng hợp toàn bộ các cấu trúc dữ liệu cốt lõi
 ---
 
 ### 2.4. Hàng đợi (Queue)
-*   **Trả lời phỏng vấn:** Hàng đợi là cấu trúc dữ liệu tuyến tính động hoạt động theo nguyên lý **FIFO (First In First Out - Vào trước, Ra trước)**.
+*   **Định nghĩa:** Hàng đợi là cấu trúc dữ liệu tuyến tính động hoạt động theo nguyên lý **FIFO (First In First Out - Vào trước, Ra trước)**.
 
 | Loại Queue | Định nghĩa ngắn gọn | Nhận biết khi đọc đề bài | Flow truy xuất dữ liệu |
 | :--- | :--- | :--- | :--- |
@@ -64,7 +64,7 @@ Tài liệu này tổng hợp toàn bộ các cấu trúc dữ liệu cốt lõi
 ## 🏗️ 3. PHÂN TÍCH CẤU TRÚC DỮ LIỆU PHI TUYẾN TÍNH (NON-LINEAR DATA STRUCTURES)
 
 ### 3.1. Cấu trúc Cây (Tree)
-*   **Trả lời phỏng vấn:** Cây là một cấu trúc dữ liệu phân cấp, không có chu trình, gồm một nút gốc (Root) và các nút con được liên kết với nhau bằng các cạnh.
+*   **Định nghĩa:** Cây là một cấu trúc dữ liệu phân cấp, không có chu trình, gồm một nút gốc (Root) và các nút con được liên kết với nhau bằng các cạnh.
 
 | Loại Cây (Tree) | Định nghĩa ngắn gọn | Nhận biết khi đọc đề bài | Flow truy xuất dữ liệu |
 | :--- | :--- | :--- | :--- |
@@ -91,7 +91,7 @@ Tài liệu này tổng hợp toàn bộ các cấu trúc dữ liệu cốt lõi
 
 ### 3.2. Bảng băm (Hash Table) & Xử lý Xung đột mã băm (Hash Collision)
 
-*   **Trả lời phỏng vấn (1 câu):** Bảng băm là cấu trúc dữ liệu lưu trữ dạng cặp `Key-Value`, sử dụng hàm băm (Hash Function) để chuyển đổi Key thành một chỉ số mảng giúp truy xuất trực tiếp dữ liệu trong $O(1)$.
+*   **Định nghĩa:** Bảng băm là cấu trúc dữ liệu lưu trữ dạng cặp `Key-Value`, sử dụng hàm băm (Hash Function) để chuyển đổi Key thành một chỉ số mảng giúp truy xuất trực tiếp dữ liệu trong $O(1)$.
 *   **Xung đột mã băm là gì?**
     Xảy ra khi hai Key khác nhau chạy qua hàm băm cho ra cùng một chỉ số index trong mảng (`hash(Key1) == hash(Key2)`).
     *Nguyên nhân:* Do số lượng Key có thể có là vô hạn, trong khi kích thước mảng lưu trữ là hữu hạn (Nguyên lý chuồng bồ câu).
@@ -104,3 +104,4 @@ Tài liệu này tổng hợp toàn bộ các cấu trúc dữ liệu cốt lõi
 | **Open Addressing: Linear Probing (Dò tuyến tính)** | Khi ô bị trùng băm, dò tìm tuần tự sang ô nhớ trống tiếp theo ngay bên cạnh: `index = (index + 1) % size`. | * Tiết kiệm bộ nhớ (không dùng con trỏ).<br>* Hiệu năng cache CPU cực tốt do dữ liệu nằm liên tục. | Xảy ra lỗi **Primary Clustering**: Các ô nhớ bị lấp đầy liên tiếp tạo thành các cụm lớn, tăng số lần dò tìm. | Hiệu năng giảm mạnh khi bảng băm đạt tải trọng cao (Load Factor lớn) vì phải dò qua hàng loạt ô kề nhau. |
 | **Open Addressing: Quadratic Probing (Dò bậc hai)** | Dò tìm ô trống bằng cách tăng khoảng cách nhảy theo bình phương: `index = (index + i^2) % size`. | Giảm bớt hiện tượng Primary Clustering của dò tuyến tính. | Gặp hiện tượng **Secondary Clustering** (các phần tử có cùng mã băm ban đầu vẫn sẽ đi theo cùng lộ trình dò tìm). | Tốt hơn dò tuyến tính nhưng vẫn bị nghẽn khi Load Factor của bảng băm tăng cao. |
 | **Open Addressing: Double Hashing (Băm kép)** | Sử dụng hàm băm thứ hai $hash_2(Key)$ để tính toán bước nhảy ô: `index = (index + i * hash_2(Key)) % size`. | Khắc phục hoàn toàn hiện tượng tụ tập cụm, phân phối các phần tử đều khắp bảng băm. | Tốn chi phí tính toán 2 hàm băm khác nhau cho mỗi lần xảy ra xung đột. | Đạt hiệu năng tốt nhất, đồng đều nhất trong các phương pháp địa chỉ mở khi xảy ra xung đột cao. |
+
