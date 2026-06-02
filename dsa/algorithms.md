@@ -1,95 +1,73 @@
-# GIẢI THUẬT (ALGORITHMS)
+# CẨM NANG VẤN ĐÁP GIẢI THUẬT (INTERVIEW-READY ALGORITHMS)
 
-Tài liệu này phân tích chi tiết về Giải thuật (Algorithm), bao gồm định nghĩa, chức năng, các hướng tư duy thiết kế (Paradigms) và kỹ thuật tối ưu hóa thực chiến (Techniques). Nội dung được giải thích trực quan theo cách hiểu thực tế, tránh các thuật ngữ hàn lâm phức tạp, đi kèm code demo ngắn gọn, dễ hiểu nhất.
+Tài liệu này tổng hợp toàn bộ các giải thuật cốt lõi được tinh chỉnh chuyên biệt cho việc ôn luyện phỏng vấn kỹ thuật. Mỗi phần được cấu trúc tối giản: Định nghĩa phỏng vấn trực diện, ẩn dụ trực quan ngắn gọn, từ khóa chuyên môn cốt lõi (Big O, Trade-offs) và code demo Java tinh gọn nhất.
 
 ---
 
-## 📖 1. ĐỊNH NGHĨA, CHỨC NĂNG & ĐẶC TRƯNG CỦA GIẢI THUẬT
+## 📖 1. ĐỊNH NGHĨA GIẢI THUẬT
 
-### 1.1. Giải thuật là gì? (Cách hiểu bình dân)
-Hãy tưởng tượng bạn muốn tự tay nấu một bát phở bò chuẩn vị. Bạn cần một **công thức nấu ăn** bao gồm các bước cụ thể: *Bước 1: Ninh xương trong 6 tiếng; Bước 2: Nướng hành tây và gừng; Bước 3: Thái thịt bò mỏng; Bước 4: Chần bánh phở và chan nước dùng.* 
-
-Nếu bạn làm đúng trình tự này, bạn chắc chắn sẽ có một bát phở bò ngon (Đầu ra - Output) từ các nguyên liệu thô (Đầu vào - Input).
-
-**Giải thuật (Algorithm)** chính là một **"công thức nấu ăn" dành cho máy tính**. Nó là một tập hợp các bước chỉ dẫn rõ ràng, có tuần tự logic, bắt đầu từ lúc nhận dữ liệu cho đến khi giải quyết xong vấn đề và dừng lại.
-
-### 1.2. Chức năng (Function) của Giải thuật
-Giải thuật sinh ra để làm các nhiệm vụ cốt lõi sau:
-*   **Giải quyết vấn đề tự động (Automation):** Tiếp nhận dữ liệu đầu vào (Input), tự động xử lý qua các bước logic để trả ra kết quả mong muốn (Output) mà không cần con người thao tác thủ công.
-*   **Tối ưu hóa tài nguyên & Hiệu năng (Optimization):** Cùng một yêu cầu đầu ra, giải thuật tối ưu giúp hệ thống chạy tốn ít thời gian nhất (Độ phức tạp thời gian - Time Complexity) và chiếm dụng ít bộ nhớ RAM nhất (Độ phức tạp không gian - Space Complexity).
-*   **Tái sử dụng (Reusability):** Tạo ra bộ khung logic chuẩn chỉnh có thể áp dụng lại cho nhiều bài toán tương tự với quy mô dữ liệu lớn hơn.
-
-### 1.3. Đặc trưng cốt lõi (Characteristics) của Giải thuật
-Một giải thuật tiêu chuẩn bắt buộc phải đáp ứng 5 đặc trưng sau (hiểu một cách đơn giản, trực quan):
-1.  **Đầu vào xác định (Input):** Có 0 hoặc nhiều dữ liệu đầu vào được mô tả rõ ràng.
-2.  **Đầu ra rõ ràng (Output):** Phải cho ra ít nhất 1 kết quả đầu ra sau khi kết thúc.
-3.  **Tính xác định (Definiteness):** Các bước trong giải thuật phải rõ ràng, không mơ hồ. Máy tính đọc vào chỉ hiểu đúng một nghĩa duy nhất và thực thi chính xác.
-4.  **Tính hữu hạn (Finiteness):** Giải thuật bắt buộc phải dừng lại sau một số bước hữu hạn, không được rơi vào vòng lặp vô hạn gây treo máy.
-5.  **Tính khả thi (Feasibility):** Các chỉ dẫn phải đủ đơn giản để có thể thực thi được bằng các tài nguyên máy tính thực tế (RAM, CPU) hiện có.
+*   **Trả lời phỏng vấn (1 câu):** Giải thuật (Algorithm) là một tập hợp các chỉ dẫn logic, có tuần tự và hữu hạn để xử lý dữ liệu đầu vào (Input) nhằm giải quyết một bài toán cụ thể và cho ra kết quả mong muốn (Output).
+*   **Ẩn dụ trực quan:** Giống như một công thức nấu ăn chuẩn xác từng bước dành cho máy tính.
+*   **Đặc trưng cốt lõi khi phỏng vấn:**
+    1.  **Finiteness (Tính hữu hạn):** Phải dừng lại sau một số bước hữu hạn, không lặp vô hạn.
+    2.  **Definiteness (Tính xác định):** Mỗi bước phải rõ ràng, chỉ có duy nhất một cách hiểu cho máy tính.
+    3.  **Feasibility (Tính khả thi):** Có thể thực thi được bằng tài nguyên phần cứng thực tế.
+    4.  **Input/Output:** Có đầu vào (0 hoặc nhiều) và đầu ra rõ ràng (ít nhất 1).
 
 ---
 
 ## 🧠 2. CÁC HƯỚNG TƯ DUY THIẾT KẾ GIẢI THUẬT (PARADIGMS)
 
-Dưới đây là chi tiết toàn bộ các hướng tư duy giải thuật trong sơ đồ của bạn, kèm định nghĩa trực quan và code demo đơn giản:
-
 ### 2.1. Tìm kiếm (Searching)
 
 #### 1. Tìm kiếm tuần tự (Linear Search)
-*   **Định nghĩa trực quan:** Giống như bạn tìm một quyển sách trong kệ sách xếp lộn xộn. Bạn đi dò từ cuốn đầu tiên bên trái, sang cuốn thứ hai, thứ ba... cho đến khi thấy cuốn cần tìm hoặc đi hết kệ sách mà không thấy.
+*   **Trả lời phỏng vấn:** Duyệt tuần tự qua từng phần tử của mảng từ đầu đến cuối để tìm kiếm giá trị mục tiêu.
+*   **Ẩn dụ trực quan:** Dò tìm từng quyển sách trên kệ từ trái sang phải cho đến khi thấy.
+*   **Từ khóa cốt lõi:** $O(n)$ time, $O(1)$ space. Dùng khi dữ liệu chưa được sắp xếp hoặc mảng quá nhỏ.
 *   **Code Demo:**
     ```java
     public int linearSearch(int[] arr, int target) {
         for (int i = 0; i < arr.length; i++) {
-            if (arr[i] == target) {
-                return i; // Tìm thấy, trả về vị trí ngay lập tức
-            }
+            if (arr[i] == target) return i;
         }
-        return -1; // Duyệt hết mảng mà không thấy
+        return -1;
     }
     ```
-*   **Luồng chạy (Flow):** Với mảng `[4, 2, 9, 1]`, tìm số `9`. Vòng lặp kiểm tra: `4` (không phải) $\rightarrow$ `2` (không phải) $\rightarrow$ `9` (Khớp! Trả về vị trí số 2).
 
 #### 2. Tìm kiếm nhị phân (Binary Search)
-*   **Định nghĩa trực quan:** Giống như bạn lật tìm một từ trong cuốn từ điển đã được sắp xếp theo bảng chữ cái. Thay vì lật từng trang, bạn mở đôi cuốn sách ở chính giữa. Nếu từ ở trang giữa đứng sau từ bạn tìm, bạn bỏ luôn nửa sau cuốn sách và chỉ tìm ở nửa đầu. Cứ thế lặp lại việc chia đôi.
+*   **Trả lời phỏng vấn:** Tìm kiếm trên mảng đã sắp xếp bằng cách liên tục chia đôi khoảng tìm kiếm. So sánh giá trị giữa (`mid`) với `target` để loại bỏ một nửa khoảng không chứa kết quả.
+*   **Ẩn dụ trực quan:** Mở đôi cuốn từ điển và chỉ tìm ở nửa chứa chữ cái cần tìm, bỏ nửa còn lại.
+*   **Từ khóa cốt lõi:** $O(\log n)$ time, $O(1)$ space. **Bắt buộc mảng phải được sắp xếp trước**.
 *   **Code Demo:**
     ```java
     public int binarySearch(int[] sortedArr, int target) {
         int left = 0, right = sortedArr.length - 1;
         while (left <= right) {
-            int mid = left + (right - left) / 2; // Tìm phần tử ở giữa
-            if (sortedArr[mid] == target) return mid; // Khớp!
-            
-            if (sortedArr[mid] < target) {
-                left = mid + 1; // Bỏ nửa bên trái
-            } else {
-                right = mid - 1; // Bỏ nửa bên phải
-            }
+            int mid = left + (right - left) / 2;
+            if (sortedArr[mid] == target) return mid;
+            if (sortedArr[mid] < target) left = mid + 1;
+            else right = mid - 1;
         }
         return -1;
     }
     ```
-*   **Luồng chạy (Flow):** Với mảng đã sort `[1, 3, 5, 7, 9]`, tìm số `7`. 
-    *   Lần 1: Phần tử giữa là `5`. Vì `5 < 7`, ta chuyển hướng sang nửa phải `[7, 9]`.
-    *   Lần 2: Phần tử giữa của khoảng mới là `7`. Khớp! Trả về kết quả.
 
 ---
 
 ### 2.2. Sắp xếp (Sorting)
 
 #### 1. Sắp xếp nổi bọt (Bubble Sort)
-*   **Định nghĩa trực quan:** Giống như các bong bóng khí dưới nước, bong bóng to hơn sẽ nổi lên trên nhanh hơn. Bạn đi dọc mảng từ trái qua phải, so sánh hai số cạnh nhau, nếu số trước to hơn số sau thì đổi chỗ cho nhau. Sau mỗi lượt quét, số to nhất sẽ "nổi" về cuối mảng.
+*   **Trả lời phỏng vấn:** Liên tục so sánh hai phần tử kề nhau và đổi chỗ nếu chúng sai thứ tự. Sau mỗi lượt quét, phần tử lớn nhất sẽ "nổi" về cuối mảng.
+*   **Ẩn dụ trực quan:** Các bong bóng khí lớn hơn sẽ nổi lên mặt nước nhanh hơn.
+*   **Từ khóa cốt lõi:** $O(n^2)$ time, $O(1)$ space. Stable, In-place. Rất chậm, thực tế chỉ dùng để giảng dạy.
 *   **Code Demo:**
     ```java
     public void bubbleSort(int[] arr) {
         int n = arr.length;
         for (int i = 0; i < n - 1; i++) {
             for (int j = 0; j < n - i - 1; j++) {
-                if (arr[j] > arr[j + 1]) { // Số trước to hơn số sau?
-                    // Đổi chỗ hai số
-                    int temp = arr[j];
-                    arr[j] = arr[j + 1];
-                    arr[j + 1] = temp;
+                if (arr[j] > arr[j + 1]) {
+                    int temp = arr[j]; arr[j] = arr[j + 1]; arr[j + 1] = temp;
                 }
             }
         }
@@ -97,77 +75,70 @@ Dưới đây là chi tiết toàn bộ các hướng tư duy giải thuật tro
     ```
 
 #### 2. Sắp xếp chèn (Insertion Sort)
-*   **Định nghĩa trực quan:** Giống như cách bạn xếp bài tây khi chơi bài. Tay trái bạn cầm các lá bài đã được sắp xếp. Tay phải bạn bốc một lá bài mới, bạn duyệt từ phải sang trái các lá bài đang có trên tay để tìm vị trí thích hợp và "chèn" lá bài mới vào đó.
+*   **Trả lời phỏng vấn:** Duyệt mảng và xây dựng một danh sách đã sắp xếp ở đầu bằng cách lấy từng phần tử mới chèn vào đúng vị trí thích hợp của nó trong danh sách đó.
+*   **Ẩn dụ trực quan:** Cách bạn bốc thêm một lá bài tây mới và chèn vào đúng vị trí trên tay.
+*   **Từ khóa cốt lõi:** $O(n^2)$ time, $O(1)$ space. Stable, In-place. Cực nhanh đối với mảng gần như đã được sắp xếp trước.
 *   **Code Demo:**
     ```java
     public void insertionSort(int[] arr) {
         for (int i = 1; i < arr.length; i++) {
-            int key = arr[i]; // Lá bài bốc lên
-            int j = i - 1;
-            // Dịch chuyển các lá bài to hơn lá bài bốc lên sang phải
+            int key = arr[i], j = i - 1;
             while (j >= 0 && arr[j] > key) {
                 arr[j + 1] = arr[j];
                 j--;
             }
-            arr[j + 1] = key; // Chèn lá bài vào vị trí trống phù hợp
+            arr[j + 1] = key;
         }
     }
     ```
 
 #### 3. Sắp xếp nhanh (Quick Sort)
-*   **Định nghĩa trực quan:** Chọn một số bất kỳ làm "cột mốc" (gọi là Pivot). Chia mảng làm hai phe: phe bé hơn pivot xếp sang bên trái, phe lớn hơn pivot xếp sang bên phải. Sau đó, lặp lại việc chọn cột mốc và phân phe này cho hai nửa đó độc lập cho đến khi mảng thẳng hàng.
+*   **Trả lời phỏng vấn:** Chọn một phần tử làm mốc (`pivot`). Phân chia mảng sao cho các phần tử nhỏ hơn pivot nằm bên trái, lớn hơn pivot nằm bên phải. Tiếp tục đệ quy hai nửa đó.
+*   **Ẩn dụ trực quan:** Chọn một người làm cột mốc chiều cao, chia hàng thành hai nhóm đứng hai bên cột mốc.
+*   **Từ khóa cốt lõi:** $O(n \log n)$ average time, $O(n^2)$ worst-case (khi chọn pivot tệ). $O(\log n)$ space. Unstable, In-place.
 *   **Code Demo:**
     ```java
     public void quickSort(int[] arr, int low, int high) {
         if (low < high) {
-            int pivotIndex = partition(arr, low, high); // Phân phe
-            quickSort(arr, low, pivotIndex - 1);  // Sắp xếp phe bên trái
-            quickSort(arr, pivotIndex + 1, high); // Sắp xếp phe bên phải
+            int pi = partition(arr, low, high);
+            quickSort(arr, low, pi - 1);
+            quickSort(arr, pi + 1, high);
         }
     }
-    
     private int partition(int[] arr, int low, int high) {
-        int pivot = arr[high]; // Chọn số cuối cùng làm mốc
-        int i = low - 1;
+        int pivot = arr[high], i = low - 1;
         for (int j = low; j < high; j++) {
             if (arr[j] < pivot) {
                 i++;
-                int temp = arr[i]; arr[i] = arr[j]; arr[j] = temp; // Đổi chỗ
+                int temp = arr[i]; arr[i] = arr[j]; arr[j] = temp;
             }
         }
         int temp = arr[i + 1]; arr[i + 1] = arr[high]; arr[high] = temp;
-        return i + 1; // Trả về vị trí của cột mốc
+        return i + 1;
     }
     ```
 
 #### 4. Sắp xếp trộn (Merge Sort)
-*   **Định nghĩa trực quan:** Đầu tiên, bạn chia đôi mảng liên tục cho đến khi mỗi mảng con chỉ còn đúng 1 phần tử (vì mảng 1 phần tử thì luôn luôn được coi là đã sắp xếp xong). Sau đó, bạn lần lượt gộp (trộn) các mảng nhỏ này lại với nhau theo cặp sao cho mảng sau khi trộn vẫn giữ đúng thứ tự tăng dần.
+*   **Trả lời phỏng vấn:** Sử dụng tư duy Chia để trị. Chia đôi mảng liên tục cho đến khi còn các mảng con 1 phần tử, sau đó trộn (merge) các mảng con đã sắp xếp lại với nhau theo thứ tự tăng dần.
+*   **Ẩn dụ trực quan:** Chia bó đũa ra thành từng chiếc đơn lẻ rồi gộp chúng lại theo cặp có thứ tự.
+*   **Từ khóa cốt lõi:** Luôn là $O(n \log n)$ time trong mọi trường hợp. Tốn $O(n)$ space cho mảng tạm để trộn. Stable.
 *   **Code Demo:**
     ```java
     import java.util.Arrays;
-
     public void mergeSort(int[] arr, int l, int r) {
         if (l < r) {
             int m = l + (r - l) / 2;
-            mergeSort(arr, l, m);     // Chia nửa trái
-            mergeSort(arr, m + 1, r); // Chia nửa phải
-            merge(arr, l, m, r);      // Trộn hai nửa đã sắp xếp lại
+            mergeSort(arr, l, m);
+            mergeSort(arr, m + 1, r);
+            merge(arr, l, m, r);
         }
     }
-    
     private void merge(int[] arr, int l, int m, int r) {
-        // Tạo các mảng tạm để copy dữ liệu hai nửa
         int[] leftArr = Arrays.copyOfRange(arr, l, m + 1);
         int[] rightArr = Arrays.copyOfRange(arr, m + 1, r + 1);
-        
         int i = 0, j = 0, k = l;
-        // Trộn so sánh từng phần tử của hai mảng tạm để ghi đè lại vào mảng gốc
         while (i < leftArr.length && j < rightArr.length) {
-            if (leftArr[i] <= rightArr[j]) {
-                arr[k++] = leftArr[i++];
-            } else {
-                arr[k++] = rightArr[j++];
-            }
+            arr[k++] = (leftArr[i] <= rightArr[j]) ? leftArr[i++] : rightArr[j++];
         }
         while (i < leftArr.length) arr[k++] = leftArr[i++];
         while (j < rightArr.length) arr[k++] = rightArr[j++];
@@ -178,53 +149,52 @@ Dưới đây là chi tiết toàn bộ các hướng tư duy giải thuật tro
 
 ### 2.3. Đệ quy (Recursion)
 
-#### Định nghĩa trực quan
-Giống như búp bê Nga Matryoshka. Bạn mở con búp bê to ra, bên trong có một con búp bê nhỏ hơn nhưng có hình dạng y hệt. Bạn tiếp tục mở cho đến khi gặp con búp bê nhỏ nhất trong cùng không thể mở được nữa (đây gọi là **Điểm dừng - Base Case**). Lúc này bạn dừng lại và xếp các con búp bê lại như cũ.
+*   **Trả lời phỏng vấn:** Cơ chế một hàm tự gọi lại chính nó với các tham số nhỏ hơn cho đến khi chạm tới điểm dừng (Base Case).
+*   **Ẩn dụ trực quan:** Bộ búp bê Nga Matryoshka - mở búp bê lớn chứa búp bê nhỏ hơn bên trong cho đến con nhỏ nhất.
+*   **Từ khóa cốt lõi:** Nguy cơ tràn bộ nhớ stack (**Stack Overflow**) nếu không có Base Case hoặc độ sâu đệ quy quá lớn.
 
 #### 1. Đệ quy tuyến tính (Linear Recursion)
-*   **Định nghĩa dễ hiểu:** Trong thân hàm đệ quy, chỉ có **duy nhất một** lời gọi lại chính nó.
-*   **Code Demo (Tính giai thừa - Factorial):**
+*   **Định nghĩa ngắn:** Hàm tự gọi lại chính nó duy nhất 1 lần trong thân hàm.
+*   **Demo (Tính Giai thừa):**
     ```java
     public int factorial(int n) {
-        if (n == 1) return 1; // Điểm dừng (Base case)
-        return n * factorial(n - 1); // Gọi lại chính nó đúng 1 lần
+        if (n == 1) return 1; // Base case
+        return n * factorial(n - 1); // 1 lời gọi đệ quy
     }
     ```
 
 #### 2. Đệ quy nhị phân (Binary Recursion)
-*   **Định nghĩa dễ hiểu:** Trong thân hàm có **hai lời gọi** đệ quy độc lập với nhau, tạo ra sơ đồ phân nhánh như một cái cây.
-*   **Code Demo (Tính số Fibonacci):**
+*   **Định nghĩa ngắn:** Hàm tự gọi lại chính nó 2 lần độc lập trong thân hàm, tạo ra sơ đồ phân nhánh dạng cây.
+*   **Demo (Số Fibonacci):**
     ```java
     public int fibonacci(int n) {
-        if (n <= 1) return n; // Điểm dừng
-        return fibonacci(n - 1) + fibonacci(n - 2); // Hai lời gọi đệ quy
+        if (n <= 1) return n;
+        return fibonacci(n - 1) + fibonacci(n - 2); // 2 lời gọi đệ quy
     }
     ```
 
 #### 3. Đệ quy lồng (Nested Recursion)
-*   **Định nghĩa dễ hiểu:** Tham số truyền vào cho hàm đệ quy lại chính là kết quả của một lời gọi đệ quy khác (đệ quy nằm trong đệ quy). Tốc độ tăng trưởng cực kỳ nhanh.
-*   **Code Demo (Hàm Ackermann):**
+*   **Định nghĩa ngắn:** Tham số truyền vào cho hàm đệ quy lại chính là kết quả của một lời gọi đệ quy khác.
+*   **Demo (Hàm Ackermann):**
     ```java
     public int ackermann(int m, int n) {
         if (m == 0) return n + 1;
         if (m > 0 && n == 0) return ackermann(m - 1, 1);
-        // Lồng nhau: Lời gọi đệ quy bên trong làm tham số cho lời gọi bên ngoài
-        return ackermann(m - 1, ackermann(m, n - 1));
+        return ackermann(m - 1, ackermann(m, n - 1)); // Lồng nhau
     }
     ```
 
 #### 4. Đệ quy hỗ tương (Mutual Recursion)
-*   **Định nghĩa dễ hiểu:** Hàm A không gọi chính nó, mà gọi hàm B. Sau đó hàm B lại gọi ngược lại hàm A. Hai hàm "nói chuyện qua lại" để giải quyết vấn đề.
-*   **Code Demo (Kiểm tra Chẵn / Lẻ):**
+*   **Định nghĩa ngắn:** Hai hoặc nhiều hàm gọi chéo lẫn nhau để giải quyết vấn đề.
+*   **Demo (Kiểm tra Chẵn Lẻ):**
     ```java
     public boolean isEven(int n) {
         if (n == 0) return true;
-        return isOdd(n - 1); // Hàm Even gọi hàm Odd
+        return isOdd(n - 1); // Hàm A gọi Hàm B
     }
-    
     public boolean isOdd(int n) {
         if (n == 0) return false;
-        return isEven(n - 1); // Hàm Odd gọi lại hàm Even
+        return isEven(n - 1); // Hàm B gọi ngược lại Hàm A
     }
     ```
 
@@ -232,37 +202,34 @@ Giống như búp bê Nga Matryoshka. Bạn mở con búp bê to ra, bên trong 
 
 ### 2.4. Quy hoạch động (Dynamic Programming)
 
-#### Định nghĩa trực quan
-Hỏi bạn: $1+1+1+1+1$ bằng mấy? Bạn đếm và trả lời bằng 5.
-Hỏi tiếp: Nếu viết thêm $+1$ vào sau thì bằng mấy? Bạn trả lời ngay bằng 6.
-Tại sao bạn trả lời nhanh thế mà không cần đếm lại từ đầu? Bởi vì bạn đã **nhớ** kết quả phép tính trước là 5 rồi cộng thêm 1. Quy hoạch động chính là việc ghi nhớ này để tránh tính lại.
+*   **Trả lời phỏng vấn:** Phương pháp giải quyết bài toán lớn bằng cách chia nhỏ thành các bài toán con, giải quyết chúng một lần duy nhất và lưu kết quả lại để tái sử dụng mà không cần tính toán lại.
+*   **Ẩn dụ trực quan:** Ghi nhớ kết quả phép tính $1+1+1+1+1=5$, khi viết thêm $+1$ bạn trả lời ngay là $6$ thay vì đếm lại từ đầu.
+*   **Từ khóa cốt lõi:** Overlapping Subproblems (bài toán con trùng lặp), Optimal Substructure (cấu trúc con tối ưu).
 
 #### 1. Quy hoạch động từ trên xuống (Top-down DP / Memoization)
-*   **Định nghĩa dễ hiểu:** Bạn đi từ bài toán lớn ban đầu, dùng đệ quy để chia nhỏ ra. Nhưng mỗi khi giải xong một bài toán con, bạn lấy bút viết kết quả vào một "cuốn sổ tay" (mảng bộ nhớ đệm). Lần sau nếu gặp lại bài toán con đó, bạn chỉ cần mở sổ ra lấy kết quả dùng luôn.
-*   **Code Demo (Fibonacci có nhớ):**
+*   **Định nghĩa ngắn:** Đi từ bài toán lớn đệ quy xuống bài toán nhỏ, lưu kết quả các bài toán con vào mảng/Map (sổ tay).
+*   **Code Demo:**
     ```java
     public int fibTopDown(int n, int[] memo) {
         if (n <= 1) return n;
-        if (memo[n] != -1) return memo[n]; // Nếu đã có trong sổ tay, trả về luôn
-        
-        memo[n] = fibTopDown(n - 1, memo) + fibTopDown(n - 2, memo); // Tính và ghi vào sổ
+        if (memo[n] != -1) return memo[n]; // Đã nhớ thì lấy dùng luôn
+        memo[n] = fibTopDown(n - 1, memo) + fibTopDown(n - 2, memo);
         return memo[n];
     }
     ```
 
 #### 2. Quy hoạch động từ dưới lên (Bottom-up DP / Tabulation)
-*   **Định nghĩa dễ hiểu:** Không dùng đệ quy. Bạn đi từ những bài toán nhỏ nhất ở đáy (ví dụ F(0), F(1)), dùng vòng lặp để tính dần lên các bài toán lớn hơn và điền kết quả vào một cái bảng (mảng) cho đến khi đạt được kết quả của bài toán cần tìm.
-*   **Code Demo (Fibonacci điền bảng):**
+*   **Định nghĩa ngắn:** Giải quyết các bài toán con nhỏ nhất trước bằng vòng lặp, điền kết quả vào bảng (mảng) và tích lũy dần lên bài toán lớn.
+*   **Code Demo:**
     ```java
     public int fibBottomUp(int n) {
         if (n <= 1) return n;
-        int[] table = new int[n + 1];
-        table[0] = 0; table[1] = 1; // Điểm xuất phát nhỏ nhất
-        
+        int[] dp = new int[n + 1];
+        dp[0] = 0; dp[1] = 1;
         for (int i = 2; i <= n; i++) {
-            table[i] = table[i - 1] + table[i - 2]; // Tính dần lên dựa vào bảng
+            dp[i] = dp[i - 1] + dp[i - 2]; // Điền bảng tuyến tính
         }
-        return table[n];
+        return dp[n];
     }
     ```
 
@@ -270,31 +237,27 @@ Tại sao bạn trả lời nhanh thế mà không cần đếm lại từ đầ
 
 ### 2.5. Tham lam (Greedy)
 
-#### Định nghĩa trực quan
-Giống như bạn đi siêu thị mua sắm với chiếc ví giới hạn và muốn nhặt các món đồ giá trị cao nhất trước. Bạn cứ chọn món đắt tiền nhất có thể mua được tại thời điểm đó, nhét vào giỏ hàng mà không cần suy tính xem các bước sau mình sẽ mua gì.
+*   **Trả lời phỏng vấn:** Tại mỗi bước đi, thuật toán luôn đưa ra lựa chọn tốt nhất hiện tại (tối ưu cục bộ) với hy vọng sẽ dẫn tới kết quả tốt nhất ở cuối cùng (tối ưu toàn cục).
+*   **Ẩn dụ trực quan:** Siêu thị giới hạn số món đồ được nhặt, bạn cứ ưu tiên nhặt món đắt tiền nhất có thể mua được tại thời điểm đó.
+*   **Từ khóa cốt lõi:** Lựa chọn tối ưu cục bộ (locally optimal choice), không phải bài toán nào giải thuật tham lam cũng cho ra kết quả đúng toàn cục.
 
 #### 1. Thuật toán Dijkstra (Tìm đường đi ngắn nhất)
-*   **Định nghĩa dễ hiểu (Không hàn lâm):** Giống như đi chọn đường từ nhà đến trường. Tại mỗi ngã rẽ, bạn luôn chọn con đường ngắn nhất chưa từng đi qua, rồi từ đó cập nhật lại bản đồ đường đi của các điểm lân cận.
-*   **Code Demo đơn giản:**
+*   **Trả lời phỏng vấn:** Tìm đường đi ngắn nhất từ một đỉnh nguồn đến tất cả các đỉnh khác trên đồ thị có trọng số không âm. Tại mỗi bước, chọn đỉnh chưa duyệt có khoảng cách ngắn nhất, cập nhật khoảng cách cho các đỉnh kề của nó.
+*   **Từ khóa cốt lõi:** Greedy, $O((V+E) \log V)$ dùng Heap/Priority Queue. **Không hoạt động trên đồ thị có trọng số âm**.
+*   **Code Demo:**
     ```java
     import java.util.Arrays;
-
     public class DijkstraDemo {
-        // Tìm đường đi ngắn nhất từ đỉnh nguồn (src) đến tất cả các đỉnh khác
         public static void dijkstra(int[][] graph, int src) {
             int n = graph.length;
-            int[] dist = new int[n]; // dist[i] lưu khoảng cách ngắn nhất từ src đến i
-            boolean[] visited = new boolean[n]; // Đánh dấu đỉnh đã duyệt xong
-
-            Arrays.fill(dist, Integer.MAX_VALUE);
-            dist[src] = 0; // Khoảng cách từ nguồn đến chính nó là 0
-
+            int[] dist = new int[n]; boolean[] visited = new boolean[n];
+            Arrays.fill(dist, Integer.MAX_VALUE); dist[src] = 0;
             for (int i = 0; i < n - 1; i++) {
-                // Bước tham lam: Chọn đỉnh có khoảng cách nhỏ nhất chưa duyệt
-                int u = findMinDistance(dist, visited);
+                int u = -1;
+                for (int v = 0; v < n; v++) {
+                    if (!visited[v] && (u == -1 || dist[v] < dist[u])) u = v;
+                }
                 visited[u] = true;
-
-                // Cập nhật khoảng cách cho các đỉnh kề của u
                 for (int v = 0; v < n; v++) {
                     if (!visited[v] && graph[u][v] != 0 && dist[u] != Integer.MAX_VALUE
                             && dist[u] + graph[u][v] < dist[v]) {
@@ -302,186 +265,34 @@ Giống như bạn đi siêu thị mua sắm với chiếc ví giới hạn và 
                     }
                 }
             }
-
-            // In kết quả
-            for (int i = 0; i < n; i++) {
-                System.out.println("Đường đi ngắn nhất từ " + src + " đến " + i + " là: " + dist[i]);
-            }
-        }
-
-        private static int findMinDistance(int[] dist, boolean[] visited) {
-            int min = Integer.MAX_VALUE, minIndex = -1;
-            for (int v = 0; v < dist.length; v++) {
-                if (!visited[v] && dist[v] <= min) {
-                    min = dist[v];
-                    minIndex = v;
-                }
-            }
-            return minIndex;
         }
     }
     ```
 
 #### 2. Thuật toán Kruskal / Thuật toán Prim (Tìm cây khung nhỏ nhất - MST)
-*   **Định nghĩa dễ hiểu (Không hàn lâm):** Giống như bạn có nhiều hòn đảo và muốn xây cầu kết nối tất cả các đảo lại với nhau sao cho tốn ít tiền nhất (không cần tạo thành vòng lặp).
-    *   **Kruskal (Tham lam theo cạnh):** Bạn liệt kê giá của tất cả các cây cầu từ rẻ nhất đến đắt nhất. Bạn cứ nhặt cây cầu rẻ nhất để xây, miễn là cây cầu đó không tạo thành một vòng tròn luẩn quẩn (vòng lặp).
-    *   **Prim (Tham lam theo đỉnh):** Bạn xuất phát từ 1 đảo đầu tiên, sau đó chỉ chọn cây cầu rẻ nhất nối từ các đảo đã được thông với thế giới bên ngoài ra một đảo hoang mới.
-*   **Code Demo Kruskal đơn giản:**
-    ```java
-    import java.util.ArrayList;
-    import java.util.Collections;
-    import java.util.List;
-
-    public class KruskalDemo {
-        static class Edge implements Comparable<Edge> {
-            int u, v, weight;
-            Edge(int u, int v, int weight) {
-                this.u = u; this.v = v; this.weight = weight;
-            }
-            public int compareTo(Edge other) {
-                return this.weight - other.weight; // Để sắp xếp cạnh từ rẻ đến đắt
-            }
-        }
-
-        // Giả lập Union-Find đơn giản để kiểm tra vòng lặp
-        static int findParent(int[] parent, int i) {
-            if (parent[i] == i) return i;
-            return findParent(parent, parent[i]);
-        }
-
-        public static void kruskal(List<Edge> edges, int numVertices) {
-            Collections.sort(edges); // Sắp xếp cạnh tăng dần theo trọng số
-            int[] parent = new int[numVertices];
-            for (int i = 0; i < numVertices; i++) parent[i] = i;
-
-            List<Edge> mst = new ArrayList<>();
-            for (Edge edge : edges) {
-                int rootU = findParent(parent, edge.u);
-                int rootV = findParent(parent, edge.v);
-
-                // Nếu không tạo thành vòng lặp
-                if (rootU != rootV) {
-                    mst.add(edge); // Nhặt cạnh này vào cây khung
-                    parent[rootU] = rootV; // Gộp nhóm
-                }
-            }
-
-            System.out.println("Các cạnh trong MST (Kruskal):");
-            for (Edge e : mst) {
-                System.out.println(e.u + " - " + e.v + " (Giá: " + e.weight + ")");
-            }
-        }
-    }
-    ```
-*   **Code Demo Prim đơn giản:**
-    ```java
-    import java.util.Arrays;
-
-    public class PrimDemo {
-        public static void prim(int[][] graph) {
-            int n = graph.length;
-            int[] key = new int[n]; // Lưu trọng số cạnh nhỏ nhất nối đến mỗi đỉnh
-            int[] parent = new int[n]; // Lưu vết cây khung
-            boolean[] inMST = new boolean[n]; // Đánh dấu đỉnh thuộc MST
-
-            Arrays.fill(key, Integer.MAX_VALUE);
-            key[0] = 0; // Bắt đầu từ đỉnh 0
-            parent[0] = -1;
-
-            for (int i = 0; i < n - 1; i++) {
-                int u = -1;
-                for (int v = 0; v < n; v++) {
-                    if (!inMST[v] && (u == -1 || key[v] < key[u])) {
-                        u = v;
-                    }
-                }
-                inMST[u] = true;
-
-                for (int v = 0; v < n; v++) {
-                    if (graph[u][v] != 0 && !inMST[v] && graph[u][v] < key[v]) {
-                        parent[v] = u;
-                        key[v] = graph[u][v];
-                    }
-                }
-            }
-
-            System.out.println("Các cạnh trong MST (Prim):");
-            for (int i = 1; i < n; i++) {
-                System.out.println(parent[i] + " - " + i + " (Giá: " + graph[i][parent[i]] + ")");
-            }
-        }
-    }
-    ```
+*   **Kruskal (Tham lam theo cạnh):** Sắp xếp tất cả các cạnh theo trọng số tăng dần. Lần lượt nhặt các cạnh nhỏ nhất nối các đỉnh lại với nhau, bỏ các cạnh tạo thành chu trình (dùng Union-Find).
+    *   *Từ khóa:* $O(E \log E)$ hoặc $O(E \log V)$ time. Cực kỳ hiệu quả đối với đồ thị thưa.
+*   **Prim (Tham lam theo đỉnh):** Bắt đầu từ 1 đỉnh nguồn, liên tục nhặt cạnh có trọng số nhỏ nhất nối từ nhóm đỉnh đã chọn sang nhóm đỉnh chưa chọn để kết nạp thêm đỉnh mới vào cây.
+    *   *Từ khóa:* $O(E \log V)$ hoặc $O(V^2)$ time. Cực kỳ hiệu quả đối với đồ thị dày đặc.
 
 #### 3. Mã hóa Huffman (Huffman Coding)
-*   **Định nghĩa dễ hiểu (Không hàn lâm):** Giống như viết tắt tin nhắn để tiết kiệm ký tự. Chữ nào xuất hiện nhiều nhất (như 'e', 'a') sẽ được mã hóa bằng ký hiệu cực ngắn (ví dụ: `0`), còn chữ nào ít gặp (như 'z') thì chấp nhận mã hóa dài hơn (ví dụ: `1101`). Nhờ đó, tổng dung lượng file nhắn tin sẽ nhỏ đi đáng kể.
-*   **Code Demo đơn giản:**
-    ```java
-    import java.util.PriorityQueue;
-
-    public class HuffmanDemo {
-        static class HuffmanNode {
-            int data;
-            char c;
-            HuffmanNode left, right;
-        }
-
-        public static HuffmanNode buildTree(char[] charArray, int[] charfreq) {
-            int n = charArray.length;
-            PriorityQueue<HuffmanNode> q = new PriorityQueue<>(n, (a, b) -> a.data - b.data);
-
-            for (int i = 0; i < n; i++) {
-                HuffmanNode hn = new HuffmanNode();
-                hn.c = charArray[i];
-                hn.data = charfreq[i];
-                q.add(hn);
-            }
-
-            HuffmanNode root = null;
-            while (q.size() > 1) {
-                HuffmanNode x = q.poll();
-                HuffmanNode y = q.poll();
-
-                HuffmanNode f = new HuffmanNode();
-                f.data = x.data + y.data;
-                f.c = '-';
-                f.left = x;
-                f.right = y;
-                root = f;
-                q.add(f);
-            }
-            return root;
-        }
-
-        public static void printCode(HuffmanNode root, String s) {
-            if (root.left == null && root.right == null && Character.isLetter(root.c)) {
-                System.out.println(root.c + " : " + s);
-                return;
-            }
-            printCode(root.left, s + "0");
-            printCode(root.right, s + "1");
-        }
-    }
-    ```
+*   **Trả lời phỏng vấn:** Giải thuật nén dữ liệu không mất mát (Lossless Compression). Tham lam gom các ký tự có tần suất xuất hiện nhỏ nhất lại để xây dựng cây nhị phân, gán mã bít ngắn nhất cho ký tự xuất hiện nhiều nhất và ngược lại.
+*   **Từ khóa cốt lõi:** Greedy, nén dữ liệu, mã độ dài biến đổi (variable-length code).
 
 ---
 
 ### 2.6. Chia để trị (Divide and Conquer)
-*   **Định nghĩa dễ hiểu (Không hàn lâm):** Giống như việc bẻ một bó đũa. Bạn không thể bẻ cả bó đũa một lúc, nên bạn chia bó đũa làm hai nửa, tiếp tục chia nhỏ cho đến khi cầm từng chiếc đũa riêng lẻ để bẻ một cách dễ dàng, cuối cùng gộp lại.
-*   **Code Demo đơn giản (Tính Lũy thừa $x^n$ nhanh bằng cách chia đôi số mũ):**
+
+*   **Trả lời phỏng vấn:** Chia bài toán lớn thành các bài toán con độc lập cùng loại, giải quyết các bài toán con một cách độc lập (thường dùng đệ quy), sau đó gộp kết quả của chúng lại để giải quyết bài toán lớn.
+*   **Ẩn dụ trực quan:** Thay vì bẻ cả bó đũa, chia ra bẻ từng chiếc rồi gom đũa đã gãy lại.
+*   **Từ khóa cốt lõi:** Chia (Divide), Trị (Conquer), Gộp (Combine). Ví dụ điển hình: Merge Sort, Quick Sort, Binary Search.
+*   **Demo (Tính Lũy thừa nhanh $x^n$):**
     ```java
     public class DivideAndConquerDemo {
-        // Chia bài toán thành các phần nhỏ hơn để giải quyết cực nhanh trong O(log n)
         public static long power(int x, int n) {
             if (n == 0) return 1;
-            
-            long half = power(x, n / 2); // Chia đôi số mũ
-            
-            if (n % 2 == 0) {
-                return half * half; // Gộp kết quả
-            } else {
-                return x * half * half;
-            }
+            long half = power(x, n / 2); // Chia bài toán làm đôi
+            return (n % 2 == 0) ? half * half : x * half * half; // Gộp kết quả
         }
     }
     ```
@@ -489,7 +300,10 @@ Giống như bạn đi siêu thị mua sắm với chiếc ví giới hạn và 
 ---
 
 ### 2.7. Vét cạn (Brute Force)
-*   **Định nghĩa trực quan:** Giống như việc bạn thử bẻ khóa mật mã vali có 4 chữ số bằng cách quay số thử lần lượt từ `0000`, `0001`, `0002`... cho đến `9999`. Đơn giản, chắc chắn đúng nhưng cực kỳ mất thời gian.
+
+*   **Trả lời phỏng vấn:** Duyệt qua tất cả các ứng viên hoặc tất cả các trường hợp có thể xảy ra để tìm ra kết quả chính xác nhất.
+*   **Ẩn dụ trực quan:** Thử bẻ khóa vali số 4 chữ số bằng cách quay số lần lượt từ `0000` đến `9999`.
+*   **Từ khóa cốt lõi:** Luôn đúng, cực kỳ dễ cài đặt nhưng độ phức tạp thời gian rất lớn ($O(2^n)$, $O(n!)$). Chỉ dùng khi tập dữ liệu cực nhỏ.
 *   **Code Demo (Tìm kiếm chuỗi con thô):**
     ```java
     public boolean bruteForceSearch(String text, String pattern) {
@@ -497,9 +311,9 @@ Giống như bạn đi siêu thị mua sắm với chiếc ví giới hạn và 
         for (int i = 0; i <= n - m; i++) {
             int j;
             for (j = 0; j < m; j++) {
-                if (text.charAt(i + j) != pattern.charAt(j)) break; // Sai là chuyển sang vị trí tiếp theo
+                if (text.charAt(i + j) != pattern.charAt(j)) break;
             }
-            if (j == m) return true; // Khớp hoàn toàn
+            if (j == m) return true; // Tìm thấy
         }
         return false;
     }
@@ -510,33 +324,21 @@ Giống như bạn đi siêu thị mua sắm với chiếc ví giới hạn và 
 ### 2.8. Duyệt đồ thị (Graph Traversal)
 
 #### 1. Duyệt theo chiều rộng (Breadth-First Search - BFS)
-*   **Định nghĩa trực quan:** Giống như một vết dầu loang trên mặt nước hoặc sóng nước khi bạn ném một viên đá. Bạn thăm tất cả các nút lân cận trực tiếp xung quanh bạn (tầng 1), sau khi thăm hết bạn mới đi tiếp sang các nút xa hơn một chút (tầng 2). Thuật toán này dùng **Hàng đợi (Queue)**.
-*   **Code Demo (Ý tưởng cấu trúc đồ thị):**
+*   **Trả lời phỏng vấn:** Duyệt đồ thị bắt đầu từ một đỉnh gốc, thăm hết toàn bộ các đỉnh kề trực tiếp (tầng 1) trước khi chuyển sang các đỉnh ở tầng tiếp theo. Sử dụng **Hàng đợi (Queue)** để lưu vết.
+*   **Ẩn dụ trực quan:** Giống như sóng nước loang ra khi bạn ném một viên đá.
+*   **Từ khóa cốt lõi:** $O(V + E)$ time, $O(V)$ space. Ứng dụng để **tìm đường đi ngắn nhất trên đồ thị không trọng số**.
+*   **Code Demo:**
     ```java
     import java.util.*;
-
-    public class BFSDemo {
-        static class Node {
-            int val;
-            List<Node> neighbors = new ArrayList<>();
-            Node(int val) { this.val = val; }
-        }
-
-        public void bfs(Node startNode) {
-            Queue<Node> queue = new LinkedList<>();
-            Set<Node> visited = new HashSet<>();
-            
-            queue.add(startNode); 
-            visited.add(startNode);
-            
-            while (!queue.isEmpty()) {
-                Node current = queue.poll(); // Lấy nút đầu hàng ra thăm
-                System.out.print(current.val + " ");
-                for (Node neighbor : current.neighbors) {
-                    if (!visited.contains(neighbor)) {
-                        visited.add(neighbor); 
-                        queue.add(neighbor); // Loang ra hàng xóm
-                    }
+    public void bfs(Node startNode) {
+        Queue<Node> queue = new LinkedList<>(); Set<Node> visited = new HashSet<>();
+        queue.add(startNode); visited.add(startNode);
+        while (!queue.isEmpty()) {
+            Node current = queue.poll();
+            System.out.print(current.val + " ");
+            for (Node neighbor : current.neighbors) {
+                if (!visited.contains(neighbor)) {
+                    visited.add(neighbor); queue.add(neighbor);
                 }
             }
         }
@@ -544,26 +346,18 @@ Giống như bạn đi siêu thị mua sắm với chiếc ví giới hạn và 
     ```
 
 #### 2. Duyệt theo chiều sâu (Depth-First Search - DFS)
-*   **Định nghĩa trực quan:** Giống như bạn đi khám phá một mê cung. Bạn chọn một lối rẽ và cắm đầu đi sâu hết mức có thể trên con đường đó cho đến khi gặp ngõ cụt. Lúc đó bạn mới quay lui lại ngã ba gần nhất để chọn lối rẽ khác. Thuật toán dùng **Đệ quy** hoặc **Ngăn xếp (Stack)**.
+*   **Trả lời phỏng vấn:** Duyệt đồ thị bắt đầu từ một đỉnh gốc, đi sâu nhất có thể theo một nhánh cho đến khi gặp ngõ cụt mới quay lui lại ngã rẽ gần nhất để đi nhánh khác. Sử dụng **Đệ quy (Call Stack)** hoặc **Ngăn xếp (Stack)**.
+*   **Ẩn dụ trực quan:** Khám phá một mê cung bằng cách đi sâu hết mức, gặp ngõ cụt thì lùi lại ngã ba gần nhất.
+*   **Từ khóa cốt lõi:** $O(V + E)$ time, $O(V)$ space. Ứng dụng để **phát hiện chu trình, sắp xếp topo**.
 *   **Code Demo:**
     ```java
     import java.util.*;
-
-    public class DFSDemo {
-        static class Node {
-            int val;
-            List<Node> neighbors = new ArrayList<>();
-            Node(int val) { this.val = val; }
-        }
-
-        public void dfs(Node node, Set<Node> visited) {
-            if (node == null || visited.contains(node)) return;
-            
-            System.out.print(node.val + " "); // Thăm nút hiện tại
-            visited.add(node);
-            for (Node neighbor : node.neighbors) {
-                dfs(neighbor, visited); // Đâm sâu tiếp vào các nhánh con
-            }
+    public void dfs(Node node, Set<Node> visited) {
+        if (node == null || visited.contains(node)) return;
+        System.out.print(node.val + " ");
+        visited.add(node);
+        for (Node neighbor : node.neighbors) {
+            dfs(neighbor, visited); // Đi sâu xuống dưới
         }
     }
     ```
@@ -571,19 +365,19 @@ Giống như bạn đi siêu thị mua sắm với chiếc ví giới hạn và 
 ---
 
 ### 2.9. Quay lui (Backtracking)
-*   **Định nghĩa trực quan:** Bạn đi giải mê cung. Bạn đến một lối rẽ, bạn thử đi đường bên trái. Nếu đi một hồi phát hiện ngõ cụt, bạn **quay ngược lại (Backtrack)** ngã rẽ đó, xóa bỏ lựa chọn sai lầm và thử đi sang con đường bên phải.
+
+*   **Trả lời phỏng vấn:** Một kỹ thuật cải tiến của Vét cạn bằng đệ quy. Thuật toán xây dựng dần các ứng viên cho lời giải, nếu phát hiện ứng viên hiện tại không thể dẫn tới lời giải đúng, nó sẽ **hủy bỏ lựa chọn đó (quay lui)** để thử hướng đi khác.
+*   **Ẩn dụ trực quan:** Đi giải mê cung, đến ngõ cụt thì quay ngược lại ngã rẽ và xóa các bước đi sai lầm trước đó.
+*   **Từ khóa cốt lõi:** Thử và sai (trial and error), tỉa nhánh (pruning) để giảm thiểu không gian trạng thái tìm kiếm.
 *   **Code Demo (Tìm tất cả các tập hợp con):**
     ```java
     import java.util.*;
-
-    public class BacktrackingDemo {
-        public void backtrack(List<List<Integer>> ans, List<Integer> temp, int[] nums, int start) {
-            ans.add(new ArrayList<>(temp)); // Thêm lựa chọn hiện tại vào kết quả
-            for (int i = start; i < nums.length; i++) {
-                temp.add(nums[i]); // Thử chọn số nums[i]
-                backtrack(ans, temp, nums, i + 1); // Đi tiếp con đường này
-                temp.remove(temp.size() - 1); // Quay lui: Bỏ chọn số nums[i] để thử số khác
-            }
+    public void backtrack(List<List<Integer>> ans, List<Integer> temp, int[] nums, int start) {
+        ans.add(new ArrayList<>(temp));
+        for (int i = start; i < nums.length; i++) {
+            temp.add(nums[i]); // Chọn nums[i]
+            backtrack(ans, temp, nums, i + 1); // Đi tiếp
+            temp.remove(temp.size() - 1); // Quay lui: Bỏ chọn để thử số khác
         }
     }
     ```
@@ -592,75 +386,60 @@ Giống như bạn đi siêu thị mua sắm với chiếc ví giới hạn và 
 
 ## 🛠️ 3. KỸ THUẬT TỐI ƯU HÓA THỰC CHIẾN (TECHNIQUES)
 
-Các mẫu kỹ thuật phổ biến dùng để giảm độ phức tạp thời gian khi viết code:
+Các mẫu kỹ thuật quan trọng giúp tối ưu chương trình khi phỏng vấn Coding:
 
 ### 3.1. Kỹ thuật hai con trỏ (Two Pointers)
-*   **Định nghĩa dễ hiểu (Không hàn lâm):** Giống như hai người đi tìm mua nhà từ hai đầu phố. Một người đi từ đầu phố (`left`), một người đi từ cuối phố (`right`). Nếu giá nhà của hai người cộng lại quá cao, người ở cuối phố lùi lại (`right--`) tìm nhà rẻ hơn. Nếu tổng giá quá thấp, người ở đầu phố tiến lên (`left++`) tìm nhà đắt hơn. Họ sẽ gặp nhau ở đúng cặp nhà cần tìm cực kỳ nhanh mà không cần phải đi dò từng đôi nhà một.
-*   **Code Demo đơn giản (Tìm 2 số có tổng bằng target trong mảng đã sắp xếp):**
+*   **Trả lời phỏng vấn:** Sử dụng hai biến chỉ số (chỉ vào đầu và cuối mảng, hoặc cùng đi từ đầu) dịch chuyển ngược chiều hoặc cùng chiều để quét mảng, giảm độ phức tạp thời gian từ $O(n^2)$ về $O(n)$.
+*   **Từ khóa cốt lõi:** Thường áp dụng trên **mảng đã sắp xếp**. Tránh các vòng lặp lồng nhau.
+*   **Code Demo (Tìm 2 số có tổng bằng target trong mảng đã sort):**
     ```java
-    public class TwoPointersDemo {
-        public static int[] findTwoSum(int[] sortedArr, int target) {
-            int left = 0;
-            int right = sortedArr.length - 1;
-
-            while (left < right) {
-                int currentSum = sortedArr[left] + sortedArr[right];
-                if (currentSum == target) {
-                    return new int[]{left, right}; // Tìm thấy!
-                } else if (currentSum > target) {
-                    right--; // Tổng quá lớn, lùi con trỏ bên phải
-                } else {
-                    left++; // Tổng quá nhỏ, tiến con trỏ bên trái
-                }
-            }
-            return new int[]{-1, -1}; // Không tìm thấy
+    public int[] findTwoSum(int[] sortedArr, int target) {
+        int left = 0, right = sortedArr.length - 1;
+        while (left < right) {
+            int sum = sortedArr[left] + sortedArr[right];
+            if (sum == target) return new int[]{left, right};
+            if (sum > target) right--;
+            else left++;
         }
+        return new int[]{-1, -1};
     }
     ```
 
 ### 3.2. Cửa sổ trượt (Sliding Window)
-*   **Định nghĩa dễ hiểu (Không hàn lâm):** Giống như bạn kéo một chiếc kính lúp dịch chuyển dọc theo một dãy số dài. Thay vì mỗi lần dịch kính lúp sang phải bạn phải cộng lại tất cả các số nằm dưới kính, bạn chỉ cần lấy tổng cũ, cộng thêm số mới lọt vào kính bên phải, và trừ đi số vừa bị đẩy ra ngoài kính bên trái.
-*   **Code Demo đơn giản (Tìm tổng lớn nhất của mảng con có kích thước K):**
+*   **Trả lời phỏng vấn:** Duy trì một phân đoạn (cửa sổ) liên tục trên mảng. Khi dịch chuyển cửa sổ sang phải, chỉ cần cộng phần tử mới lọt vào bên phải và trừ phần tử bị đẩy ra bên trái để tính toán kết quả mới trong $O(1)$.
+*   **Từ khóa cốt lõi:** Áp dụng cho các bài toán tìm **mảng con liên tục**. Giảm từ $O(k \cdot n)$ về $O(n)$.
+*   **Code Demo (Tổng lớn nhất của mảng con kích thước K):**
     ```java
-    public class SlidingWindowDemo {
-        public static int maxSumSubarray(int[] arr, int k) {
-            if (arr.length < k) return -1;
-
-            int windowSum = 0;
-            // Tính tổng của cửa sổ đầu tiên kích thước k
-            for (int i = 0; i < k; i++) {
-                windowSum += arr[i];
-            }
-
-            int maxSum = windowSum;
-            // Trượt cửa sổ sang phải
-            for (int i = k; i < arr.length; i++) {
-                // Cộng thêm phần tử bên phải, trừ đi phần tử bị đẩy ra bên trái
-                windowSum += arr[i] - arr[i - k];
-                maxSum = Math.max(maxSum, windowSum);
-            }
-            return maxSum;
+    public int maxSumSubarray(int[] arr, int k) {
+        if (arr.length < k) return -1;
+        int windowSum = 0;
+        for (int i = 0; i < k; i++) windowSum += arr[i];
+        int maxSum = windowSum;
+        for (int i = k; i < arr.length; i++) {
+            windowSum += arr[i] - arr[i - k]; // Thêm phải, bớt trái
+            maxSum = Math.max(maxSum, windowSum);
         }
+        return maxSum;
     }
     ```
 
-### 3.3. Các kỹ thuật tối ưu hóa khác
-*   **Mảng cộng dồn (Prefix Sum):** Tạo mảng lưu tổng lũy kế giúp truy vấn tổng của bất kỳ đoạn con từ $L$ đến $R$ trong thời gian hằng số $O(1)$ bằng công thức: `sum = prefix[R] - prefix[L-1]`.
-*   **Kỹ thuật Băm (Hashing):** Dùng HashSet/HashMap để lưu và kiểm tra sự tồn tại của phần tử đã duyệt qua trong $O(1)$.
-*   **Ngăn xếp đơn điệu (Monotonic Stack):** Dùng Stack luôn duy trì thứ tự tăng/giảm dần để tìm phần tử lớn hơn/nhỏ hơn tiếp theo (Next Greater Element) trong $O(n)$.
-*   **Thao tác Bit (Bit Manipulation):** Sử dụng các toán tử nhị phân cơ bản (`&`, `|`, `^`, `<<`, `>>`) để tính toán trực tiếp trên bit của số nguyên nhằm đạt tốc độ phần cứng tối đa.
+### 3.3. Các kỹ thuật tối ưu khác
+*   **Prefix Sum (Mảng cộng dồn):** Lưu tổng lũy kế từ đầu mảng để truy vấn tổng đoạn con từ $L$ đến $R$ trong $O(1)$ bằng công thức: `sum = prefix[R] - prefix[L-1]`.
+*   **Hashing (Kỹ thuật băm):** Sử dụng HashSet/HashMap để kiểm tra sự tồn tại của phần tử đã duyệt qua trong $O(1)$.
+*   **Monotonic Stack (Ngăn xếp đơn điệu):** Duy trì phần tử trong Stack theo thứ tự tăng/giảm dần để tìm phần tử lớn hơn/nhỏ hơn tiếp theo (Next Greater Element) trong $O(n)$.
 
 ---
 
 ## 📊 4. ĐỘ PHỨC TẠP THUẬT TOÁN (COMPLEXITY)
 
-Big O là thước đo tốc độ tăng trưởng tài nguyên (thời gian hoặc bộ nhớ) của giải thuật khi dữ liệu đầu vào ($n$) tăng lên vô hạn.
+Bảng xếp hạng hiệu năng thuật toán giúp bạn so sánh trực tiếp khi trao đổi với người phỏng vấn:
 
-| Big O | Tên gọi | Tốc độ | Ví dụ thực tế |
+| Big O | Tốc độ | Nhận xét thực tế | Ví dụ tiêu biểu |
 | :--- | :--- | :--- | :--- |
-| **$O(1)$** | Constant Time | Siêu tốc (Hằng số) | Truy cập phần tử mảng `arr[i]`, lấy giá trị Map. |
-| **$O(\log n)$** | Logarithmic Time | Cực nhanh | Tìm kiếm nhị phân (Binary Search). |
-| **$O(n)$** | Linear Time | Tốt (Tuyến tính) | Tìm kiếm tuần tự (Linear Search), duyệt mảng 1 vòng lặp. |
-| **$O(n \log n)$** | Linearithmic Time | Khá | Thuật toán sắp xếp Merge Sort, Quick Sort. |
-| **$O(n^2)$** | Quadratic Time | Chậm | Hai vòng lặp lồng nhau duyệt mảng (Bubble Sort). |
-| **$O(2^n)$** | Exponential Time | Ác mộng (Mũ) | Đệ quy Fibonacci thô không nhớ, tìm tập con. |
+| **$O(1)$** | Siêu tốc | Không phụ thuộc vào kích thước dữ liệu đầu vào. | Lấy phần tử mảng qua index, lấy từ HashMap. |
+| **$O(\log n)$** | Cực nhanh | Bị chia đôi liên tục mỗi bước, rất tốt cho dữ liệu lớn. | Tìm kiếm nhị phân (Binary Search). |
+| **$O(n)$** | Tốt | Thời gian tăng tuyến tính theo kích thước dữ liệu. | Tìm kiếm tuần tự (Linear Search), duyệt mảng 1 vòng lặp. |
+| **$O(n \log n)$** | Khá | Tốc độ của các thuật toán sắp xếp tối ưu. | Merge Sort, Quick Sort (trung bình). |
+| **$O(n^2)$** | Chậm | Thường gặp ở các thuật toán có hai vòng lặp lồng nhau. | Bubble Sort, chèn ép thô sơ. |
+| **$O(2^n)$** | Rất chậm | Phân nhánh nhị phân ở mỗi bước, số phép tính bùng nổ. | Fibonacci đệ quy thô không nhớ, tìm tập con. |
+| **$O(n!)$** | Ác mộng | Duyệt qua tất cả các hoán vị của dữ liệu. | Bài toán người đi du lịch (Traveling Salesman). |
