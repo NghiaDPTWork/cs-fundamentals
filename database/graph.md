@@ -1,109 +1,125 @@
-# Tìm Hiểu Sâu Về Cơ Sở Dữ Liệu Đồ Thị (Graph Database)
+# NGÔN NGỮ TRUY VẤN ĐỒ THỊ: CYPHER
 
-Cơ sở dữ liệu đồ thị (Graph Database) thuộc nhóm NoSQL nhưng được thiết kế chuyên biệt để lưu trữ và truy vấn các dữ liệu có mối quan hệ chằng chịt, phức tạp và đan xen nhiều tầng lớp. Thay vì cố gắng biểu diễn mối quan hệ bằng bảng trung gian hay các khóa ngoại, Graph Database coi **mối quan hệ là đối tượng ưu tiên hàng đầu** (first-class citizen) trong hệ thống.
-
----
-
-## 1. Mô Hình Labeled Property Graph (LPG)
-
-Mô hình phổ biến nhất được sử dụng trong các hệ cơ sở dữ liệu đồ thị như Neo4j là mô hình **Đồ thị Thuộc tính có Nhãn**:
-
-```mermaid
-graph LR
-    User1((Node: User\nname: "An"\nage: 28)) -->|Edge: FRIEND_WITH\nsince: 2020| User2((Node: User\nname: "Bình"\nage: 30))
-    User1 -->|Edge: LIKES| Product((Node: Product\nname: "MacBook Pro"\nprice: 1999))
-```
-
-- **Nodes (Đỉnh / Nút)**: Đại diện cho các thực thể (như Người, Sản phẩm, Địa điểm). Mỗi Node có thể có một hoặc nhiều **Labels** (Nhãn) để phân loại (ví dụ: `:User`, `:Product`).
-- **Edges / Relationships (Cạnh / Mối quan hệ)**: Kết nối các Node lại với nhau. Mối quan hệ luôn có **hướng** (Direction - từ Node nguồn đến Node đích) và có một **Type** (Kiểu quan hệ - ví dụ: `[:FRIEND_WITH]`, `[:PURCHASED]`).
-- **Properties (Thuộc tính)**: Cả Nodes và Edges đều có thể chứa các cặp key-value thuộc tính (ví dụ: Node User có thuộc tính `name`, `age`; Edge `FRIEND_WITH` có thuộc tính `since` để chỉ thời gian bắt đầu làm bạn).
-
-> **Phân biệt Labeled Property Graph (LPG) vs RDF (Resource Description Framework)**:
-> - **LPG**: Tập trung vào lưu trữ các thuộc tính phức tạp trên cả node và edge. Rất thích hợp cho các ứng dụng phần mềm doanh nghiệp, mạng xã hội nhờ tốc độ truy vấn cao.
-> - **RDF**: Biểu diễn dữ liệu dưới dạng bộ ba (Subject - Predicate - Object). Thường dùng trong Semantic Web (web ngữ nghĩa), xây dựng Ontology chuẩn hóa và liên kết dữ liệu mở trên toàn cầu (Linked Open Data).
+Tài liệu này tập trung chi tiết vào cú pháp truy vấn Cypher (được sử dụng phổ biến trong Neo4j), giải thích cấu trúc dựa trên nghệ thuật ASCII-art và cách viết các câu truy vấn từ cơ bản đến nâng cao để khai thác mối quan hệ chằng chịt trong đồ thị.
 
 ---
 
-## 2. Cơ Chế Lưu Trữ Độc Đáo: Index-Free Adjacency
+## 1. CÚ PHÁP ĐỒ THỊ DỰA TRÊN ASCII-ART
 
-Sức mạnh lớn nhất giúp Graph Database vượt trội hoàn toàn so với SQL khi truy vấn liên kết đa cấp là cơ chế **Index-Free Adjacency (Kề cận không cần chỉ mục)**.
+Điểm độc đáo nhất của Cypher là cú pháp mô tả mô hình đồ thị trực quan bằng cách sử dụng các ký tự văn bản thông thường (ASCII-art). Bạn vẽ mô hình đồ thị như thế nào, bạn viết câu truy vấn y hệt như thế:
 
-### 2.1. Vấn đề của SQL (Global Index Lookup)
-Trong RDBMS, khi muốn tìm bạn của bạn của một người (2-hop friend), ta phải thực hiện phép `JOIN` giữa bảng User và bảng Friend, rồi `JOIN` tiếp một lần nữa.
-Về mặt vật lý, DBMS phải sử dụng chỉ mục (Index) trên khóa ngoại để tìm kiếm trên cây B+ Tree:
-- Với mỗi bước nhảy (hop), DBMS thực hiện tìm kiếm trên index cấp toàn cục (Global Index Lookup) có độ phức tạp $O(\log N)$.
-- Khi số cấp nhảy tăng lên (3-hop, 4-hop, hoặc n-hop), thời gian truy vấn sẽ tăng theo cấp số nhân (exponential slowdown) và nhanh chóng làm nghẽn hệ thống.
-
-### 2.2. Giải pháp của Graph Database (Index-Free Adjacency)
-Với Index-Free Adjacency, Graph Database lưu trữ trực tiếp địa chỉ vật lý (memory address hoặc disk offset) của các node lân cận ngay trong bản ghi của node hiện tại.
-
-```
-[ Node: An ] ---------> Trỏ trực tiếp tới địa chỉ bộ nhớ của ------> [ Node: Bình ]
-                        (Quan hệ: FRIEND_WITH)
-```
-
-- **Không dùng Global Index**: Khi duyệt đồ thị, bộ máy thực thi chỉ cần đi theo các con trỏ địa chỉ này để nhảy từ node này sang node kia.
-- **Độ phức tạp cố định $O(1)$**: Thời gian duyệt qua một mối quan hệ (1 bước nhảy) chỉ mất thời gian hằng số $O(1)$ vì nó chỉ là một phép toán dereference con trỏ.
-- **Hiệu năng độc lập với kích thước dữ liệu**: Dù cơ sở dữ liệu có 10 nghìn hay 10 tỷ node, tốc độ duyệt từ Node A sang các Node bạn bè kề cạnh của nó vẫn không thay đổi, bởi vì hệ thống không phải quét một bảng chỉ mục khổng lồ nào cả.
+*   **Đỉnh / Nút (Nodes) $\rightarrow$ Biểu diễn bằng cặp ngoặc đơn `()`**:
+    *   Ngoặc đơn mô phỏng hình tròn của một nút.
+    *   Cú pháp: `(tên_biến:Tên_Nhãn {các_thuộc_tính})`
+    *   Ví dụ: `(u:User {name: "An", age: 28})`
+        *   `u`: Biến đại diện cho node (dùng để tham chiếu ở phần sau của câu query).
+        *   `:User`: Nhãn (Label) phân loại node.
+        *   `{name: "An", age: 28}`: Thuộc tính lưu trữ trong node dưới dạng key-value.
+*   **Mối quan hệ / Cạnh (Relationships/Edges) $\rightarrow$ Biểu diễn bằng nét vẽ mũi tên `-->` hoặc `<--`**:
+    *   Mũi tên chỉ hướng của mối quan hệ từ node nguồn sang node đích.
+    *   Nếu mối quan hệ không cần quan tâm đến hướng, viết dạng nét ngang `--`.
+    *   Để khai báo thông tin của mối quan hệ, đặt trong ngoặc vuông `[]` ở giữa nét vẽ: `-[tên_biến:TÊN_LOẠI {các_thuộc_tính}]->`
+    *   Ví dụ: `-[r:FRIEND_WITH {since: 2020}]->`
+        *   `r`: Biến đại diện cho mối quan hệ.
+        *   `:FRIEND_WITH`: Loại mối quan hệ (Relationship Type).
+        *   `{since: 2020}`: Thuộc tính của mối quan hệ.
 
 ---
 
-## 3. Ngôn Ngữ Truy Vấn Cypher
+## 2. CÁC PHÉP TRUY VẤN CYPHER CƠ BẢN
 
-Cypher là ngôn ngữ truy vấn đồ thị mang tính khai báo (declarative) được Neo4j phát triển và đã trở thành một chuẩn công nghiệp mở (openCypher). Cypher sử dụng nghệ thuật ASCII-art để biểu diễn các mô hình đồ thị trực quan:
+Dưới đây là phân tích chi tiết cấu trúc các câu lệnh cơ bản phục vụ CRUD dữ liệu trong Graph Database.
 
-- `()` đại diện cho một Node.
-- `-->` hoặc `<--` đại diện cho một Edge (Mối quan hệ có hướng).
-- `[]` nằm trong mũi tên đại diện cho thông tin của Edge.
+### 2.1. Tạo mới dữ liệu (CREATE)
+Sử dụng để tạo các Node và thiết lập mối quan hệ giữa chúng trong cùng một lệnh:
 
-### Ví dụ các truy vấn cơ bản:
-
-#### 1. Tạo dữ liệu (Create):
 ```cypher
+// 1. Tạo node User tên "An"
 CREATE (a:User {name: "An", age: 28})
+
+// 2. Tạo node User tên "Bình"
 CREATE (b:User {name: "Bình", age: 30})
+
+// 3. Tạo mối quan hệ FRIEND_WITH hướng từ "An" sang "Bình"
 CREATE (a)-[:FRIEND_WITH {since: 2020}]->(b)
 ```
 
-#### 2. Tìm kiếm bạn bè của "An" (Match):
+---
+
+### 2.2. Tìm kiếm dữ liệu (MATCH ... WHERE ... RETURN)
+Cypher sử dụng cơ chế so khớp mẫu (Pattern Matching) bằng từ khóa `MATCH`.
+
+*   **Tìm kiếm thông tin của một người cụ thể:**
+    ```cypher
+    MATCH (u:User)                 // Tìm tất cả các node có nhãn User
+    WHERE u.name = "An"            // Điều kiện lọc thuộc tính (giống WHERE trong SQL)
+    RETURN u.age                   // Trả về thuộc tính cần hiển thị (giống SELECT trong SQL)
+    ```
+
+*   **Tìm danh sách bạn bè của "An":**
+    ```cypher
+    MATCH (u:User {name: "An"})-[:FRIEND_WITH]->(f:User)
+    RETURN f.name, f.age
+    ```
+    *Giải nghĩa mẫu vẽ:* Tìm node `u` là User tên "An", đi theo hướng mũi tên quan hệ `FRIEND_WITH` để tìm đến các node `f` là User. Trả về tên và tuổi của các node `f` tìm được.
+
+---
+
+### 2.3. Cập nhật thuộc tính (SET)
 ```cypher
-MATCH (u:User {name: "An"})-[:FRIEND_WITH]->(f:User)
-RETURN f.name, f.age
+MATCH (u:User {name: "An"})
+SET u.age = 29, u.status = "active" // Cập nhật hoặc thêm thuộc tính mới
+RETURN u
 ```
 
-#### 3. Tìm kiếm bạn của bạn (2-hop friends) và gợi ý kết bạn:
+---
+
+### 2.4. Xóa dữ liệu (DELETE & DETACH DELETE)
+Trong cơ sở dữ liệu đồ thị, bạn không được phép xóa một Node nếu Node đó vẫn đang có các mối quan hệ (cạnh) kết nối với các Node khác (để tránh lỗi tham chiếu mồ côi).
+
+*   **Xóa mối quan hệ (cạnh):**
+    ```cypher
+    MATCH (a:User {name: "An"})-[r:FRIEND_WITH]->(b:User {name: "Bình"})
+    DELETE r
+    ```
+*   **Xóa Node an toàn (Xóa sạch các quan hệ liên quan trước khi xóa Node):**
+    ```cypher
+    MATCH (u:User {name: "An"})
+    DETACH DELETE u  // Tự động tìm và xóa tất cả các cạnh kết nối vào u, sau đó xóa u
+    ```
+
+---
+
+## 3. TRUY VẤN QUAN HỆ NHIỀU TẦNG (MULTI-HOP QUERY)
+
+Sức mạnh thực sự của Cypher tỏa sáng ở các phép truy vấn duyệt đồ thị đa cấp, việc mà SQL phải viết hàng chục dòng JOIN rất chậm.
+
+### 3.1. Tìm bạn của bạn (2-hop friends)
+Tìm kiếm những người là bạn của bạn của "An", nhưng bản thân "An" chưa kết bạn với họ để đưa ra gợi ý kết bạn:
+
 ```cypher
 MATCH (u:User {name: "An"})-[:FRIEND_WITH]->(friend)-[:FRIEND_WITH]->(fof:User)
 WHERE NOT (u)-[:FRIEND_WITH]->(fof) AND u <> fof
 RETURN DISTINCT fof.name AS SuggestedFriend
 ```
 
----
-
-## 4. Các Thuật Toán Đồ Thị Cốt Lõi (Graph Algorithms)
-
-Graph Database tích hợp sẵn các thuật toán đồ thị kinh điển giúp giải quyết các bài toán phân tích mạng lưới phức tạp:
-
-- **Pathfinding Algorithms (Tìm đường đi)**:
-  - **Dijkstra / A\***: Tìm đường đi ngắn nhất giữa hai node (ví dụ ứng dụng trong Google Maps hoặc định tuyến mạng).
-  - **All Pairs Shortest Path**: Tính toán khoảng cách giữa tất cả các cặp node.
-- **Centrality Algorithms (Độ trung tâm / Đo lường tầm ảnh hưởng)**:
-  - **PageRank**: Đo lường mức độ quan trọng của một node dựa trên số lượng và chất lượng các liên kết trỏ đến nó (thuật toán gốc của Google Search).
-  - **Betweenness Centrality**: Xác định các node đóng vai trò là "cầu nối" (bridge) luân chuyển thông tin giữa các nhóm khác nhau trong đồ thị.
-- **Community Detection (Phát hiện cộng đồng / Phân cụm)**:
-  - **Louvain Algorithm**: Phát hiện các nhóm/cộng đồng có liên kết nội bộ cực kỳ chặt chẽ với nhau nhưng liên kết lỏng lẻo với nhóm ngoài (phát hiện hội nhóm lừa đảo, nhóm sở thích mạng xã hội).
+*   *Phân tích luồng đi của câu query:*
+    1.  `MATCH (u:User {name: "An"})-[:FRIEND_WITH]->(friend)`: Đi 1 bước nhảy (1-hop) tìm bạn bè trực tiếp của An, gán vào biến `friend`.
+    2.  `-[:FRIEND_WITH]->(fof:User)`: Từ node `friend` đi tiếp 1 bước nhảy nữa (2-hop) tìm bạn của họ, gán vào biến `fof` (Friend of Friend).
+    3.  `WHERE NOT (u)-[:FRIEND_WITH]->(fof)`: Loại bỏ các node `fof` mà bản thân An đã kết bạn trực tiếp rồi.
+    4.  `AND u <> fof`: Đảm bảo node `fof` tìm được không trùng lại chính An (tránh vòng lặp quay lại ban đầu).
+    5.  `RETURN DISTINCT fof.name`: Trả về danh sách tên duy nhất của các ứng viên gợi ý.
 
 ---
 
-## 5. Các Kịch Bản Sử Dụng Thực Tế (Use Cases)
+### 3.2. Truy vấn độ sâu biến động (Variable-Length Path)
+Nếu muốn tìm mối liên kết giữa An và một người tên là "Cường" qua tối đa 4 bước nhảy (tìm xem họ có mối quan hệ bắc cầu nào không):
 
-Graph Database không thay thế hoàn toàn SQL hay Document Store, nhưng nó là lựa chọn bắt buộc cho các bài toán sau:
+```cypher
+MATCH path = (u:User {name: "An"})-[:FRIEND_WITH*1..4]->(target:User {name: "Cường"})
+RETURN path
+```
 
-1. **Hệ thống Gợi ý (Recommendation Engines)**:
-   - Gợi ý sản phẩm dựa trên hành vi mua sắm của những người có chung sở thích, bạn bè. Ví dụ: "Bạn bè của bạn cũng thích sản phẩm này".
-2. **Phát hiện Gian lận tài chính (Fraud Detection)**:
-   - Phát hiện các nhóm tài khoản ảo đăng ký bằng cách chia sẻ chung địa chỉ IP, số điện thoại, hoặc thẻ tín dụng bằng cách tìm kiếm các vòng lặp (rings) liên kết trong đồ thị giao dịch.
-3. **Quản lý Phân quyền phức tạp (Identity & Access Management - IAM)**:
-   - Phân quyền theo nhiều cấp độ: User thuộc Group A, Group A kế thừa Group B, Group B có quyền trên Resource C. Việc truy vấn quyền hạn n-cấp dạng này trong SQL cực kỳ chậm, nhưng trong Graph Database chỉ là một đường duyệt đồ thị đơn giản.
-4. **Đồ thị tri thức (Knowledge Graph)**:
-   - Kết nối các khái niệm, thực thể dữ liệu khác nhau để máy tính có thể hiểu được ngữ nghĩa mối quan hệ (ứng dụng nhiều trong AI và các hệ thống tìm kiếm thông minh).
+*   *Ý nghĩa cú pháp:*
+    *   `*1..4` chỉ định độ dài của đường đi có số bước nhảy dao động từ 1 đến 4.
+    *   `path = (...)` gán toàn bộ chuỗi node và cạnh tìm được vào biến `path` để hiển thị sơ đồ đường đi chi tiết.

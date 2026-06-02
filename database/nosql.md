@@ -1,110 +1,198 @@
-# Tìm Hiểu Sâu Về Cơ Cơ Dữ Liệu Phi Quan Hệ (NoSQL)
+# NGÔN NGỮ TRUY VẤN NOSQL: MONGODB & REDIS
 
-NoSQL (Not Only SQL) đại diện cho các hệ quản trị cơ sở dữ liệu không sử dụng mô hình quan hệ truyền thống. Chúng được thiết kế để giải quyết bài toán lưu trữ dữ liệu quy mô cực lớn (Big Data), tốc độ ghi cực cao, cấu trúc dữ liệu động và khả năng mở rộng hàng ngang (Horizontal Scaling) trên các cụm máy chủ (clusters) giá rẻ.
-
----
-
-## 1. Khác Biệt Triết Lý: ACID vs BASE
-
-Nếu RDBMS tối ưu cho sự chặt chẽ giao dịch qua mô hình ACID, thì NoSQL tối ưu cho hiệu năng và tính sẵn sàng cao qua mô hình **BASE**:
-
-- **Basically Available (Khả dụng cơ bản)**: Hệ thống đảm bảo phản hồi ngay cả khi một số node bị sập nhờ cơ chế sao bản (replication) và thiết kế chịu lỗi tốt.
-- **Soft State (Trạng thái mềm)**: Trạng thái dữ liệu có thể tự động thay đổi theo thời gian thông qua các tiến trình nội bộ đồng bộ bất đồng bộ mà không cần client tác động trực tiếp.
-- **Eventual Consistency (Nhất quán cuối cùng)**: Hệ thống đảm bảo rằng nếu không có cập nhật mới nào được thực hiện, cuối cùng tất cả các node trong cụm phân tán sẽ đồng bộ và trả về giá trị giống hệt nhau.
+Tài liệu này tập trung chi tiết vào cú pháp truy vấn thực tế, cách thức thao tác dữ liệu và phân tích các thành phần cấu thành một câu lệnh truy vấn trong hai cơ sở dữ liệu NoSQL phổ biến nhất là MongoDB (Document Store) và Redis (Key-Value Store).
 
 ---
 
-## 2. Đi Sâu Các Nhóm Cơ Sở Dữ Liệu NoSQL
+## 1. TRUY VẤN MONGODB (DOCUMENT STORE)
 
-NoSQL thường được phân chia thành 4 nhóm chính, dưới đây là phân tích chi tiết cấu trúc lưu trữ và hoạt động của 3 nhóm phổ biến nhất (trừ nhóm Graph được viết ở file riêng):
+MongoDB sử dụng cấu trúc dữ liệu tài liệu dạng BSON (Binary JSON). Mọi thao tác truy vấn đều được thực thi dưới dạng các đối tượng JSON.
 
-### 2.1. Key-Value Store (Ví dụ: Redis, Memcached)
+### 1.1. Các câu lệnh CRUD cơ bản
+Dưới đây là các hàm cơ bản để tương tác với dữ liệu trong một tập hợp (Collection) tên là `users`:
 
-Mô hình đơn giản nhất nhưng có hiệu năng nhanh nhất. Dữ liệu được lưu dưới dạng một cặp khóa-giá trị (`Key-Value`).
-
-- **Cơ chế lưu trữ RAM (In-Memory)**:
-  - Redis lưu trữ toàn bộ dữ liệu trong bộ nhớ RAM, giúp tốc độ truy xuất đạt mức microsecond ($< 1$ ms) với hàng trăm ngàn request/s.
-  - Sử dụng cấu trúc dữ liệu đơn luồng (Single-Threaded event loop) dựa trên Multiplexing để tránh overhead do tranh chấp tài nguyên (lock contention) và context switching giữa các luồng.
-- **Cơ chế bền vững dữ liệu (Persistence)**:
-  Để tránh mất dữ liệu khi mất điện/restart, Redis áp dụng 2 cơ chế:
-  - **RDB (Redis Database Backup)**: Chụp ảnh dữ liệu (snapshot) tại một thời điểm nhất định và lưu xuống Disk định kỳ. Quá trình này dùng lệnh `fork` hệ điều hành để tạo tiến trình con ghi file, không ảnh hưởng đến luồng chính.
-  - **AOF (Append-Only File)**: Ghi lại mọi câu lệnh ghi (write command) vào cuối một file log tuần tự. Khi khởi động lại, Redis sẽ chạy lại toàn bộ các câu lệnh này để khôi phục dữ liệu. AOF an toàn hơn RDB nhưng dung lượng file lớn hơn và thời gian khởi động lâu hơn.
+*   **Tạo mới dữ liệu (Create):**
+    ```javascript
+    db.users.insertOne({
+      name: "An",
+      age: 28,
+      skills: ["Java", "SQL"],
+      status: "active"
+    });
+    ```
+*   **Tìm kiếm dữ liệu (Read):**
+    ```javascript
+    // Tìm tất cả user có age = 28
+    db.users.find({ age: 28 });
+    ```
+*   **Cập nhật dữ liệu (Update):**
+    ```javascript
+    // Cập nhật trạng thái thành "inactive" cho user tên là "An"
+    db.users.updateOne(
+      { name: "An" },          // Điều kiện định vị bản ghi cần sửa (Filter)
+      { $set: { status: "inactive" } } // Thao tác sửa đổi (Update Operator)
+    );
+    ```
+*   **Xóa dữ liệu (Delete):**
+    ```javascript
+    // Xóa tất cả user có trạng thái "inactive"
+    db.users.deleteMany({ status: "inactive" });
+    ```
 
 ---
 
-### 2.2. Document Store (Ví dụ: MongoDB, CouchDB)
+### 1.2. Các toán tử truy vấn thông dụng (Query Operators)
+Khi viết các câu lệnh tìm kiếm nâng cao, MongoDB sử dụng các toán tử có tiền tố `$` để chỉ định điều kiện logic:
 
-Mô hình lưu trữ dữ liệu dạng tài liệu tự mô tả, cấu trúc linh hoạt.
-
-- **Định dạng dữ liệu BSON/JSON**:
-  - MongoDB lưu trữ dữ liệu dưới dạng **BSON** (Binary JSON). BSON mở rộng JSON bằng cách hỗ trợ nhiều kiểu dữ liệu hơn (như Date, ObjectId, Binary Data) và tối ưu hóa việc phân tích cú pháp (parsing) của database engine.
-- **Tập hợp (Collections) và Tài liệu (Documents)**:
-  - Thay vì Bảng (Table), ta có Tập hợp (Collection). Thay vì Dòng (Row), ta có Tài liệu (Document).
-  - Schema-less: Mỗi document trong cùng một collection có thể có cấu trúc hoàn toàn khác nhau (ví dụ: document 1 có 3 trường, document 2 có 10 trường).
-- **Cơ chế Indexing trên Nested Document**:
-  - MongoDB hỗ trợ tạo chỉ mục trên các trường lồng nhau (Embedded/Nested Fields) và cả trên các phần tử của mảng (Multikey Index).
-  - Mặc định sử dụng công cụ lưu trữ **WiredTiger**, hỗ trợ cả B-Tree Index và cơ chế khóa cấp tài liệu (Document-level Locking) cho phép đọc ghi đồng thời cao.
+*   **`$gt` (Greater Than - Lớn hơn) & `$lt` (Less Than - Nhỏ hơn):**
+    ```javascript
+    // Tìm các user có tuổi từ 18 đến 30 (18 < age < 30)
+    db.users.find({ age: { $gt: 18, $lt: 30 } });
+    ```
+*   **`$in` (In range - Nằm trong tập hợp):**
+    ```javascript
+    // Tìm các user có status thuộc một trong các giá trị: "active", "pending"
+    db.users.find({ status: { $in: ["active", "pending"] } });
+    ```
+*   **`$and` & `$or` (Kết hợp logic):**
+    ```javascript
+    // Tìm user có (age > 18) VÀ (status là "active" HOẶC skills chứa "Java")
+    db.users.find({
+      age: { $gt: 18 },
+      $or: [
+        { status: "active" },
+        { skills: "Java" }
+      ]
+    });
+    ```
+*   **`$exists` (Kiểm tra sự tồn tại của trường dữ liệu):**
+    ```javascript
+    // Tìm các user có khai báo trường "email" trong document
+    db.users.find({ email: { $exists: true } });
+    ```
 
 ---
 
-### 2.3. Wide-Column Store / Column-Family (Ví dụ: Apache Cassandra, ScyllaDB, HBase)
-
-Mô hình tối ưu hóa tuyệt đối cho việc **Ghi dữ liệu tốc độ cao** và lưu trữ phân tán quy mô Petabyte.
+### 1.3. MongoDB Aggregation Pipeline (Đường ống tổng hợp dữ liệu)
+Aggregation Pipeline là cơ chế xử lý và phân tích dữ liệu nâng cao trong MongoDB, tương đương với các phép `GROUP BY` và hàm tổng hợp trong SQL. Dữ liệu sẽ đi qua một chuỗi các giai đoạn (Stages), kết quả của stage trước sẽ làm đầu vào cho stage sau:
 
 ```mermaid
-graph TD
-    Write[Yêu cầu Ghi mới] --> CommitLog[1. Ghi tuần tự vào CommitLog trên Disk]
-    Write --> MemTable[2. Ghi vào MemTable trong RAM]
-    MemTable -->|Khi MemTable đầy| SSTable[3. Flush tuần tự thành SSTable bất biến trên Disk]
-    SSTable -->|Định kỳ chạy Compaction| MergeSSTable[4. Gộp nhiều SSTable thành một & Xóa dữ liệu cũ]
+graph LR
+    Collection[Users Collection] --> Stage1["$match<br>(Lọc dữ liệu)"]
+    Stage1 --> Stage2["$group<br>(Gom nhóm & Tính toán)"]
+    Stage2 --> Stage3["$sort<br>(Sắp xếp kết quả)"]
+    Stage3 --> Output[Kết quả cuối cùng]
 ```
 
-- **Kiến trúc lưu trữ LSM-Tree & SSTables**:
-  - **CommitLog**: Mọi thao tác ghi trước hết được ghi tuần tự vào file nhật ký CommitLog trên đĩa cứng để phòng ngừa mất dữ liệu.
-  - **MemTable**: Đồng thời, dữ liệu được ghi vào cấu trúc cây trong RAM gọi là MemTable (thường sắp xếp theo khóa). Thao tác này diễn ra tức thì.
-  - **SSTable (Sorted String Table)**: Khi MemTable đầy, nó được ghi (Flush) xuống đĩa thành một file SSTable bất biến (immutable). Do dữ liệu đã được sắp xếp sẵn trong MemTable, việc ghi xuống đĩa là ghi tuần tự liên tục (Sequential Write) nên tốc độ ghi đạt mức tối đa của phần cứng.
-  - **Compaction**: Vì SSTable là bất biến, việc cập nhật hoặc xóa dữ liệu thực chất là ghi đè một bản ghi mới với timestamp mới hơn hoặc ghi đè một nhãn xóa (**Tombstone**). Quá trình Compaction chạy ngầm định kỳ sẽ đọc nhiều file SSTable, gộp các khóa trùng nhau, giữ lại giá trị có timestamp mới nhất, loại bỏ dữ liệu đã đánh dấu xóa, tạo ra SSTable mới tối ưu hơn.
+#### Ví dụ Aggregation thực tế:
+Tính tuổi trung bình của các user theo từng trạng thái (status), lọc ra các nhóm có tuổi trung bình > 20, và sắp xếp theo tuổi trung bình giảm dần:
+
+```javascript
+db.users.aggregate([
+  // Stage 1: Lọc ra các user có kỹ thuật "Java" (giống WHERE)
+  { 
+    $match: { skills: "Java" } 
+  },
+  
+  // Stage 2: Gom nhóm theo trường "status" (giống GROUP BY) và tính tuổi trung bình
+  { 
+    $group: { 
+      _id: "$status",                      // Gom nhóm theo cột này
+      averageAge: { $avg: "$age" },        // Hàm tổng hợp tính trung bình
+      totalUsers: { $sum: 1 }              // Hàm tổng hợp đếm số lượng
+    } 
+  },
+  
+  // Stage 3: Lọc kết quả sau gom nhóm (giống HAVING)
+  {
+    $match: { averageAge: { $gt: 20 } }
+  },
+  
+  // Stage 4: Sắp xếp theo tuổi trung bình giảm dần (-1) (giống ORDER BY)
+  { 
+    $sort: { averageAge: -1 } 
+  }
+]);
+```
 
 ---
 
-## 3. Lý Thuyết Hệ Thống Phân Tán Trong NoSQL
+## 2. TRUY VẤN REDIS (KEY-VALUE STORE)
 
-### 3.1. PACELC Theorem áp dụng thực tế
-Như đã giới thiệu ở phần tổng quan, định lý PACELC phân loại hệ thống dựa trên sự đánh đổi giữa Tính sẵn sàng (Availability), Nhất quán (Consistency) và Độ trễ (Latency):
+Redis là một In-memory Key-Value store hiệu năng cao. Redis không sử dụng ngôn ngữ truy vấn dạng văn bản như SQL, mà client giao tiếp trực tiếp thông qua các câu lệnh command-line ứng với từng cấu trúc dữ liệu cụ thể.
 
-- **Cassandra (PA/EL)**: Khi mạng bị phân mảnh chọn Availability; khi bình thường chọn Latency (phản hồi client trước, đồng bộ ngầm sau).
-- **MongoDB (PC/EC)**: Luôn ưu tiên Consistency trong mọi tình huống (kể cả khi mạng lỗi hay bình thường).
+### 2.1. String (Chuỗi văn bản / Số thô)
+*   **`SET`**: Lưu trữ một cặp key-value.
+    ```bash
+    SET user:1:name "An"
+    ```
+*   **`GET`**: Lấy ra giá trị của key.
+    ```bash
+    GET user:1:name  # Trả về: "An"
+    ```
+*   **`INCR` / `DECR`**: Tăng / giảm giá trị số của key lên 1 đơn vị (thao tác nguyên tử - atomic, an toàn khi chạy đa luồng).
+    ```bash
+    SET user:1:views 100
+    INCR user:1:views  # Trả về số: 101
+    ```
 
-### 3.2. Consistent Hashing (Băm nhất quán)
-Trong một database phân tán gồm nhiều node máy chủ, làm sao để biết một Key dữ liệu cụ thể nằm ở node nào mà không cần một server điều phối trung tâm (Single Point of Failure)? NoSQL sử dụng **Consistent Hashing**:
+---
 
-```mermaid
-graph TD
-    Ring((Consistent Hashing Ring))
-    NodeA[Node A: Slot 0-1000] --> Ring
-    NodeB[Node B: Slot 1001-2000] --> Ring
-    NodeC[Node C: Slot 2001-3000] --> Ring
-    
-    KeyHash[hash_func 'User123' => 1500] -->|Tìm node có slot lớn hơn hoặc bằng gần nhất| NodeB
-```
+### 2.2. Hash (Cấu trúc đối tượng / Bản đồ)
+Dùng để lưu trữ các đối tượng có nhiều thuộc tính dưới dạng một key duy nhất.
+*   **`HSET`**: Lưu các trường thuộc tính vào đối tượng.
+    ```bash
+    HSET user:1 age 28 status "active"
+    ```
+*   **`HGET`**: Lấy giá trị của một thuộc tính cụ thể.
+    ```bash
+    HGET user:1 age  # Trả về: "28"
+    ```
+*   **`HGETALL`**: Lấy toàn bộ thông tin thuộc tính của đối tượng.
+    ```bash
+    HGETALL user:1  # Trả về: age: "28", status: "active"
+    ```
 
-- Không gian khóa được biểu diễn dưới dạng một vòng tròn số (Hash Ring, ví dụ từ $0$ đến $2^{32}-1$).
-- Mỗi Server Node trong cụm được băm và gán vào một vị trí cụ thể trên vòng tròn.
-- Khi cần đọc/ghi một Key, ta tính giá trị hash của Key đó, rồi duyệt theo chiều kim đồng hồ trên vòng tròn để tìm Server Node đầu tiên gặp được. Server đó sẽ chịu trách nhiệm lưu trữ Key này.
-- **Ưu điểm**: Khi thêm hoặc bớt một Server Node vào hệ thống, ta chỉ cần phân phối lại một lượng nhỏ dữ liệu nằm kề Node đó, thay vì phải tính toán lại vị trí và dịch chuyển toàn bộ dữ liệu như phép chia dư (`hash(key) % N`) truyền thống.
-- **Virtual Nodes (Vnodes)**: Để tránh phân phối dữ liệu không đều giữa các node vật lý (Data Skew), mỗi node vật lý được ánh xạ thành nhiều node ảo (vnodes) rải đều trên vòng tròn hash.
+---
 
-### 3.3. Quorum Consistency (Nhất quán có thể tùy chỉnh)
-Trong các hệ thống masterless như Cassandra, ta có thể điều chỉnh mức độ nhất quán cho từng truy vấn thông qua công thức Quorum:
-Cho các thông số:
-- $N$: Replication Factor (Số lượng node bản sao lưu trữ dữ liệu đó).
-- $W$: Write Factor (Số lượng node bản sao phải xác nhận ghi thành công trước khi phản hồi Client).
-- $R$: Read Factor (Số lượng node bản sao phải trả về dữ liệu để đối chiếu trước khi phản hồi Client).
+### 2.3. List (Danh sách liên kết - Đảm bảo thứ tự chèn)
+Hoạt động như một hàng đợi hoặc ngăn xếp.
+*   **`LPUSH`**: Đẩy phần tử vào đầu danh sách (bên trái).
+    ```bash
+    LPUSH notifications "Thông báo 1"
+    LPUSH notifications "Thông báo 2"
+    ```
+*   **`LPOP`**: Lấy ra và xóa phần tử ở đầu danh sách.
+    ```bash
+    LPOP notifications  # Trả về: "Thông báo 2" (Vào sau ra trước nếu dùng LPUSH + LPOP)
+    ```
 
-> **Công thức đảm bảo tính Nhất quán mạnh (Strong Consistency)**:
-> $$W + R > N$$
+---
 
-*Giải thích*: Nếu tổng số node ghi thành công và số node đọc ra lớn hơn số node bản sao, điều đó đảm bảo luôn tồn tại ít nhất 1 node giao thoa (overlap) chứa dữ liệu mới nhất.
-- Nếu muốn **ghi cực nhanh**: Chọn $W = 1$, $R = N$.
-- Nếu muốn **đọc cực nhanh**: Chọn $W = N$, $R = 1$.
-- Cân bằng thông dụng: Chọn $W = \text{Quorum}$ ($\lfloor N/2 \rfloor + 1$) và $R = \text{Quorum}$.
+### 2.4. Set (Tập hợp các phần tử duy nhất, không sắp xếp)
+*   **`SADD`**: Thêm phần tử vào tập hợp. Nếu phần tử đã tồn tại, lệnh sẽ bị bỏ qua.
+    ```bash
+    SADD active_users "user1"
+    SADD active_users "user2"
+    SADD active_users "user1"  # Trả về 0 (bị bỏ qua vì trùng)
+    ```
+*   **`SISMEMBER`**: Kiểm tra một phần tử có nằm trong tập hợp không ($O(1)$ time).
+    ```bash
+    SISMEMBER active_users "user1"  # Trả về 1 (True)
+    ```
+
+---
+
+### 2.5. Sorted Set (Tập hợp có sắp xếp theo điểm số - Score)
+Từng phần tử đi kèm với một điểm số (score). Redis tự động sắp xếp các phần tử dựa trên điểm số này.
+*   **`ZADD`**: Thêm phần tử kèm điểm số.
+    ```bash
+    ZADD leaderboard 100 "PlayerA"
+    ZADD leaderboard 250 "PlayerB"
+    ZADD leaderboard 180 "PlayerC"
+    ```
+*   **`ZRANGE`**: Lấy ra danh sách phần tử theo thứ tự điểm số từ thấp đến cao.
+    ```bash
+    ZRANGE leaderboard 0 -1 WITHSCORES
+    # Trả về: PlayerA (100), PlayerC (180), PlayerB (250)
+    ```
