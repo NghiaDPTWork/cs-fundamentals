@@ -133,3 +133,24 @@ sequenceDiagram
     Không nên nhồi nhét tất cả thông tin phân quyền chi tiết của User vào trong Payload của JWT vì hai lý do:
     - Khiến kích thước token bị phình to, làm tiêu hao băng thông mạng của tất cả các request.
     - Quyền hạn của người dùng có thể thay đổi bất kỳ lúc nào bởi người quản trị. Việc kiểm tra quyền trực tiếp từ DB/Cache ở mỗi request nhạy cảm giúp đảm bảo tính cập nhật quyền hạn theo thời gian thực (Real-time).
+
+---
+
+## 6. BÀI TOÁN BÀO MẬT & CƠ CHẾ THU HỒI TOKEN (RECOVERY & REVOCATION)
+
+### 6.1. Vì sao không dùng CHỈ 1 loại (Chỉ dùng Access hoặc chỉ dùng Refresh)?
+*   **Nếu chỉ dùng Access Token:**
+    - *Hạn dài:* Nếu bị lộ, hacker chiếm quyền tài khoản vĩnh viễn vì Server xác thực Stateless không tự thu hồi được chiếc vé đó.
+    - *Hạn ngắn:* Người dùng liên tục bị đá ra ngoài và bắt đăng nhập lại sau mỗi 10-15 phút.
+*   **Nếu chỉ dùng Refresh Token để gọi API:**
+    - Vì Refresh Token là Stateful (phải check DB để quản lý thu hồi), việc dùng nó để gọi mọi API sẽ ép Server phải kết nối Database liên tục $\rightarrow$ Gây nghẽn cổ chai DB và mất hoàn toàn ưu thế Stateless của JWT.
+
+### 6.2. Vì sao không thiết lập thời hạn vĩnh cửu (Never Expire)?
+*   JWT là bất biến sau khi được ký. Kẻ tấn công nếu đánh cắp được token vĩnh cửu sẽ có quyền kiểm soát tài khoản đó trọn đời. Do đó, thời hạn hết hạn (`exp`) là chốt chặn an toàn bắt buộc phải có để giới hạn thời gian phơi nhiễm rủi ro.
+
+### 6.3. Cơ chế thu hồi (Revoke) Token
+*   **Với Refresh Token (Stateful):** Khi người dùng nhấn **Đăng xuất (Logout)** hoặc **Đổi mật khẩu**, Server chỉ cần chạy lệnh **xóa (Delete)** Refresh Token đó trong Database. Lần kế tiếp khi gửi Refresh Token này lên xin cấp mới, hệ thống kiểm tra DB không thấy sẽ từ chối ngay.
+*   **Với Access Token (Stateless):** Do không lưu DB nên việc thu hồi tức thời rất khó khăn. Các cách xử lý chuẩn gồm:
+    1.  *Đặt hạn cực ngắn (5-15 phút):* Đây là giải pháp phổ biến nhất. Khi logout chỉ cần xóa Refresh Token. Access Token của kẻ gian dù có giữ cũng chỉ dùng được thêm vài phút rồi tự động vô hiệu.
+    2.  *Sử dụng Blacklist trên Redis:* Khi logout, lưu Access Token cũ vào Blacklist của Redis với thời hạn sống bằng thời gian còn lại của token. Middleware sẽ check nhanh trong Redis trước khi cho đi qua.
+    3.  *Kiểm tra thời điểm đổi mật khẩu:* So sánh thời điểm phát hành token (`iat`) với thời điểm thay đổi thông tin gần nhất (`updated_at`) trong DB. Nếu `iat < updated_at`, token đó lập tức bị hủy bỏ.
