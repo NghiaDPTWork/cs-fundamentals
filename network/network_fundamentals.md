@@ -1,4 +1,4 @@
-﻿# CẨM NANG VẤN ĐÁP MẠNG CĂN BẢN (INTERVIEW-READY NETWORK FUNDAMENTALS)
+# CẨM NANG VẤN ĐÁP MẠNG CĂN BẢN (INTERVIEW-READY NETWORK FUNDAMENTALS)
 
 Tài liệu này tổng hợp toàn bộ các kiến thức mạng máy tính nền tảng được tinh chỉnh chuyên biệt cho việc ôn luyện phỏng vấn kỹ thuật. Mỗi phần chỉ tập trung vào câu trả lời trực diện, từ khóa chuyên môn cốt lõi, bảng so sánh thiết bị vật lý và môi trường truyền dẫn.
 
@@ -71,4 +71,73 @@ Dữ liệu được chuyển đổi thành các dạng năng lượng vật lý
 | **Ánh sáng** *(Cáp quang)* | Dẫn tia sáng laser đi trong sợi thủy tinh bằng hiện tượng phản xạ toàn phần. | Xương sống của mạng Internet toàn cầu (cáp quang biển, trục kết nối). | Băng thông cực lớn (Gbps-Tbps), không bị nhiễu điện từ. | Truyền tải dữ liệu đi cực xa với tốc độ ánh sáng và độ suy hao tín hiệu thấp nhất. | Kết nối giữa các quốc gia, các trung tâm dữ liệu (Datacenter). | Kết nối di động hoặc các vị trí uốn cong góc hẹp (sợi thủy tinh giòn, dễ gãy). |
 | **Sóng vô tuyến** *(Không dây)* | Lan tỏa sóng điện từ trong không gian tự do. | Kết nối các thiết bị di động linh hoạt (Wifi, 4G, 5G, Bluetooth). | Giúp thiết bị kết nối mạng mọi lúc mọi nơi không cần dây cáp vật lý. | Phát tín hiệu sóng mang dữ liệu ra môi trường xung quanh để thiết bị thu nhận. | Thiết bị di động, IoT cầm tay, các địa hình phức tạp không thể đi dây cáp mạng. | Ứng dụng yêu cầu độ tin cậy tuyệt đối, độ trễ cực thấp (giao dịch tài chính tốc độ cao, phẫu thuật từ xa). |
 | **Cáp đồng** *(Cáp mạng đồng)* | Truyền dòng điện mang điện áp cao/thấp dọc theo lõi đồng. | Kết nối nội bộ cự ly gần (văn phòng, gia đình). | Chi phí rẻ, dễ lắp đặt và uốn cong, tương thích với hầu hết thiết bị văn phòng. | Chuyển đổi dữ liệu nhị phân thành các xung điện để truyền dẫn cự ly ngắn. | Nối mạng nội bộ LAN từ Switch tới máy tính bàn (PC), máy in, camera giám sát. | Khoảng cách kết nối xa vượt quá 100 mét (suy hao tín hiệu mạnh) hoặc khu vực nhiễu điện từ nặng. |
+
+---
+
+## 🌐 5. PHÂN TÍCH CHI TIẾT CÁC GIAO THỨC CỐT LÕI (CORE PROTOCOLS)
+
+### 5.1. Các Giao thức Tầng Ứng dụng (Application Layer)
+
+#### A. HTTP (Hypertext Transfer Protocol)
+*   **Định nghĩa:** Giao thức truyền tải siêu văn bản (dữ liệu web như HTML, ảnh, JSON) giữa Client và Server hoạt động theo mô hình Request-Response.
+*   **Cơ chế hoạt động:** Chạy trên giao thức TCP qua cổng (Port) 80. Là giao thức **Không trạng thái (Stateless)** - mỗi yêu cầu độc lập, server không nhớ lịch sử yêu cầu trước (cần dùng Cookie/Session/Token để duy trì trạng thái đăng nhập).
+*   **Từ khóa cốt lõi:** Port 80, Stateless, Request/Response, TCP-based.
+
+#### B. HTTPS (HTTP Secure)
+*   **Định nghĩa:** Phiên bản bảo mật của HTTP, trong đó dữ liệu được mã hóa trước khi truyền qua mạng bằng giao thức **TLS/SSL**.
+*   **Cơ chế hoạt động:** Chạy trên TCP qua cổng 443. Trước khi truyền dữ liệu HTTP, Client và Server thực hiện quá trình bắt tay bảo mật (TLS Handshake) để xác thực chứng chỉ số và thỏa thuận khóa đối xứng dùng để mã hóa thông tin.
+*   **Từ khóa cốt lõi:** Port 443, Mã hóa TLS/SSL, Bảo mật dữ liệu, CA Certificate.
+
+#### C. DNS (Domain Name System)
+*   **Định nghĩa:** Hệ thống phân giải tên miền giúp chuyển đổi các tên miền dễ nhớ (như `google.com`) thành địa chỉ IP vật lý của máy chủ để máy tính kết nối.
+*   **Cơ chế hoạt động:** Chạy chủ yếu trên giao thức UDP qua cổng 53 để lấy tốc độ phân giải nhanh nhất. Nếu phản hồi quá lớn hoặc cần đồng bộ cơ sở dữ liệu tên miền (Zone Transfer), DNS mới chuyển sang sử dụng TCP.
+*   **Từ khóa cốt lõi:** Port 53, Phân giải IP, UDP-based (phổ biến) / TCP-based, Cây phân cấp tên miền.
+
+#### D. FTP (File Transfer Protocol)
+*   **Định nghĩa:** Giao thức truyền nhận tệp tin giữa Client và Server trên mạng Internet.
+*   **Cơ chế hoạt động:** Sử dụng hai kết nối TCP riêng biệt:
+    *   **Port 21 (Connection Control):** Dùng để truyền lệnh điều khiển (như đăng nhập, đổi thư mục).
+    *   **Port 20 (Data Connection):** Dùng để truyền dữ liệu tệp tin thực tế.
+*   **Từ khóa cốt lõi:** Port 20 & 21, Tách biệt luồng điều khiển và luồng dữ liệu, TCP-based.
+
+#### E. SMTP (Simple Mail Transfer Protocol)
+*   **Định nghĩa:** Giao thức tiêu chuẩn dùng để gửi thư điện tử (email) từ Client tới Mail Server hoặc giữa các Mail Server với nhau.
+*   **Cơ chế hoạt động:** Chạy trên giao thức TCP qua cổng 25 (hoặc cổng bảo mật 587/465). Lưu ý: SMTP chỉ dùng để **Gửi đi**, để nhận thư về máy khách cần dùng giao thức **POP3** hoặc **IMAP**.
+*   **Từ khóa cốt lõi:** Port 25 / 587, Gửi thư đi, TCP-based.
+
+---
+
+### 5.2. Các Giao thức Tầng Giao vận (Transport Layer)
+
+#### A. TCP (Transmission Control Protocol)
+*   **Định nghĩa:** Giao thức giao vận **hướng kết nối (Connection-oriented)**, cam kết đảm bảo truyền dữ liệu tin cậy 100%, đúng thứ tự và kiểm soát tắc nghẽn luồng truyền tải.
+*   **Cơ chế hoạt động:** Bắt buộc phải thực hiện bắt tay 3 bước (SYN $\rightarrow$ SYN-ACK $\rightarrow$ ACK) để thiết lập kết nối trước khi truyền tin. Nó chia dữ liệu thành các Segment, đánh số thứ tự, kiểm tra tính toàn vẹn và bắt buộc bên nhận gửi lại phản hồi ACK. Nếu mất gói, nó tự động gửi lại.
+*   **Từ khóa cốt lõi:** Connection-oriented, Bắt tay 3 bước, ACK, Tin cậy 100%, Kiểm soát luồng (Flow Control) & Tắc nghẽn (Congestion Control).
+
+#### B. UDP (User Datagram Protocol)
+*   **Định nghĩa:** Giao thức giao vận **phi kết nối (Connectionless)**, ưu tiên tối đa tốc độ truyền dữ liệu nhanh nhất mà không đảm bảo độ tin cậy.
+*   **Cơ chế hoạt động:** Không cần bắt tay thiết lập kết nối trước. Dữ liệu được đóng gói thành các Datagram và bắn liên tục đi. UDP không có cơ chế xác nhận gói tin, không tự gửi lại khi mất gói và không quản lý thứ tự gói tin đến.
+*   **Từ khóa cốt lõi:** Connectionless, Không tin cậy (Unreliable), Tốc độ tối đa, Không kiểm soát tắc nghẽn. Phù hợp cho Livestream, Voice IP, Game online.
+
+---
+
+### 5.3. Các Giao thức Tầng Mạng & Tầng Liên kết dữ liệu (Network & Data Link Layers)
+
+#### A. IP (Internet Protocol - IPv4/IPv6)
+*   **Định nghĩa:** Giao thức cốt lõi tầng Network, chịu trách nhiệm định nghĩa địa chỉ IP logical và đóng gói dữ liệu thành các Packet để định tuyến đi xuyên các mạng khác nhau.
+*   **Cơ chế hoạt động:** 
+    *   **IPv4:** Sử dụng địa chỉ 32-bit (khoảng 4.3 tỷ địa chỉ), viết dưới dạng 4 nhóm số thập phân ngăn cách bởi dấu chấm (ví dụ: `192.168.1.1`).
+    *   **IPv6:** Sử dụng địa chỉ 128-bit (gần như vô hạn địa chỉ), viết dưới dạng 8 nhóm số hexa ngăn cách bởi dấu hai chấm để giải quyết triệt để vấn đề cạn kiệt địa chỉ IPv4.
+*   **Từ khóa cốt lõi:** IP Address logical, Định tuyến (Routing), IPv4 32-bit, IPv6 128-bit.
+
+#### B. ICMP (Internet Control Message Protocol)
+*   **Định nghĩa:** Giao thức dùng để truyền tải các thông điệp chẩn đoán lỗi mạng và điều khiển thông tin giữa các thiết bị mạng.
+*   **Cơ chế hoạt động:** Không dùng để truyền dữ liệu ứng dụng. Khi đường truyền lỗi hoặc router bị quá tải, router gửi thông điệp ICMP về thiết bị nguồn. Lệnh `ping` (kiểm tra kết nối) và `traceroute` (dò đường đi) hoạt động hoàn toàn dựa trên ICMP.
+*   **Từ khóa cốt lõi:** Chẩn đoán lỗi mạng, lệnh Ping / Traceroute, Không truyền dữ liệu người dùng.
+
+#### C. ARP (Address Resolution Protocol)
+*   **Định nghĩa:** Giao thức dịch chuyển địa chỉ logic (IP Address) thành địa chỉ vật lý (MAC Address) của thiết bị trong cùng mạng nội bộ LAN.
+*   **Cơ chế hoạt động:** Khi máy tính muốn gửi dữ liệu đến IP `192.168.1.5` nhưng chưa biết địa chỉ MAC của máy đó, nó gửi một yêu cầu **ARP Request Broadcast** ra toàn mạng hỏi: *"Ai có IP này, hãy trả lời địa chỉ MAC cho tôi"*. Thiết bị có IP tương ứng sẽ trả lời bằng **ARP Reply Unicast** chứa địa chỉ MAC của nó. Máy gửi lưu thông tin này vào bảng bộ nhớ đệm `ARP Cache` để dùng lại.
+*   **Từ khóa cốt lõi:** Dịch IP sang MAC, ARP Request Broadcast, ARP Reply Unicast, ARP Cache.
+
 
