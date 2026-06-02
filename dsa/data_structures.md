@@ -1,10 +1,10 @@
-﻿# CẨM NANG VẤN ĐÁP CẤU TRÚC DỮ LIỆU (INTERVIEW-READY DATA STRUCTURES)
+# CẤU TRÚC DỮ LIỆU (DATA STRUCTURES)
 
-Tài liệu này tổng hợp toàn bộ các cấu trúc dữ liệu cốt lõi được cấu trúc chuyên biệt cho việc ôn luyện phỏng vấn kỹ thuật. Mỗi phần chỉ tập trung vào: Định nghĩa phỏng vấn trực diện, bảng phân loại các dạng con kèm cách nhận biết khi đọc đề, cơ chế duyệt cây (Tree Traversal) và phân tích sâu sắc xung đột băm (Hash Collision) của HashMap.
+Tài liệu này tổng hợp toàn bộ các cấu trúc dữ liệu cốt lõi. Mỗi phần chỉ tập trung vào: Định nghĩa phỏng vấn trực diện, bảng phân loại các dạng con kèm cách nhận biết khi đọc đề, cơ chế duyệt cây (Tree Traversal) và phân tích sâu sắc xung đột băm (Hash Collision) của HashMap.
 
 ---
 
-## 📖 1. ĐỊNH NGHĨA CẤU TRÚC DỮ LIỆU
+## 1. ĐỊNH NGHĨA CẤU TRÚC DỮ LIỆU
 
 *   **Định nghĩa:** Cấu trúc dữ liệu (Data Structure) là cách thức tổ chức, quản lý và lưu trữ dữ liệu trong bộ nhớ máy tính một cách khoa học để có thể truy xuất, thao tác và tối ưu hóa tài nguyên hiệu quả nhất.
 *   **Đặc trưng cốt lõi khi phỏng vấn:**
@@ -14,7 +14,7 @@ Tài liệu này tổng hợp toàn bộ các cấu trúc dữ liệu cốt lõi
 
 ---
 
-## 📶 2. PHÂN TÍCH CẤU TRÚC DỮ LIỆU TUYẾN TÍNH (LINEAR DATA STRUCTURES)
+## 2. PHÂN TÍCH CẤU TRÚC DỮ LIỆU TUYẾN TÍNH (LINEAR DATA STRUCTURES)
 
 ### 2.1. Mảng (Array - Tĩnh và Động)
 *   **Định nghĩa:** Mảng là cấu trúc dữ liệu lưu trữ một tập hợp các phần tử có cùng kiểu dữ liệu tại các vị trí bộ nhớ liên tiếp nhau trên RAM.
@@ -61,7 +61,7 @@ Tài liệu này tổng hợp toàn bộ các cấu trúc dữ liệu cốt lõi
 
 ---
 
-## 🏗️ 3. PHÂN TÍCH CẤU TRÚC DỮ LIỆU PHI TUYẾN TÍNH (NON-LINEAR DATA STRUCTURES)
+## 3. PHÂN TÍCH CẤU TRÚC DỮ LIỆU PHI TUYẾN TÍNH (NON-LINEAR DATA STRUCTURES)
 
 ### 3.1. Cấu trúc Cây (Tree)
 *   **Định nghĩa:** Cây là một cấu trúc dữ liệu phân cấp, không có chu trình, gồm một nút gốc (Root) và các nút con được liên kết với nhau bằng các cạnh.
@@ -74,7 +74,7 @@ Tài liệu này tổng hợp toàn bộ các cấu trúc dữ liệu cốt lõi
 | **Cây tiền tố (Trie)** | Mỗi nút đại diện cho một ký tự, các từ có chung tiền tố sẽ chia sẻ chung nhánh. | Bài toán về chuỗi: Gợi ý từ khóa (Auto-complete), kiểm tra chính tả, tìm kiếm từ điển. | Đi từ Root dọc theo từng ký tự của từ cần tìm. Tốc độ tìm kiếm $O(L)$ với $L$ là độ dài từ. |
 | **Segment / Fenwick Tree** | Cây quản lý thông tin các đoạn/khoảng của một mảng số. | Đề bài yêu cầu cập nhật phần tử và truy vấn tổng/min/max đoạn $[L, R]$ với tần suất lớn. | Cập nhật và truy vấn đoạn trong thời gian $O(\log n)$ thay vì duyệt mảng tuần tự $O(n)$. |
 
-#### 🔄 Quy tắc duyệt cây (Tree Traversal) - Cốt lõi phỏng vấn
+#### Quy tắc duyệt cây (Tree Traversal) - Cốt lõi phỏng vấn
 Để duyệt qua toàn bộ các nút của cây, ta có hai phương pháp:
 
 1.  **Duyệt theo chiều sâu (DFS):**

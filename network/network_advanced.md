@@ -1,12 +1,12 @@
-﻿# CẨM NANG VẤN ĐÁP MẠNG NÂNG CAO (INTERVIEW-READY NETWORK ADVANCED)
+# MẠNG MÁY TÍNH NÂNG CAO (NETWORK ADVANCED)
 
-Tài liệu này tổng hợp các kiến thức mạng máy tính nâng cao chuyên biệt cho việc ôn luyện phỏng vấn kỹ thuật. Mỗi phần chỉ tập trung vào câu trả lời trực diện, từ khóa chuyên môn cốt lõi, luồng truyền tải dữ liệu và liên kết liên môn.
+Tài liệu này tổng hợp các kiến thức mạng máy tính nâng cao. Mỗi phần chỉ tập trung vào câu trả lời trực diện, từ khóa chuyên môn cốt lõi, luồng truyền tải dữ liệu và liên kết liên môn.
 
 ---
 
-## 🔄 1. LUỒNG TRUYỀN DỮ LIỆU THỰC TẾ (CUSTOM TRANSMISSION FLOWS)
+## 1. LUỒNG TRUYỀN DỮ LIỆU THỰC TẾ (CUSTOM TRANSMISSION FLOWS)
 
-### 💬 1.1. Luồng 1: Gửi tin nhắn Zalo ("Học internet nè mọi người")
+### 1.1. Luồng 1: Gửi tin nhắn Zalo ("Học internet nè mọi người")
 *   **Đặc trưng:** Văn bản ngắn, yêu cầu độ tin cậy tuyệt đối 100% (không được mất chữ). Sử dụng giao thức **TCP**.
 
 ```mermaid
@@ -43,7 +43,7 @@ sequenceDiagram
 
 ---
 
-### 🎥 1.2. Luồng 2: Xem video trên YouTube (YouTube Video Streaming)
+### 1.2. Luồng 2: Xem video trên YouTube (YouTube Video Streaming)
 *   **Đặc trưng:** Dung lượng dữ liệu lớn, truyền tải thời gian thực liên tục, chấp nhận mất mát nhỏ nhưng không được phép xảy ra hiện tượng đứng màn hình (buffering). Sử dụng giao thức **QUIC (chạy trên UDP)**.
 
 #### Quy trình tóm gọn các bước:
@@ -54,52 +54,51 @@ sequenceDiagram
 
 ---
 
-## 🧠 2. KHAI THÁC CÁC NGÁCH SÂU HỆ THỐNG (NICHE & CORNER CASES)
+## 2. KHAI THÁC CÁC NGÁCH SÂU HỆ THỐNG (NICHE & CORNER CASES)
 
-### ⚙️ 2.1. Socket Descriptor vs TCP Connection
+### 2.1. Socket Descriptor vs TCP Connection
 *   **Phỏng vấn hỏi:** Hệ điều hành quản lý kết nối TCP như thế nào?
 *   **Trả lời:** OS Kernel coi mỗi Socket là một file đặc biệt và cấp cho nó một số nguyên gọi là **Socket File Descriptor (FD)**. Khi kết nối được thiết lập, OS cấp phát hai vùng đệm RAM cho riêng Socket đó: `Send Buffer` (để gửi) và `Receive Buffer` (để nhận).
 *   **Từ khóa cần nhớ:** 
     *   **SYN Backlog Queue:** Hàng đợi lưu các kết nối chưa hoàn tất bắt tay 3 bước.
     *   **SYN Flood Attack:** Kẻ tấn công gửi hàng loạt gói SYN nhưng không phản hồi ACK cuối để làm tràn hàng đợi SYN Backlog. OS chống lại bằng cờ **SYN Cookies**.
 
-### 📥 2.2. NIC Hardware Interrupts & Direct Memory Access (DMA)
+### 2.2. NIC Hardware Interrupts & Direct Memory Access (DMA)
 *   **Phỏng vấn hỏi:** Làm thế nào dữ liệu từ cáp mạng đi vào RAM mà không làm CPU quá tải?
 *   **Trả lời:** Card mạng (NIC) sử dụng công nghệ **DMA (Direct Memory Access)** để ghi dữ liệu trực tiếp từ cổng vật lý vào RAM của hệ thống (Rx Ring Buffer) mà không cần CPU tham gia. Khi chép xong, NIC phát tín hiệu ngắt phần cứng (**IRQ**) gửi tới CPU. CPU tạm dừng tác vụ hiện tại để gọi SoftIRQ xử lý gói tin mạng từ RAM lên ứng dụng.
 
-### 🔄 2.3. Event Polling: epoll/kqueue vs select/poll
+### 2.3. Event Polling: epoll/kqueue vs select/poll
 *   **Phỏng vấn hỏi:** Tại sao Web Server (Nginx, Node.js) chịu tải được hàng triệu kết nối đồng thời?
 *   **Trả lời:** Nhờ mô hình Event-driven thay thế cho kiểm tra tuần tự.
     *   **select/poll (Cũ):** Duyệt tuần tự qua toàn bộ danh sách kết nối để kiểm tra có dữ liệu hay không ($O(N)$ time). Cực kỳ chậm khi số kết nối lớn.
     *   **epoll (Linux) / kqueue (macOS) (Hiện đại):** OS Kernel lưu các socket vào cây đỏ-đen, khi có sự kiện mạng, Kernel tự gọi callback đưa socket vào hàng đợi sẵn sàng. Ứng dụng chỉ đọc các socket đã sẵn sàng với độ phức tạp **$O(1)$ time**.
 
-### 🏎️ 2.4. TCP Congestion Control: BBR vs Cubic
+### 2.4. TCP Congestion Control: BBR vs Cubic
 *   **Phỏng vấn hỏi:** Sự khác biệt giữa thuật toán kiểm soát tắc nghẽn BBR và Cubic?
 *   **Trả lời:**
     *   **Cubic (Loss-based):** Tăng tốc độ gửi cho đến khi xảy ra mất gói (packet loss) thì đột ngột giảm 50% cửa sổ truyền. Gây răng cưa và tích tụ hàng đợi tại router.
     *   **BBR (Bandwidth/RTT-based):** Do Google phát triển. Nó chủ động đo đạc băng thông thực tế (Bottleneck Bandwidth) và thời gian RTT ngắn nhất của đường truyền để điều phối tốc độ gửi tối ưu, tránh tích tụ hàng đợi và hoạt động rất tốt trên mạng không dây chập chờn.
 
-### 📦 2.5. MTU (Maximum Transmission Unit) & Path MTU Discovery (PMTUD)
+### 2.5. MTU (Maximum Transmission Unit) & Path MTU Discovery (PMTUD)
 *   **MTU:** Kích thước gói tin IP tối đa đi qua đường truyền (Ethernet tiêu chuẩn là 1500 bytes). Nếu gói tin lớn hơn, Router phải thực hiện phân mảnh (**IP Fragmentation**), gây tốn CPU.
 *   **PMTUD:** Giải pháp tránh phân mảnh. Thiết bị gửi cắm cờ DF (Don't Fragment) vào gói tin. Nếu gói tin vượt quá MTU của router trung gian, router sẽ drop gói tin và gửi lại gói tin báo lỗi **ICMP Type 3 Code 4 (Fragmentation Needed)** kèm theo thông số MTU của nó. Thiết bị gửi dựa vào đó giảm kích thước gói tin cho phù hợp toàn bộ hành trình.
 
-### 🔒 2.6. DNS Vulnerabilities (Cache Poisoning) & DNSSEC
+### 2.6. DNS Vulnerabilities (Cache Poisoning) & DNSSEC
 *   **DNS Cache Poisoning (Đầu độc bộ nhớ đệm):** Kẻ tấn công gửi phản hồi DNS giả mạo cực nhanh về resolver trước khi server thật trả lời, lừa resolver lưu IP giả vào cache để điều hướng người dùng sang trang web lừa đảo.
 *   **DNSSEC:** Giải pháp bảo mật ký số (cryptographic signature) lên các bản ghi DNS để resolver xác thực nguồn gốc và tính toàn vẹn dữ liệu, chống giả mạo.
 
 ---
 
-## 🔗 3. LIÊN KẾT LIÊN MÔN (CROSS-FOLDER CONNECTIONS)
+## 3. LIÊN KẾT LIÊN MÔN (CROSS-FOLDER CONNECTIONS)
 
-### 🖥️ 3.1. Liên kết với Hệ điều hành (OS)
+### 3.1. Liên kết với Hệ điều hành (OS)
 *   **Zero-copy (hàm `sendfile`):** OS tối ưu hóa truyền file qua mạng bằng cách cho phép sao chép dữ liệu trực tiếp từ ổ cứng vào vùng đệm Socket thông qua DMA, bỏ qua bước sao chép trung gian lên vùng nhớ ứng dụng (User Space), giảm tải CPU tối đa.
 
-### 🧠 3.2. Liên kết với Cấu trúc dữ liệu & Giải thuật (DSA)
+### 3.2. Liên kết với Cấu trúc dữ liệu & Giải thuật (DSA)
 *   **Dijkstra và Bellman-Ford:** Giao thức định tuyến OSPF chạy Dijkstra trên đồ thị các Router để tìm đường ngắn nhất. Giao thức RIP chạy Bellman-Ford.
 *   **Priority Queue:** Router dùng hàng đợi ưu tiên để lập lịch gói tin (QoS). Ưu tiên đẩy gói thoại/video đi trước, gói tải file (FTP/Torrent) đi sau.
 *   **Mã hóa Huffman:** HTTP/2 dùng thuật toán **HPACK** nén đầu bảng (Header), bên dưới chạy bảng mã hóa Huffman tĩnh để tiết kiệm băng thông.
 
-### 🔧 3.3. Liên kết với Git
+### 3.3. Liên kết với Git
 *   **git push qua SSH (Port 22):** Thiết lập kênh mã hóa qua Diffie-Hellman TCP. Git chạy giải thuật nén tạo ra tệp tin nhị phân **Packfile** và stream tệp tin này qua luồng TCP đến GitHub.
 *   **git push qua HTTPS (Port 443):** Thực hiện bắt tay bảo mật TLS, sau đó truyền tải Packfile thông qua các yêu cầu HTTP POST chuẩn.
-

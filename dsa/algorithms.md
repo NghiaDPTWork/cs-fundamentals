@@ -1,10 +1,10 @@
-﻿# CẨM NANG VẤN ĐÁP GIẢI THUẬT (INTERVIEW-READY ALGORITHMS)
+# GIẢI THUẬT (ALGORITHMS)
 
-Tài liệu này tổng hợp toàn bộ các giải thuật cốt lõi được tinh chỉnh chuyên biệt cho việc ôn luyện phỏng vấn kỹ thuật. Mỗi phần được cấu trúc tối giản: Định nghĩa phỏng vấn trực diện, ẩn dụ trực quan ngắn gọn, từ khóa chuyên môn cốt lõi (Big O, Trade-offs) và code demo Java tinh gọn nhất.
+Tài liệu này tổng hợp toàn bộ các giải thuật cốt lõi. Mỗi phần được cấu trúc tối giản: Định nghĩa phỏng vấn trực diện, ẩn dụ trực quan ngắn gọn, từ khóa chuyên môn cốt lõi (Big O, Trade-offs) và code demo Java tinh gọn nhất.
 
 ---
 
-## 📖 1. ĐỊNH NGHĨA GIẢI THUẬT
+## 1. ĐỊNH NGHĨA GIẢI THUẬT
 
 *   **Định nghĩa:** Giải thuật (Algorithm) là một tập hợp các chỉ dẫn logic, có tuần tự và hữu hạn để xử lý dữ liệu đầu vào (Input) nhằm giải quyết một bài toán cụ thể và cho ra kết quả mong muốn (Output).
 *   **Ẩn dụ trực quan:** Giống như một công thức nấu ăn chuẩn xác từng bước dành cho máy tính.
@@ -16,7 +16,7 @@ Tài liệu này tổng hợp toàn bộ các giải thuật cốt lõi được
 
 ---
 
-## 🧠 2. CÁC HƯỚNG TƯ DUY THIẾT KẾ GIẢI THUẬT (PARADIGMS)
+## 2. CÁC HƯỚNG TƯ DUY THIẾT KẾ GIẢI THUẬT (PARADIGMS)
 
 ### 2.1. Tìm kiếm (Searching)
 
@@ -384,7 +384,7 @@ Tài liệu này tổng hợp toàn bộ các giải thuật cốt lõi được
 
 ---
 
-## 🛠️ 3. KỸ THUẬT TỐI ƯU HÓA THỰC CHIẾN (TECHNIQUES)
+## 3. KỸ THUẬT TỐI ƯU HÓA THỰC CHIẾN (TECHNIQUES)
 
 Các mẫu kỹ thuật quan trọng giúp tối ưu chương trình khi phỏng vấn Coding:
 
@@ -430,7 +430,7 @@ Các mẫu kỹ thuật quan trọng giúp tối ưu chương trình khi phỏng
 
 ---
 
-## 📊 4. ĐỘ PHỨC TẠP THUẬT TOÁN (COMPLEXITY)
+## 4. ĐỘ PHỨC TẠP THUẬT TOÁN (COMPLEXITY)
 
 Bảng xếp hạng hiệu năng thuật toán giúp bạn so sánh trực tiếp khi trao đổi với người phỏng vấn:
 
