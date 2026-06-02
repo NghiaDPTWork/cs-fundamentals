@@ -1,6 +1,6 @@
-# CẨM NANG VẤN ĐÁP MẠNG CĂN BẢN (INTERVIEW-READY NETWORK FUNDAMENTALS)
+# MẠNG MÁY TÍNH CĂN BẢN (NETWORK FUNDAMENTALS)
 
-Tài liệu này tổng hợp toàn bộ các kiến thức mạng máy tính nền tảng được tinh chỉnh chuyên biệt cho việc ôn luyện phỏng vấn kỹ thuật. Thiết bị mạng và các giao thức được tích hợp đồng bộ theo từng Tầng (Layer) để làm rõ cơ chế đóng gói, mở gói và luồng đi của dữ liệu qua các trạm.
+Tài liệu này hệ thống hóa các kiến thức mạng máy tính nền tảng. Thiết bị mạng và các giao thức được tích hợp đồng bộ theo từng Tầng (Layer) để làm rõ cơ chế đóng gói, mở gói và luồng đi của dữ liệu qua các trạm.
 
 ---
 
