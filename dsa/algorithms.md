@@ -432,6 +432,68 @@ Các mẫu kỹ thuật quan trọng giúp tối ưu chương trình khi phỏng
 
 ## 4. ĐỘ PHỨC TẠP THUẬT TOÁN (COMPLEXITY)
 
+### 4.1. Cách tính Độ phức tạp thời gian (Time Complexity - Big O)
+
+Độ phức tạp thời gian đo lường sự tăng trưởng về số lượng phép tính của thuật toán khi kích thước dữ liệu đầu vào ($n$) tiến tới vô cùng ($n \rightarrow \infty$). Để tính Big O, chúng ta tập trung vào **trường hợp xấu nhất (Worst-case)** và tuân theo 4 quy tắc cốt lõi sau:
+
+1.  **Quy tắc bỏ qua hằng số (Drop Constants):**
+    *   *Cơ chế:* Khi $n$ cực kỳ lớn, các hệ số nhân và số cộng thêm trở nên không đáng kể.
+    *   *Ví dụ:* Một thuật toán thực hiện $2n + 5$ phép tính. Ta bỏ số $5$ và hệ số $2$ đi $\rightarrow$ Độ phức tạp là $O(n)$.
+2.  **Quy tắc giữ lại số hạng lớn nhất (Keep the Dominant Term):**
+    *   *Cơ chế:* Giữ lại thành phần có tốc độ tăng trưởng nhanh nhất và bỏ qua các số hạng nhỏ hơn.
+    *   *Ví dụ:* Thuật toán chạy mất $n^2 + 3n + 100$ bước. Khi $n \rightarrow \infty$, $n^2$ sẽ lấn át hoàn toàn $3n$ và $100$. Ta viết $\rightarrow$ $O(n^2)$.
+3.  **Quy tắc cộng (Các thao tác tuần tự):**
+    *   *Cơ chế:* Nếu các đoạn code chạy độc lập, nối tiếp nhau, ta cộng các Big O lại.
+    *   *Ví dụ:*
+        ```java
+        // Đoạn 1: Duyệt mảng n phần tử -> O(n)
+        for (int i = 0; i < n; i++) { ... }
+        // Đoạn 2: Duyệt tiếp mảng n phần tử -> O(n)
+        for (int j = 0; j < n; j++) { ... }
+        ```
+        Tổng cộng: $O(n) + O(n) = O(2n) \rightarrow O(n)$.
+4.  **Quy tắc nhân (Các thao tác lồng nhau):**
+    *   *Cơ chế:* Nếu các vòng lặp lồng nhau, ta nhân các Big O của chúng lại.
+    *   *Ví dụ:*
+        ```java
+        // Vòng lặp ngoài chạy n lần -> O(n)
+        for (int i = 0; i < n; i++) {
+            // Vòng lặp trong chạy n lần -> O(n)
+            for (int j = 0; j < n; j++) { ... }
+        }
+        ```
+        Tổng cộng: $O(n \cdot n) = O(n^2)$.
+
+*🚨 LƯU Ý KHI CHIA ĐÔI DỮ LIỆU:*
+Mỗi bước thực thi, dữ liệu đầu vào bị chia đôi (ví dụ: Tìm kiếm nhị phân):
+```java
+while (n > 1) {
+    n = n / 2; // Số bước thực hiện k thỏa mãn n / 2^k = 1 -> k = log2(n)
+}
+```
+Độ phức tạp luôn là **$O(\log n)$**.
+
+---
+
+### 4.2. Cách tính Độ phức tạp không gian (Space Complexity)
+
+Độ phức tạp không gian đo lường **lượng bộ nhớ RAM bổ sung** (Memory Overhead) mà thuật toán cần sử dụng để hoàn thành việc thực thi, **không tính** vùng nhớ của dữ liệu đầu vào ban đầu (Auxiliary Space).
+
+Các kịch bản tính toán bộ nhớ phổ biến:
+1.  **Không gian hằng số - $O(1)$ Space:**
+    *   *Cơ chế:* Thuật toán chỉ khởi tạo thêm một vài biến đơn lẻ (như biến đếm `i`, biến tạm `temp`, con trỏ `left`, `right`). Bộ nhớ này không đổi bất kể dữ liệu đầu vào $n$ lớn bao nhiêu.
+    *   *Ví dụ:* Giải thuật Two Pointers, Linear Search, Bubble Sort.
+2.  **Không gian tuyến tính - $O(n)$ Space:**
+    *   *Cơ chế:* Thuật toán khởi tạo thêm cấu trúc dữ liệu mới (Mảng, List, Map, Set) có số lượng phần tử tỷ lệ thuận với dữ liệu đầu vào $n$.
+    *   *Ví dụ:* Copy mảng ban đầu sang mảng mới, thuật toán nén ký tự, lưu vết đỉnh đã đi qua trong đồ thị.
+3.  **Không gian ngăn xếp đệ quy (Call Stack Space):**
+    *   *Cơ chế:* Mỗi lần một hàm đệ quy được gọi, hệ thống phải lưu trạng thái của hàm đó vào **Call Stack** trong bộ nhớ. Độ phức tạp không gian tỷ lệ thuận với **chiều sâu tối đa** của cây đệ quy.
+    *   *Ví dụ:* Hàm tính Fibonacci đệ quy thô sâu $n$ tầng tốn $O(n)$ Space.
+
+---
+
+### 4.3. Bảng đối chiếu hiệu năng Big O (Big O Comparison Table)
+
 Bảng xếp hạng hiệu năng thuật toán giúp bạn so sánh trực tiếp khi trao đổi với người phỏng vấn:
 
 | Big O | Tốc độ | Nhận xét thực tế | Ví dụ tiêu biểu |

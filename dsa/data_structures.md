@@ -7,6 +7,17 @@ Tài liệu này tổng hợp toàn bộ các cấu trúc dữ liệu cốt lõi
 ## 1. ĐỊNH NGHĨA CẤU TRÚC DỮ LIỆU
 
 *   **Định nghĩa:** Cấu trúc dữ liệu (Data Structure) là cách thức tổ chức, quản lý và lưu trữ dữ liệu trong bộ nhớ máy tính một cách khoa học để có thể truy xuất, thao tác và tối ưu hóa tài nguyên hiệu quả nhất.
+*   **Điểm chung thống nhất của mọi Cấu trúc dữ liệu:**
+    Dù là Mảng, Danh sách liên kết, Cây hay Đồ thị, bản chất của mọi cấu trúc dữ liệu đều được xây dựng dựa trên 2 điểm chung duy nhất:
+    1.  **Cách tổ chức vật lý trên RAM (Memory Layout):** Mọi cấu trúc dữ liệu đều được lắp ghép từ hai dạng tổ chức bộ nhớ vật lý cơ bản:
+        *   *Vùng nhớ liên tiếp (Contiguous Allocation):* Các phần tử nằm sát nhau trên RAM (như Mảng). Giúp truy xuất theo chỉ số trong $O(1)$, nhưng khó thay đổi kích thước.
+        *   *Vùng nhớ liên kết rải rác (Linked Allocation):* Các phần tử nằm rải rác trên RAM và kết nối qua địa chỉ bộ nhớ/con trỏ (như Linked List, Tree, Graph). Giúp co giãn linh hoạt nhưng tốn thêm bộ nhớ lưu con trỏ và tốn $O(n)$ để tìm kiếm.
+    2.  **Bộ 4 thao tác cơ bản (CRUD Operations):** Tất cả cấu trúc dữ liệu đều sinh ra để phục vụ việc thực thi tối ưu hóa các thao tác:
+        *   *Access (Truy xuất):* Lấy dữ liệu tại vị trí biết trước.
+        *   *Search (Tìm kiếm):* Dò tìm vị trí của giá trị cụ thể.
+        *   *Insert (Thêm mới):* Chèn phần tử mới vào cấu trúc.
+        *   *Delete (Xóa bỏ):* Gỡ bỏ phần tử khỏi cấu trúc.
+    *Mỗi cấu trúc dữ liệu thực chất là một sự đánh đổi (Trade-off) về hiệu năng của 4 thao tác trên trên nền tảng 2 dạng lưu trữ vật lý để giải quyết một bài toán cụ thể.*
 *   **Đặc trưng cốt lõi khi phỏng vấn:**
     *   **Time Complexity (Độ phức tạp thời gian):** Thời gian thực hiện các tác vụ (Insert, Delete, Access, Search) được biểu diễn bằng Big O.
     *   **Space Complexity (Độ phức tạp không gian):** Lượng bộ nhớ RAM cần tiêu thụ để cấu trúc tự duy trì.
