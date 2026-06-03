@@ -176,3 +176,40 @@ Ngữ cảnh này là các dịch vụ (Services) giao tiếp nội bộ với n
 | **Cơ chế lưu trữ Secret** | **Không an toàn**: Client chỉ lưu trữ token ngắn hạn, không được giữ khóa bí mật chính. | **An toàn**: Server đối tác lưu trữ Secret Key trong môi trường bảo mật của họ. | **Rất an toàn**: Sử dụng CA nội bộ cấp phát chứng chỉ trực tiếp cho hạ tầng chạy service. |
 | **Vấn đề bảo vệ đường truyền** | Dữ liệu request có thể bị thay đổi nếu hacker can thiệp (chỉ bảo mật qua HTTPS). | **HMAC bảo vệ toàn vẹn**: Bất kỳ thay đổi nào ở body/URL đều làm sai lệch chữ ký. | Mã hóa và xác thực 2 chiều ở cấp độ giao vận mạng (Network/Transport layer). |
 | **Tác động hiệu năng** | Trung bình (Giải mã JWT trên RAM). | Thấp đến trung bình (Chạy hàm băm HMAC). | Cao hơn ở bước bắt tay kết nối ban đầu (do trao đổi chứng chỉ 2 chiều), nhưng cực nhanh khi đã giữ kết nối (Keep-Alive). |
+
+---
+
+## 6. CORS (CROSS-ORIGIN RESOURCE SHARING) VÀ CHÍNH SÁCH SAME-ORIGIN POLICY (SOP)
+
+### 6.1. CORS là gì và Luật cấm túc mặc định Same-Origin Policy (SOP)
+Để hiểu về **CORS (Cross-Origin Resource Sharing)**, trước hết ta bắt buộc phải hiểu về **Same-Origin Policy (SOP - Chính sách cùng nguồn gốc)**. Đây là một quy tắc bảo mật sinh tử được tích hợp sẵn trong mọi trình duyệt web hiện đại.
+
+*   **SOP quy định:** Frontend chạy ở nguồn (Origin) nào thì chỉ được gọi API đến đúng nguồn đó. Nếu cố tình gửi request sang một nguồn khác (Cross-Origin), trình duyệt sẽ chặn phản hồi đó lại ngay lập tức để bảo vệ dữ liệu người dùng khỏi các cuộc tấn công đánh cắp phiên làm việc.
+*   **Thế nào là cùng nguồn (Same-Origin)?** Một nguồn (Origin) được cấu thành từ 3 yếu tố:
+    1.  **Giao thức (Protocol):** `http` hoặc `https`
+    2.  **Tên miền (Domain / Host):** `example.com`, `api.example.com`
+    3.  **Cổng (Port):** `:80`, `:443`, `:3000`
+
+> [!IMPORTANT]
+> Chỉ cần thay đổi **bất kỳ yếu tố nào** trong 3 yếu tố trên, trình duyệt sẽ coi đó là một nguồn khác (Cross-Origin).
+> *   `https://example.com` và `http://example.com` $\rightarrow$ **Khác nguồn** (khác Giao thức).
+> *   `https://example.com` và `https://api.example.com` $\rightarrow$ **Khác nguồn** (khác Tên miền).
+> *   `https://localhost:3000` và `https://localhost:4000` $\rightarrow$ **Khác nguồn** (khác Cổng).
+
+---
+
+### 6.2. Cơ chế giải cứu của CORS (Cross-Origin Resource Sharing)
+Vì sự phát triển của các ứng dụng web hiện đại (Single Page Application như React, Vue thường chạy ở một server frontend riêng và gọi API tới server backend ở domain/port khác), việc gọi API chéo nguồn là bắt buộc. **CORS** sinh ra như một cơ chế "ngoại lệ" an toàn để nới lỏng chính sách SOP.
+
+CORS cho phép Server backend chủ động khai báo với Trình duyệt những nguồn nào (Origin) được phép vượt rào để lấy dữ liệu từ Server.
+
+*   **Các Header CORS cốt lõi được cấu hình ở Server:**
+    *   `Access-Control-Allow-Origin`: Chỉ định origin nào được phép truy cập tài nguyên (ví dụ: `https://myfrontend.com` hoặc `*` cho tất cả).
+    *   `Access-Control-Allow-Methods`: Các phương thức HTTP được phép sử dụng (GET, POST, PUT, DELETE, v.v.).
+    *   `Access-Control-Allow-Headers`: Các custom header được phép gửi lên.
+    *   `Access-Control-Allow-Credentials`: Cho phép gửi kèm Cookie hay thông tin xác thực (như Authorization header) hay không.
+
+### 6.3. Preflight Request (Cơ chế yêu cầu gửi trước)
+Đối với các request có khả năng gây ảnh hưởng tới dữ liệu của server (như POST, PUT, DELETE hoặc các request có custom headers), trình duyệt sẽ tự động gửi một request nháp gọi là **Preflight Request** bằng phương thức **`OPTIONS`** trước khi gửi request thật.
+*   Server phải phản hồi request `OPTIONS` này với các header CORS hợp lệ.
+*   Nếu Server đồng ý, trình duyệt mới tiến hành gửi request thật (POST/PUT/DELETE) của người dùng đi.
