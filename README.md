@@ -25,4 +25,15 @@ cs-fundamentals/
 
 ---
 
-_Last updated: 2026-06-02_
+## 2. DANH MỤC TÀI LIỆU LẬP TRÌNH NỔI BẬT
+
+Dưới đây là các tài liệu lập trình cốt lõi bạn có thể tham khảo trực tiếp:
+
+*   [oop_solid_java_core.md](file:///d:/FOR_LEARN/TU_HOC/cs-fundamentals/programming/oop_solid_java_core.md) - **Tài liệu mới:** Tổng hợp đầy đủ về Hướng đối tượng (OOP), 5 Nguyên lý SOLID (có ví dụ trước/sau refactor) và kiến thức cốt lõi Java Core (Memory, String Pool, Collections, Exception...).
+*   [programming_concepts.md](file:///d:/FOR_LEARN/TU_HOC/cs-fundamentals/programming/programming_concepts.md) - Các khái niệm cơ bản về lập trình, so sánh Compiler/Interpreter và thuật toán.
+*   [programming_basic.md](file:///d:/FOR_LEARN/TU_HOC/cs-fundamentals/programming/programming_basic.md) - Triết lý lập trình sâu từ bóng bán dẫn (Transistor) đến Abstraction.
+*   [roadmap.md](file:///d:/FOR_LEARN/TU_HOC/cs-fundamentals/programming/roadmap.md) - Lộ trình học lập trình tư duy 6 lớp.
+
+---
+
+_Last updated: 2026-06-03_
