@@ -279,3 +279,89 @@ Khi làm việc với các tác vụ bất đồng bộ (như gọi API) trong v
       console.log("Hoàn thành tất cả song song!");
     };
     ```
+
+---
+
+## 7. JAVASCRIPT CORE NÂNG CAO (ADVANCED JAVASCRIPT CORE)
+
+Để nắm vững JavaScript ở cấp độ chuyên sâu, bạn cần hiểu rõ cơ chế vận hành bên dưới của JS Engine và cách quản lý tài nguyên của trình duyệt.
+
+### 7.1. Event Loop: Cơ chế đa luồng giả lập của Single-threaded
+
+JavaScript là ngôn ngữ **đơn luồng (single-threaded)**, nghĩa là tại một thời điểm chỉ có thể thực thi một dòng lệnh duy nhất trên một **Call Stack**.
+Để xử lý các tác vụ bất đồng bộ (như gọi API, hẹn giờ) mà không làm đơ trình duyệt, JS Engine kết hợp với môi trường chạy (Web APIs của Browser hoặc C++ APIs của Node.js) thông qua cơ chế **Event Loop**:
+
+```
+[ Call Stack ] ──(Gặp tác vụ bất đồng bộ)──► [ Web APIs (Browser) ]
+      ▲                                              │
+      │ (Được Event Loop đẩy lên khi Stack trống)   │ (Hoàn thành)
+      │                                              ▼
+[ Event Loop ] ◄─────────────────────────── [ Callback Queues ]
+                                              - Microtask Queue (Promise, queueMicrotask)
+                                              - Macrotask Queue (setTimeout, DOM events)
+```
+
+*   **Quy trình vận hành:**
+    1. Gặp tác vụ bất đồng bộ, JS gửi sang Web APIs xử lý ở nền và chạy tiếp các dòng lệnh đồng bộ khác trên Call Stack.
+    2. Khi Web APIs xử lý xong, nó đẩy callback của tác vụ đó vào **Callback Queues**.
+    3. **Event Loop** liên tục giám sát: Nếu **Call Stack** trống hoàn toàn, nó sẽ lấy các callback từ Callback Queues đẩy lên Call Stack để thực thi.
+*   **Độ ưu tiên của Callback Queues:**
+    *   **Microtask Queue (Ưu tiên cực cao):** Chứa các callback của `Promise.then/catch/finally`, `queueMicrotask`, `MutationObserver`. Event Loop sẽ quét sạch tất cả các tác vụ trong Microtask Queue cho đến khi rỗng hoàn toàn trước khi chuyển sang hàng đợi khác.
+    *   **Macrotask Queue / Task Queue (Ưu tiên thấp hơn):** Chứa `setTimeout`, `setInterval`, `setImmediate`, các sự kiện click, keypress... Event Loop chỉ lấy ra **đúng 1 tác vụ** ở Macrotask Queue để thực thi, sau đó quay lại kiểm tra và dọn sạch Microtask Queue trước khi lấy tác vụ tiếp theo từ Macrotask.
+
+### 7.2. Execution Context & Hoisting bản chất
+
+*   **Execution Context (Ngữ cảnh thực thi):** Là môi trường mà mã nguồn JS được biên dịch và chạy. Gồm 2 giai đoạn:
+    1.  **Creation Phase (Thiết lập):** JS Engine quét qua file code, cấp phát vùng nhớ cho các biến và khai báo hàm.
+        *   Biến `var` được cấp vùng nhớ và gán mặc định là `undefined`.
+        *   Biến `let` và `const` được cấp vùng nhớ nhưng **không khởi tạo giá trị**, đưa chúng vào vùng chết tạm thời (**Temporal Dead Zone - TDZ**).
+        *   Các khai báo hàm (`function declaration`) được lưu toàn bộ thân hàm vào bộ nhớ.
+    2.  **Execution Phase (Thực thi):** Chạy code từ trên xuống dưới, gán giá trị thực cho các biến và gọi hàm.
+*   **Bản chất của Hoisting:** Hoisting không phải là "di chuyển vật lý" các dòng code lên đầu file, mà là kết quả của việc **cấp phát vùng nhớ trước khi chạy** (Creation Phase). Vì hàm đã được lưu vào bộ nhớ, bạn có thể gọi hàm trước khi định nghĩa nó. Nhưng gọi biến `let/const` trước khi khai báo sẽ gây lỗi `ReferenceError` do đang nằm trong TDZ.
+
+### 7.3. Closure (Bao đóng) & Rò rỉ bộ nhớ (Memory Leak)
+
+*   **Closure (Bao đóng):**
+    *   *Định nghĩa:* Là một hàm có khả năng **ghi nhớ và truy cập** vào phạm vi chứa nó (Lexical Scope) ngay cả khi phạm vi đó đã thực thi xong và bị hủy khỏi Call Stack.
+    *   *Vai trò thực tế:* Dùng để đóng gói dữ liệu an toàn (Encapsulation), tạo ra các biến Private mà bên ngoài không thể sửa đổi trực tiếp.
+*   **Garbage Collection (Bộ thu gom rác):** JS tự động dọn dẹp các vùng nhớ không còn được tham chiếu từ gốc (GC Roots) bằng thuật toán **Mark-and-Sweep**.
+*   **Memory Leak (Rò rỉ bộ nhớ):** Xảy ra khi các vùng nhớ không còn dùng tới nhưng vẫn bị tham chiếu vô ý làm GC không thể giải phóng:
+    1.  *Accidental Globals:* Tạo biến toàn cục vô ý do quên viết từ khóa `let/const/var` (biến gắn vào window/global sẽ tồn tại mãi mãi).
+    2.  *Forgotten Timers:* Dùng `setInterval` nhưng quên gọi `clearInterval` khi component/trang bị hủy (các biến trong callback vẫn bị giữ lại).
+    3.  *Detached DOM Elements:* Xóa thẻ DOM khỏi giao diện nhưng vẫn giữ biến trỏ tới thẻ đó trong code JS.
+
+### 7.4. Prototype & Prototype Chain (Cơ chế kế thừa nguyên mẫu)
+
+JS không sử dụng lớp (Class-based OOP) làm nhân cốt lõi kế thừa như Java, mà kế thừa dựa trên **Nguyên mẫu (Prototype-based)**. Cú pháp `class` trong ES6 chỉ là Syntactic Sugar (lớp vỏ cú pháp bên ngoài).
+
+```
+[ Instance: user ] ──(__proto__)──► [ Prototype: User.prototype ] ──(__proto__)──► [ Object.prototype ] ──► null
+```
+
+*   **`prototype` vs `__proto__`:**
+    *   `prototype`: Là thuộc tính chỉ có trên **Constructor Function** (hoặc Class). Nó định nghĩa những thuộc tính/phương thức mà các instance được tạo ra sau này sẽ được dùng chung.
+    *   `__proto__`: Là thuộc tính ẩn có trên **mọi đối tượng (instance)**. Nó là con trỏ trỏ trực tiếp đến prototype của cha nó.
+*   **Prototype Chain (Chuỗi nguyên mẫu):** Khi truy cập một thuộc tính của đối tượng, JS tìm trên chính đối tượng đó trước. Nếu không có, nó đi theo con trỏ `__proto__` lên prototype của cha, rồi lên ông nội, cho đến khi gặp `Object.prototype` (hoặc `null`). Nếu đi hết chuỗi mà vẫn không thấy, trả về `undefined`.
+
+### 7.5. Explicit Binding: call(), apply(), bind()
+
+Dùng để gán hoặc thay đổi ngữ cảnh của từ khóa `this` một cách chủ động:
+*   **`call(thisArg, arg1, arg2, ...)`:** Gọi hàm ngay lập tức với ngữ cảnh `this` mới và truyền các tham số riêng biệt qua dấu phẩy.
+*   **`apply(thisArg, [argsArray])`:** Giống `call()`, nhưng truyền các tham số dưới dạng một mảng (Array).
+*   **`bind(thisArg, arg1, arg2, ...)`:** Không gọi hàm ngay. Nó trả về một **hàm mới** được liên kết (bound) vĩnh viễn với `thisArg`. Rất hữu ích khi làm việc với callback trong React hoặc Event Listener.
+
+### 7.6. Advanced Comparisons & Copying
+
+*   **`Object.is()` vs `===`:**
+    *   `Object.is()` so sánh chính xác tuyệt đối mà không có các hành vi dị biệt của `===`:
+        *   `NaN === NaN` -> `false` (lỗi kinh điển của JS). Nhưng `Object.is(NaN, NaN)` -> `true`.
+        *   `-0 === +0` -> `true`. Nhưng `Object.is(-0, +0)` -> `false`.
+*   **Shallow Copy vs Deep Copy:**
+    *   *Shallow Copy (Sao chép nông):* Chỉ sao chép địa chỉ của các đối tượng con bên trong (dùng `...spread` hoặc `Object.assign`). Sửa đối tượng con ở bản copy sẽ làm thay đổi đối tượng con ở bản gốc.
+    *   *Deep Copy (Sao chép sâu):* Sao chép toàn bộ các tầng đối tượng độc lập hoàn toàn.
+        *   Cách nhanh: `JSON.parse(JSON.stringify(obj))` (Tuy nhiên sẽ mất các kiểu dữ liệu đặc biệt như Function, Date, undefined, RegExp).
+        *   Cách chuẩn hóa hiện đại: Dùng hàm có sẵn **`structuredClone(obj)`** hỗ trợ deep copy chuẩn xác mọi kiểu dữ liệu.
+
+---
+*Tài liệu học tập - cs-fundamentals/web-development/js-basic*
+
