@@ -10,7 +10,7 @@ Tài liệu này hệ thống hóa các kiến thức nền tảng và nâng cao
 **API (Application Programming Interface - Giao diện lập trình ứng dụng)** là một tập hợp các quy tắc, giao thức và công cụ cho phép các phần mềm/ứng dụng khác nhau có thể giao tiếp, trao đổi dữ liệu với nhau.
 
 ### 1.2. RESTful API là gì?
-**REST (Representational State Transfer)** là một kiểu kiến trúc phần mềm được thiết kế dành cho các hệ thống phân tán (như World Wide Web). Một hệ thống API tuân thủ các quy tắc của REST được gọi là **RESTful API**.
+**REST (Representational State Transfer)** KHÔNG PHẢI là một ngôn ngữ lập trình, không phải một thư viện, cũng không phải một phần mềm. REST là một tập hợp các quy tắc (hoặc phong cách kiến trúc) do một nhà khoa học máy tính tên là Roy Fielding định nghĩa ra vào năm 2000, nhằm chuẩn hóa cách các máy tính nói chuyện với nhau trên môi trường Internet. Một hệ thống API tuân thủ các quy tắc của REST được gọi là **RESTful API**.
 
 #### 6 ràng buộc cốt lõi của kiến trúc REST:
 1.  **Client-Server (Mô hình Khách - Chủ):** Phân tách rõ ràng giữa giao diện người dùng (Client) và nơi xử lý, lưu trữ dữ liệu (Server). Giúp hai thành phần này phát triển độc lập.
