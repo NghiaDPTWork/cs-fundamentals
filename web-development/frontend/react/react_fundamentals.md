@@ -50,6 +50,15 @@ React tuân thủ chặt chẽ kiến trúc **Dòng dữ liệu một chiều (U
 | **Tính đột biến** | **Bất biến (Read-only)**. Component con tuyệt đối không được tự ý chỉnh sửa giá trị `props` nhận về. | **Có thể thay đổi** thông qua hàm cập nhật tương ứng (ví dụ: `setState` hoặc `setCount`). |
 | **Kích hoạt render** | Khi `props` truyền vào thay đổi, Component con sẽ tự động re-render. | Khi `state` thay đổi, chính Component đó và tất cả con cái của nó sẽ re-render. |
 
+### 3.1. Vai trò của tính Bất Biến (State Immutability)
+*   **Tại sao không được mutate trực tiếp?** Khi muốn thay đổi state dạng Object hoặc Array, ta tuyệt đối không viết `state.push(newValue)` hay `state.name = "New Name"`.
+*   **Cơ chế đối sánh của React:** React sử dụng so sánh nông (`shallow comparison` qua `Object.is`) để phát hiện thay đổi của state. Nếu bạn chỉnh sửa trực tiếp giá trị bên trong nhưng giữ nguyên tham chiếu bộ nhớ (địa chỉ ô nhớ cũ của Array/Object), React sẽ hiểu là state **chưa thay đổi** và bỏ qua việc kích hoạt re-render.
+*   **Giải pháp:** Luôn sử dụng cú pháp Spread hoặc các hàm tạo mảng mới để tạo ra một địa chỉ ô nhớ mới hoàn toàn:
+    ```javascript
+    // ❌ Sai: arr.push(4); setArr(arr); -> Không re-render
+    // ✔️ Đúng: setArr([...arr, 4]); -> Tạo tham chiếu mới -> Kích hoạt re-render
+    ```
+
 ---
 
 ## 4. LÀM CHỦ REACT HOOKS CỐT LÕI
@@ -67,6 +76,11 @@ Hooks (từ bản 16.8) cho phép Function Component sử dụng các tính năn
     *   *Truyền mảng rỗng `[]`:* Chỉ chạy **duy nhất 1 lần** sau khi component mount (lần render đầu tiên).
     *   *Truyền biến `[count]`:* Chạy callback ở lần đầu và bất cứ khi nào giá trị `count` thay đổi.
     *   *Clean-up Function:* Nếu hàm callback return về một function, React sẽ chạy function đó trước khi component bị unmount hoặc trước khi chạy lại callback lần sau để dọn dẹp bộ nhớ (ví dụ: `clearTimeout`, `removeEventListener`).
+
+> [!WARNING]
+> **useEffect không phải là Lifecycle / Event Handler:**
+> *   *Mục đích thực sự:* `useEffect` dùng để **đồng bộ hóa** Component với các **hệ thống bên ngoài** (External Systems - như API, Chat server, DOM window event).
+> *   *Lỗi lạm dụng:* Tránh dùng `useEffect` để xử lý các sự kiện trực tiếp từ người dùng. Sự kiện người dùng (như click nút, submit form) phải được xử lý trực tiếp trong các **Event Handlers** (như `onClick`, `onSubmit`), không được đưa vào `useEffect` thông qua các biến trung gian vì sẽ gây re-render dư thừa và logic rối rắm.
 
 ### 4.3. Hooks tối ưu hiệu năng và quản lý tham chiếu
 *   **`useMemo(() => value, dependencies)`:** Ghi nhớ **giá trị** của một phép toán phức tạp. Tránh việc tính toán lại vô ích ở mỗi lần re-render nếu các dependency không thay đổi.
