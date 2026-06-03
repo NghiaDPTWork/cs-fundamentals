@@ -178,19 +178,19 @@ sequenceDiagram
     autonumber
     actor User as Khách hàng
     participant FE as Frontend của bạn
-    participant BE as Server của bạn (Có Secret_Key)
-    participant MoMo as Server MoMo (Có Secret_Key)
+    participant BE as Server của bạn (Có SecretKey)
+    participant MoMo as Server MoMo (Có SecretKey)
 
-    Note over BE, MoMo: Bước chuẩn bị: Hai bên cấu hình chung Secret_Key bí mật (Ví dụ: HuyBaoMat123)
+    Note over BE, MoMo: "Bước chuẩn bị: Hai bên cấu hình chung SecretKey bí mật (Ví dụ: HuyBaoMat123)"
     User->>FE: Click mua hàng (100.000đ)
     FE->>BE: Yêu cầu tạo đơn hàng
-    BE->>BE: 1. Gom dữ liệu: Message = "order_id=999&amount=100000"
-    BE->>BE: 2. Ký HMAC-SHA256(Secret_Key, Message)<br/>-> Signature = "a1b2c3d4..."
-    BE->>MoMo: 3. Gửi Request qua Internet (Chứa Body thô & Chữ ký trong Header)<br/>(Không kèm Secret_Key)
-    Note over BE, MoMo: [Giả lập] Hacker can thiệp sửa Body: amount = 10 (10đ)<br/>nhưng giữ nguyên Signature trong Header
-    MoMo->>MoMo: 4. Nhận request và truy vấn Secret_Key của đối tác tương ứng
-    MoMo->>MoMo: 5. Lấy body nhận được và tự chạy lại hàm băm:<br/>HMAC-SHA256(Secret_Key, Message_Nhận_Được)<br/>-> Tạo ra chữ ký mới: "z9y8x7w6..."
-    MoMo->>MoMo: 6. So sánh Signature trong Header (a1b2c3d4...) và Chữ ký vừa tính (z9y8x7w6...)
+    BE->>BE: "1. Gom dữ liệu: Message = 'order_id=999&amount=100000'"
+    BE->>BE: "2. Ký HMAC-SHA256(SecretKey, Message) -> Signature = 'a1b2c3d4...'"
+    BE->>MoMo: "3. Gửi Request qua Internet (Chứa Body thô & Chữ ký trong Header, không kèm SecretKey)"
+    Note over BE, MoMo: "[Giả lập] Hacker can thiệp sửa Body: amount = 10 (10đ) nhưng giữ nguyên Signature"
+    MoMo->>MoMo: 4. Nhận request và truy vấn SecretKey của đối tác tương ứng
+    MoMo->>MoMo: "5. Lấy body nhận được và tự băm lại: HMAC-SHA256(SecretKey, Message_Nhận) -> Chữ ký mới: 'z9y8x7w6...'"
+    MoMo->>MoMo: "6. So sánh Signature trong Header (a1b2c3d4...) và Chữ ký vừa tính (z9y8x7w6...)"
     alt Chữ ký KHÔNG KHỚP (Dữ liệu đã bị sửa đổi)
         MoMo-->>BE: Trả về lỗi 400 Bad Request / 401 Unauthorized (Giao dịch thất bại)
     else Chữ ký KHỚP (Dữ liệu toàn vẹn & chính chủ)
@@ -199,16 +199,16 @@ sequenceDiagram
 ```
 
 ##### Chi tiết 6 bước vận hành:
-* **Chuẩn bị (Setup):** Hai bên thống nhất lưu trữ bí mật `Secret_Key` (`HuyBaoMat123`). Khóa này được lưu tại server của mỗi bên, không bao giờ truyền qua mạng.
+* **Chuẩn bị (Setup):** Hai bên thống nhất lưu trữ bí mật `SecretKey` (`HuyBaoMat123`). Khóa này được lưu tại server của mỗi bên, không bao giờ truyền qua mạng.
 * **Bước 1: Chuẩn bị dữ liệu (Phía Server của bạn):** Gom các thông tin đơn hàng thành chuỗi dữ liệu thô:
   `Message = "order_id=999&amount=100000"`
-* **Bước 2: Tạo chữ ký HMAC (Phía Server của bạn):** Đưa `Message` và `Secret_Key` vào hàm băm HMAC-SHA256 để tạo chữ ký độc nhất:
-  $$Signature = \text{HMAC-SHA256}(\text{Secret\_Key}, \text{Message})$$
+* **Bước 2: Tạo chữ ký HMAC (Phía Server của bạn):** Đưa `Message` và `SecretKey` vào hàm băm HMAC-SHA256 để tạo chữ ký độc nhất:
+  $$Signature = \text{HMAC-SHA256}(\text{SecretKey}, \text{Message})$$
   Thu được signature: `"a1b2c3d4e5f6g7h8..."`
-* **Bước 3: Truyền gói tin qua mạng:** Gửi request sang MoMo gồm dữ liệu thô và chữ ký (đính kèm ở header `X-Signature`), tuyệt đối không gửi `Secret_Key`.
+* **Bước 3: Truyền gói tin qua mạng:** Gửi request sang MoMo gồm dữ liệu thô và chữ ký (đính kèm ở header `X-Signature`), tuyệt đối không gửi `SecretKey`.
 * **Bước 4: Hacker can thiệp (Giả thuyết):** Hacker chặn gói tin và sửa số tiền từ `100000` thành `10` trong body, giữ nguyên chữ ký cũ và gửi tiếp đến MoMo.
-* **Bước 5: Xác minh (Phía MoMo):** MoMo nhận request, lấy `Secret_Key` tương ứng từ DB của họ và băm lại dữ liệu nhận được để đối chiếu:
-  $$Server\_Signature = \text{HMAC-SHA256}(\text{Secret\_Key}, \text{Message\_Nhận\_Được})$$
+* **Bước 5: Xác minh (Phía MoMo):** MoMo nhận request, lấy `SecretKey` tương ứng từ DB của họ và băm lại dữ liệu nhận được để đối chiếu:
+  $$ServerSignature = \text{HMAC-SHA256}(\text{SecretKey}, \text{ReceivedMessage})$$
   Do dữ liệu bị thay đổi, chữ ký mới tạo ra sẽ là `"z9y8x7w6v5u4..."` hoàn toàn khác chữ ký cũ.
 * **Bước 6: Đối chiếu và phán quyết:** MoMo so sánh chữ ký nhận được trong header (`a1b2...`) với chữ ký tự tính (`z9y8...`). Do lệch nhau, MoMo lập tức từ chối giao dịch, trả về lỗi validation và chặn đứng cuộc tấn công.
 
