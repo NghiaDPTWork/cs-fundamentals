@@ -154,3 +154,42 @@ sequenceDiagram
     1.  *Đặt hạn cực ngắn (5-15 phút):* Đây là giải pháp phổ biến nhất. Khi logout chỉ cần xóa Refresh Token. Access Token của kẻ gian dù có giữ cũng chỉ dùng được thêm vài phút rồi tự động vô hiệu.
     2.  *Sử dụng Blacklist trên Redis:* Khi logout, lưu Access Token cũ vào Blacklist của Redis với thời hạn sống bằng thời gian còn lại của token. Middleware sẽ check nhanh trong Redis trước khi cho đi qua.
     3.  *Kiểm tra thời điểm đổi mật khẩu:* So sánh thời điểm phát hành token (`iat`) với thời điểm thay đổi thông tin gần nhất (`updated_at`) trong DB. Nếu `iat < updated_at`, token đó lập tức bị hủy bỏ.
+
+---
+
+## 7. CHI TIẾT LUỒNG AUTH FLOW VÀ PHÂN TÍCH VAI TRÒ CỦA AT & RT
+
+### 7.1. Luồng chạy Auth Flow cơ bản
+1. **Gửi thông tin đăng nhập**: User gửi Username (us) + Password (pwd) qua giao thức bảo mật **HTTPS** (để chống nghe trộm trên đường truyền). Tại bước này, nếu dự án yêu cầu bảo mật cực cao, thông tin nhạy cảm có thể được đóng gói bằng **JWE (JSON Web Encryption)** để mã hóa sâu.
+2. **Xác thực và Cấp mã**: Frontend chuyển thông tin về Backend. Sau khi Backend xác thực thông tin đăng nhập thành công, nó sẽ tạo và trả về 2 mã token:
+   * **Access Token (AT)**: Được trả về trong response body và Frontend sẽ lưu vào **In-memory** (biến cục bộ trong ứng dụng như React state, pinia, redux) để tránh việc bị mã độc XSS đọc từ LocalStorage.
+   * **Refresh Token (RT)**: Được lưu trữ trong **Cookie** với cấu hình **`HttpOnly`** và **`SameSite=Strict`** (hoặc `SameSite=Lax` kết hợp `Secure`) để ngăn chặn hoàn toàn mã JS bên thứ ba đọc được (chống XSS) và giảm thiểu tối đa nguy cơ bị tấn công CSRF.
+
+---
+
+### 7.2. Vai trò của Access Token (AT)
+Access Token đóng vai trò như một "vé thông hành nhanh" có thời hạn cực kỳ ngắn.
+
+* **Xác thực & Phân quyền trực tiếp (Authentication & Authorization)**:
+  AT thường được đính kèm vào phần Header của mỗi Request (`Authorization: Bearer <AT>`). Khi nhận được, Server chỉ cần dùng `Secret Key` để giải mã trên bộ nhớ RAM (Stateless) mà không cần truy vấn Database. Quá trình giải mã này sẽ ngay lập tức xác thực được 2 yếu tố:
+  1. *Authentication*: Người gửi request này thực sự là ai (xác định danh tính).
+  2. *Authorization*: Người này có quyền thực hiện hành động/truy cập tài nguyên hiện tại hay không (kiểm tra scope/roles được ghi trong payload).
+* **Tối ưu hóa hiệu năng cho hệ thống (Scalability)**:
+  Nếu dùng cơ chế `Session ID` truyền thống, mỗi request của User gửi lên bắt buộc Server phải truy vấn xuống Database (hoặc Redis) để kiểm tra phiên làm việc. Với 100 - 1,000 user thì không vấn đề, nhưng khi lượng người dùng lên tới 10,000 hay 1,000,000, lượng truy vấn này sẽ gây nghẽn cổ chai và áp lực khủng khiếp lên Database. Sử dụng AT giải mã bằng `Secret Key` giúp giảm tải hoàn toàn các truy vấn này, bảo vệ và tối ưu hiệu năng DB cực tốt.
+* **Giới hạn vùng sát thương (Blast Radius)**:
+  Một điểm chí mạng của AT là **không thể thu hồi lập tức** vì Server xác thực theo cơ chế Stateless (không lưu trữ trạng thái của AT ở DB). Chính vì vậy, để đảm bảo an toàn, thời hạn hiệu lực của AT luôn được thiết lập **rất ngắn** (ví dụ: 5-15 phút). Nếu chẳng may AT bị rò rỉ, thời gian kẻ xấu có thể lợi dụng nó để tấn công cũng cực kỳ ngắn trước khi token tự động hết hạn.
+
+---
+
+### 7.3. Vai trò của Refresh Token (RT)
+Refresh Token đóng vai trò như một "chìa khóa dự phòng" có thời hạn dài, được lưu trữ an toàn để kiểm soát phiên đăng nhập.
+
+* **Cân bằng hoàn hảo giữa Bảo mật và Trải nghiệm người dùng**:
+  Vì lý do bảo mật, AT được thiết lập thời gian sống rất ngắn. Để người dùng không bị văng ra và phải đăng nhập lại liên tục sau mỗi 5-15 phút, RT được sinh ra. Mỗi khi AT hết hạn, Frontend sẽ tự động mang RT đi "xin" Server cấp một cặp AT và RT mới dưới nền (silent refresh). Cơ chế này giúp giữ phiên đăng nhập hoạt động trơn tru suốt cả tháng mà không làm gián đoạn trải nghiệm của người dùng.
+* **Tối ưu hóa hiệu năng truy xuất Database**:
+  Mặc dù RT cần được lưu trữ ở DB (hoặc Redis) để quản lý (Stateful), tần suất sử dụng RT để xin cấp lại AT rất thấp (chỉ khoảng 30 - 40 phút một lần tùy theo thời gian sống của AT). So với việc truy xuất DB trên mọi request (như Session ID hoặc RT thông thường), việc chỉ truy xuất DB sau mỗi 30-40 phút là một sự giảm tải tài nguyên vô cùng lớn cho Server.
+* **Cơ chế thu hồi (Revoke) và Phòng thủ từ xa**:
+  Do AT không được lưu trữ nên Server không thể chủ động thu hồi nó. Nhưng RT được lưu ở Server, cho phép Server **thu hồi lập tức** bằng cách xóa RT trong Database/Redis. Đây là cơ chế phòng thủ tối quan trọng khi:
+  * User bị hack hoặc mất thiết bị.
+  * User muốn thực hiện hành động "Đăng xuất từ xa" trên các thiết bị khác.
+  Khi RT bị thu hồi, kẻ xấu sẽ không thể dùng nó để xin cấp thêm bất kỳ Access Token mới nào nữa, và phiên truy cập trái phép sẽ bị chấm dứt ngay khi AT hiện tại hết hạn.
