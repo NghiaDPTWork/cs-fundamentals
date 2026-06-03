@@ -212,50 +212,6 @@ sequenceDiagram
   Do dữ liệu bị thay đổi, chữ ký mới tạo ra sẽ là `"z9y8x7w6v5u4..."` hoàn toàn khác chữ ký cũ.
 * **Bước 6: Đối chiếu và phán quyết:** MoMo so sánh chữ ký nhận được trong header (`a1b2...`) với chữ ký tự tính (`z9y8...`). Do lệch nhau, MoMo lập tức từ chối giao dịch, trả về lỗi validation và chặn đứng cuộc tấn công.
 
-##### 💻 Code mẫu mô phỏng tính toán chữ ký HMAC-SHA256 (Node.js)
-```javascript
-const crypto = require('crypto');
-
-// 1. Cấu hình khóa bí mật (Secret Key) được chia sẻ giữa 2 hệ thống
-const secretKey = 'HuyBaoMat123';
-
-// 2. Dữ liệu thô của đơn hàng (Message)
-const message = 'order_id=999&amount=100000';
-
-// 3. Hàm tính toán chữ ký điện tử HMAC-SHA256
-const generateSignature = (key, data) => {
-    return crypto
-        .createHmac('sha256', key)
-        .update(data)
-        .digest('hex'); // Trả về dạng chuỗi hex
-};
-
-// 4. Ký dữ liệu
-const signature = generateSignature(secretKey, message);
-console.log('--- PHÍA CLIENT/SERVER CỦA BẠN ---');
-console.log('Dữ liệu gửi đi:', message);
-console.log('Chữ ký tạo ra (Signature):', signature);
-// Output: a1b2c3d4e5f6g7h8... (chuỗi hex có độ dài 64 ký tự)
-
-// --- PHÍA SERVER NHẬN (MOMO / CỔNG THANH TOÁN) ---
-console.log('\n--- PHÍA CỔNG THANH TOÁN (MOMO/VNPAY) ---');
-// Giả lập hacker sửa dữ liệu nhận được
-const receivedMessageFromHacker = 'order_id=999&amount=10'; // Bị sửa đổi số tiền
-const receivedSignature = signature; // Hacker giữ nguyên chữ ký cũ trong header
-
-// Server nhận tự tính toán lại chữ ký dựa trên dữ liệu nhận được và Secret Key trong DB
-const recalculatedSignature = generateSignature(secretKey, receivedMessageFromHacker);
-
-console.log('Chữ ký nhận được trong Header:', receivedSignature);
-console.log('Chữ ký tự tính toán lại:', recalculatedSignature);
-
-if (receivedSignature === recalculatedSignature) {
-    console.log('=> KẾT QUẢ: Xác minh THÀNH CÔNG! Dữ liệu toàn vẹn.');
-} else {
-    console.log('=> KẾT QUẢ: Xác minh THẤT BẠI! Dữ liệu đã bị hacker sửa đổi hoặc chữ ký không hợp lệ.');
-}
-```
-
 > [!TIP]
 > Sức mạnh của HMAC nằm ở tính một chiều và sự bí mật của `Secret Key`. Hacker có thể thấy dữ liệu thô và chữ ký, nhưng nếu không sở hữu `Secret_Key`, họ hoàn toàn không thể đoán hoặc tính toán ra một chữ ký hợp lệ cho dữ liệu đã bị chỉnh sửa.
 
